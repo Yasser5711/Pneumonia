@@ -1,0 +1,52 @@
+[tool.ruff]
+line-length = 88
+exclude = [".venv", "__pypackages__", "**/__init__.py","*.ipynb"]
+
+# Enable all common rule sets used in modern Python backend projects
+select = [
+  "E",      # pycodestyle errors
+  "F",      # pyflakes
+  "B",      # bugbear
+  "I",      # isort
+  "UP",     # pyupgrade
+  "C90",    # mccabe complexity
+  "N",      # pep8-naming
+  "A",      # flake8-builtins
+  "T20",    # flake8-print
+  "ASYNC",  # flake8-async
+  "S",      # flake8-bandit (security)
+]
+
+# Ignore rules that are safe to skip in FastAPI/SQLAlchemy context
+ignore = [
+  "E501",   # let black handle line length
+  "B008",   # FastAPI Depends in function args
+  "C901",   # function too complex (can be noisy)
+  "S101",   # assert statements allowed in tests
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+skip-string-normalization = false
+
+[tool.isort]
+profile = "black"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+filterwarnings = [
+  "ignore::DeprecationWarning",
+  "ignore::PendingDeprecationWarning",
+]
+
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"

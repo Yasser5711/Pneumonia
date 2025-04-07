@@ -1,0 +1,28 @@
+{
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+
+  "editor.formatOnSave": true,
+  "[python]": {
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  },
+  "python.envFile": "${workspaceFolder}/.env",
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestEnabled": true,
+  "python.testing.pytestArgs": ["back/tests"],
+  "python.testing.pytestPath": "pytest",
+  "pytest.command": [
+    "eval",
+    "$(docker-machine env default);",
+    "docker-compose",
+    "run",
+    "--no-deps",
+    "api",
+    "pytest"
+  ],
+
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "always"
+  },
+
+  "python.analysis.typeCheckingMode": "off"
+}

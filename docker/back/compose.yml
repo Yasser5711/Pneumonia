@@ -1,0 +1,51 @@
+services:
+  migration:
+    container_name: migration
+    build:
+      context: ../../server
+      dockerfile: Dockerfile
+    command: >
+      bash -c "/wait-for-it.sh db:5432 --timeout=30 --strict -- && alembic upgrade head && python db/seed.py"
+    environment:
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - ALEMBIC_DATABASE_URL=postgresql+psycopg2://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/${DATABASE_NAME}
+      - DATABASE_URL=postgresql+psycopg2://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/${DATABASE_NAME}
+      - PYTHONPATH=/app
+    volumes:
+      - ../../server:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+    profiles:
+      - back
+    networks:
+      - app_network
+  server:
+    container_name: server
+    build:
+      context: ../../server
+      dockerfile: Dockerfile
+    ports:
+      - "8001:8000"
+    environment:
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DATABASE_NAME=${DATABASE_NAME}
+      - ALEMBIC_DATABASE_URL=postgresql+psycopg2://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/${DATABASE_NAME}
+      - DATABASE_URL=postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@db:5432/${DATABASE_NAME}
+      - PYTHONPATH=/app
+    volumes:
+      - ../../server:/app
+    depends_on:
+      migration:
+        condition: service_completed_successfully
+    command: >
+      bash -c "uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+
+    profiles:
+      - back
+    networks:
+      - app_network

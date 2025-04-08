@@ -1,10 +1,18 @@
+# Import necessary libraries
 import os
 
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.metrics import auc, classification_report, confusion_matrix, roc_curve
 from tensorflow.keras.callbacks import EarlyStopping
-from tensorflow.keras.layers import Conv2D, Dense, Dropout, Flatten, Input, MaxPooling2D
+from tensorflow.keras.layers import (  # type: ignore
+    Conv2D,
+    Dense,
+    Dropout,
+    Flatten,
+    Input,
+    MaxPooling2D,
+)
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
@@ -111,10 +119,11 @@ plt.xlabel("False Positive Rate")
 plt.ylabel("True Positive Rate")
 plt.title("Receiver Operating Characteristic")
 plt.legend(loc="lower right")
-plt.savefig("results/roc_curve.png")
 plt.show()
 
 # Compute and plot confusion matrix
+# custom_threshold = 0.9  # TODO
+# y_pred_classes = (y_pred > custom_threshold).astype(int)
 y_pred_classes = (y_pred > 0.5).astype(int)
 cm = confusion_matrix(y_true, y_pred_classes)
 
@@ -130,7 +139,6 @@ sns.heatmap(
 plt.xlabel("Predicted")
 plt.ylabel("Actual")
 plt.title("Confusion Matrix")
-plt.savefig("results/confusion_matrix.png")
 plt.show()
 
 # Classification report

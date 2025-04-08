@@ -21,8 +21,29 @@
   ],
 
   "editor.codeActionsOnSave": {
-    "source.organizeImports": "always"
+    "source.organizeImports": "always",
+    "source.fixAll.eslint": "explicit"
   },
 
-  "python.analysis.typeCheckingMode": "off"
+  "python.analysis.typeCheckingMode": "off",
+  "eslint.enable": true,
+  "eslint.useFlatConfig": true,
+  "eslint.nodePath": ".yarn/sdks",
+  "eslint.run": "onType",
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "eslint.workingDirectories": [{ "mode": "auto" }],
+  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "[javascript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[typescript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  }
 }

@@ -1,0 +1,11 @@
+include:
+  - path: "docker/db/compose.yml"
+  - path: "docker/tools/compose.yml"
+  - path: "docker/back/compose.yml"
+  - path: "docker/front/compose.yml"
+volumes:
+  db_data:
+  pgadmin_data:
+
+networks:
+  app_network:

@@ -2,8 +2,9 @@ services:
   server:
     container_name: fastify-server
     build:
-      context: ../../server
-      dockerfile: Dockerfile
+      context: ../..
+      dockerfile: server/Dockerfile
+    working_dir: /app/server
     ports:
       - "3000:3000"
     environment:
@@ -11,9 +12,9 @@ services:
       - API_KEY=${API_KEY}
       - FRONTEND_ORIGIN=${FRONTEND_ORIGIN}
     volumes:
-      - ../../server:/app
+      - ../..:/app
       - /app/node_modules
-    command: yarn dev  # ✅ override CMD
+    command: yarn dev # ✅ override CMD
     restart: always
     networks:
       - app_network

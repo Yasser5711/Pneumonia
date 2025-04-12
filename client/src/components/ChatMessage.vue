@@ -1,34 +1,34 @@
 <script setup lang="ts">
-import { CheckCheckIcon, CheckIcon } from "lucide-vue-next";
-import { computed, ref } from "vue";
-import type { Message } from "../types/chat";
-import HoverImage from "./HoverImage.vue";
-import ImageModal from "./ImageModal.vue";
+import { CheckCheckIcon, CheckIcon } from 'lucide-vue-next'
+import { computed, ref } from 'vue'
+import type { Message } from '../types/chat'
+import HoverImage from './HoverImage.vue'
+import ImageModal from './ImageModal.vue'
 
 const props = defineProps<{
-  message: Message;
-}>();
+  message: Message
+}>()
 
-const showImageModal = ref(false);
+const showImageModal = ref(false)
 
 const statusIcon = computed(() => {
   switch (props.message.status) {
-    case "sent":
-      return CheckIcon;
-    case "delivered":
-    case "read":
-      return CheckCheckIcon;
+    case 'sent':
+      return CheckIcon
+    case 'delivered':
+    case 'read':
+      return CheckCheckIcon
     default:
-      return null;
+      return null
   }
-});
+})
 
 const formattedTime = computed(() => {
-  return new Intl.DateTimeFormat("en", {
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(props.message.timestamp);
-});
+  return new Intl.DateTimeFormat('en', {
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(props.message.timestamp)
+})
 // onMounted(() => {
 //   emit("mounted"); // or emit('messageRendered')
 // });
@@ -37,19 +37,14 @@ const formattedTime = computed(() => {
 <template>
   <div
     v-motion
-    :class="[
-      'flex w-full mb-4',
-      message.sender === 'user' ? 'justify-end' : 'justify-start',
-    ]"
+    :class="['mb-4 flex w-full', message.sender === 'user' ? 'justify-end' : 'justify-start']"
     :initial="{ opacity: 0, y: 20 }"
     :enter="{ opacity: 1, y: 0 }"
   >
     <div
       :class="[
-        'max-w-[70%] rounded-2xl px-4 py-2 glass-panel',
-        message.sender === 'user'
-          ? 'bg-primary/10 rounded-tr-sm'
-          : 'bg-surface rounded-tl-sm',
+        'glass-panel max-w-[70%] rounded-2xl px-4 py-2',
+        message.sender === 'user' ? 'bg-primary/10 rounded-tr-sm' : 'rounded-tl-sm bg-surface',
         message.type === 'text' ? 'hover:scale-105' : '',
       ]"
     >
@@ -68,12 +63,12 @@ const formattedTime = computed(() => {
         />
       </template>
 
-      <div class="flex items-center justify-end gap-1 mt-1">
-        <span class="text-xs text-text/60">{{ formattedTime }}</span>
+      <div class="mt-1 flex items-center justify-end gap-1">
+        <span class="text-text/60 text-xs">{{ formattedTime }}</span>
         <component
           :is="statusIcon"
           v-if="message.sender === 'user' && statusIcon"
-          class="w-4 h-4 text-text/60"
+          class="text-text/60 h-4 w-4"
         />
       </div>
     </div>

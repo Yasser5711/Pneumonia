@@ -32,7 +32,7 @@ async function main() {
       //   const allowedOrigin = isProd
       //     ? process.env.FRONTEND_ORIGIN // e.g. https://app.myfrontend.com
       //     : "http://localhost:5173"; // or whatever your local port is
-      const allowedOrigin = process.env.FRONTEND_ORIGIN || 'http://localhost:5173';
+      const allowedOrigin = process.env.FRONTEND_ORIGIN || 'http://localhost:4000';
 
       if (!origin || origin === allowedOrigin) {
         cb(null, true);
@@ -63,7 +63,7 @@ async function main() {
 
   fastify.get('/', async () => ({ status: '🚀 Server is running' }));
 
-  await fastify.listen({ port: 3000 });
+  await fastify.listen({ port: 3000, host: '0.0.0.0' });
   console.log('✅ Fastify + tRPC server running on http://localhost:3000');
   console.log('🧩 tRPC router keys:', Object.keys(appRouter._def.procedures));
 }

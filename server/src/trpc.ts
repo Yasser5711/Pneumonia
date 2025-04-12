@@ -1,4 +1,4 @@
-import { inferAsyncReturnType, initTRPC } from '@trpc/server';
+import { inferAsyncReturnType, initTRPC, TRPCError } from '@trpc/server';
 import { FastifyRequest } from 'fastify';
 export const createContext = ({ req }: { req: FastifyRequest }) => {
   return {
@@ -10,15 +10,16 @@ type Context = inferAsyncReturnType<typeof createContext>;
 const t = initTRPC.context<Context>().create();
 
 export const router = t.router;
-// export const publicProcedure = t.procedure;
+export const publicProcedure = t.procedure;
 
 // eslint-disable-next-line no-unused-vars
 const isProd = process.env.NODE_ENV === 'production';
-const expectedApiKey = process.env.API_KEY;
 
 const requireAuth = t.middleware(({ ctx, next }) => {
+  const expectedApiKey = process.env.API_KEY;
   if (!ctx.apiKey || ctx.apiKey !== expectedApiKey) {
-    throw new Error('UNAUTHORIZED');
+    console.warn('🚫 Invalid API key attempt:', ctx.apiKey);
+    throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid API key' });
   }
 
   return next();

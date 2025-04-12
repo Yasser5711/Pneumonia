@@ -1,21 +1,30 @@
 FROM node:20-slim
 
-# Enable Corepack for Yarn 4
+# Enable Corepack and configure Yarn 4
 RUN corepack enable && yarn config set nodeLinker node-modules
 
+# Create app directory
 WORKDIR /app
 
-# Copy package files first
+# Copy core Yarn files first (for all workspaces)
+COPY .yarn .yarn
+COPY .yarnrc.yml .yarnrc.yml
 COPY package.json yarn.lock ./
 
-# Install dependencies (including dev for tsx)
-RUN yarn install
+# Copy only server workspace package.json
+COPY server/package.json ./server/package.json
 
-# Copy the rest of the source
+# Install dependencies with Yarn 4 workspaces (resolves all workspaces)
+RUN yarn install --inline-builds
+
+# Copy the full monorepo (needed to build/run server workspace)
 COPY . .
+
+# Set working dir to server workspace
+WORKDIR /app/server
 
 # Expose Fastify port
 EXPOSE 3000
 
-# Run dev mode using tsx (no build needed)
+# Run server in dev mode
 CMD ["yarn", "dev"]

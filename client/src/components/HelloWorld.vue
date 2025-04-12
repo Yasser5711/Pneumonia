@@ -1,41 +1,133 @@
 <script setup lang="ts">
+import { useImagePredictor } from '@/composables/useImagePredictor'
+import { useHelloQuery } from '@/queries/useHelloQuery'
 import { ref } from 'vue'
 
-defineProps<{ msg: string }>()
+const showHelloResult = ref(false)
+const { imageUrl, predictFromFile, predictFromUrl, showResult, isPending, data, error } =
+  useImagePredictor()
 
-const count = ref(0)
+const {
+  data: helloData,
+  isLoading: isHelloLoading,
+  isError: isHelloError,
+  refetch,
+} = useHelloQuery()
 </script>
 
 <template>
-  <h1>{{ msg }}</h1>
+  <v-container class="pa-4">
+    <!-- Hello Query -->
+    <v-card
+      class="pa-4 mb-6"
+      elevation="2"
+    >
+      <v-card-title class="text-h6">
+        👋 Hello from tRPC + Vuetify
+      </v-card-title>
+      <v-card-text>
+        <v-btn
+          color="secondary"
+          :loading="isHelloLoading"
+          :disabled="isHelloLoading"
+          @click="refetch().then(() => (showHelloResult = true))"
+        >
+          🔍 Test tRPC Query
+        </v-btn>
 
-  <div class="card">
-    <button type="button" @click="count++">count is {{ count }}</button>
-    <p>
-      Edit
-      <code>components/HelloWorld.vue</code> to test HMR
-    </p>
-  </div>
+        <v-alert
+          v-if="isHelloLoading"
+          type="info"
+          class="mt-4"
+          border="start"
+        >
+          ⏳ Fetching hello...
+        </v-alert>
 
-  <p>
-    Check out
-    <a href="https://vuejs.org/guide/quick-start.html#local" target="_blank"
-      >create-vue</a
-    >, the official Vue + Vite starter
-  </p>
-  <p>
-    Learn more about IDE Support for Vue in the
-    <a
-      href="https://vuejs.org/guide/scaling-up/tooling.html#ide-support"
-      target="_blank"
-      >Vue Docs Scaling up Guide</a
-    >.
-  </p>
-  <p class="read-the-docs">Click on the Vite and Vue logos to learn more</p>
+        <v-alert
+          v-else-if="isHelloError"
+          type="error"
+          class="mt-4"
+          border="start"
+        >
+          ❌ Something went wrong while fetching the hello query.
+        </v-alert>
+
+        <v-alert
+          v-else-if="showHelloResult && helloData"
+          type="success"
+          class="mt-4"
+          border="start"
+        >
+          ✅ Server says: <strong>{{ helloData }}</strong>
+        </v-alert>
+      </v-card-text>
+    </v-card>
+
+    <!-- Pneumonia Prediction -->
+    <v-card
+      class="pa-4"
+      elevation="2"
+    >
+      <v-card-title class="text-h6">
+        🩻 Predict Pneumonia
+      </v-card-title>
+
+      <v-card-text>
+        <v-file-input
+          label="Upload chest X-ray"
+          accept="image/*"
+          prepend-icon="mdi-upload"
+          :disabled="isPending"
+          :loading="isPending"
+          @update:model-value="predictFromFile"
+        />
+
+        <v-text-field
+          v-model="imageUrl"
+          label="Paste image URL"
+          prepend-icon="mdi-link"
+          class="mt-4"
+          :disabled="isPending"
+        />
+        <v-btn
+          class="mt-2"
+          :disabled="!imageUrl || isPending"
+          color="primary"
+          @click="predictFromUrl"
+        >
+          🔗 Predict from URL
+        </v-btn>
+
+        <v-alert
+          v-if="isPending"
+          type="info"
+          class="mt-4"
+          border="start"
+        >
+          ⏳ Predicting...
+        </v-alert>
+
+        <v-alert
+          v-else-if="showResult && data?.data"
+          type="success"
+          class="mt-4"
+          border="start"
+        >
+          🩺 Prediction: <strong>{{ data.data.label }}</strong><br>
+          📊 Confidence:
+          <strong>{{ (data.data.probability_pneumonia * 100).toFixed(2) }}%</strong>
+        </v-alert>
+
+        <v-alert
+          v-else-if="showResult && error"
+          type="error"
+          class="mt-4"
+          border="start"
+        >
+          ❌ Error: {{ error.message }}
+        </v-alert>
+      </v-card-text>
+    </v-card>
+  </v-container>
 </template>
-
-<style scoped>
-.read-the-docs {
-  color: #888;
-}
-</style>

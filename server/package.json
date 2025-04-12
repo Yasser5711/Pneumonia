@@ -12,6 +12,10 @@
     "check:knip": "knip",
     "check:dep": "depcheck",
     "check:prune": "ts-prune ./src",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:ui": "vitest --ui",
+    "check:test": "vitest run --silent --coverage",
     "check:all": "yarn check:lint && yarn check:types && yarn check:knip && yarn check:dep && yarn check:prune"
   },
   "type": "module",
@@ -32,6 +36,9 @@
     "@types/node": "^22.14.1",
     "@types/ws": "^8.18.1",
     "@typescript-eslint/parser": "^8.29.1",
+    "@vitest/coverage-istanbul": "^3.1.1",
+    "@vitest/coverage-v8": "3.1.1",
+    "@vitest/ui": "^3.1.1",
     "depcheck": "^1.4.7",
     "eslint": "^9.24.0",
     "eslint-config-prettier": "^10.1.2",
@@ -41,6 +48,7 @@
     "prettier": "^3.5.3",
     "ts-prune": "^0.10.3",
     "tsx": "^4.19.3",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.1"
   }
 }

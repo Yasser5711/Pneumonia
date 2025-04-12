@@ -1,5 +1,31 @@
 {
   "entry": ["src/index.ts"],
   "project": ["tsconfig.json"],
-  "ignoreDependencies": ["@types/ws", "@fastify/websocket", "pino-pretty", "axios", "sharp", "zod"]
+  "ignoreBinaries": [
+    "nodemon",
+    "tsx",
+    "tsc",
+    "eslint",
+    "prettier",
+    "knip",
+    "depcheck",
+    "ts-prune",
+    "vitest"
+  ],
+  "ignoreDependencies": [
+    "@types/ws",
+    "@vitest/coverage-v8",
+    "@fastify/websocket",
+    "pino-pretty",
+    "axios",
+    "sharp",
+    "zod",
+    "@vitest/ui",
+    "depcheck",
+    "eslint-config-prettier",
+    "prettier",
+    "ts-prune",
+    "tsx",
+    "nodemon"
+  ]
 }

@@ -20,15 +20,15 @@
 
 @layer base {
   body {
-    @apply bg-background text-text min-h-screen;
+    @apply min-h-screen bg-background text-text;
   }
 }
 
 @layer components {
   .glass-panel {
-    @apply bg-surface backdrop-blur-sm border border-white/20 shadow-lg;
+    @apply border border-white/20 bg-surface shadow-lg backdrop-blur-sm;
   }
-  
+
   .message-enter-active,
   .message-leave-active {
     transition: all 0.3s ease;

@@ -6,6 +6,8 @@ ignores: [
     'pino-pretty',
     'eslint*',
     'knip',
-    'tsx'
+    'tsx',
+    '@vitest/coverage-v8',
+    '@vitest/coverage-istanbul'
 ]
 

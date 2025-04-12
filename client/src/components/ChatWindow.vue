@@ -1,26 +1,26 @@
 <script setup lang="ts">
-import { useChatScroll } from "../composables/useChatScroll";
-import { useChatStore } from "../stores/chatStore";
-import ChatMessage from "./ChatMessage.vue";
-import ClockDisplay from "./ClockDisplay.vue";
-import MessageInput from "./MessageInput.vue";
-import ScrollToBottomButton from "./ScrollToBottomButton.vue";
+import { useChatScroll } from '../composables/useChatScroll'
+import { useChatStore } from '../stores/chatStore'
+import ChatMessage from './ChatMessage.vue'
+import ClockDisplay from './ClockDisplay.vue'
+import MessageInput from './MessageInput.vue'
+import ScrollToBottomButton from './ScrollToBottomButton.vue'
 
-const chatStore = useChatStore();
+const chatStore = useChatStore()
 
-const { showScrollButton, scrollToBottom } = useChatScroll();
-scrollToBottom(false);
+const { showScrollButton, scrollToBottom } = useChatScroll()
+scrollToBottom(false)
 </script>
 
 <template>
-  <div class="flex flex-col min-h-screen">
+  <div class="flex min-h-screen flex-col">
     <header class="bg-background p-4">
       <ClockDisplay />
     </header>
 
-    <main class="p-4 space-y-4 flex flex-col grow">
+    <main class="flex grow flex-col space-y-4 p-4">
       <TransitionGroup name="message">
-        <div class="flex flex-col space-y-4 flex-grow">
+        <div class="flex flex-grow flex-col space-y-4">
           <ChatMessage
             v-for="message in chatStore.messages"
             :key="message.id"
@@ -32,14 +32,14 @@ scrollToBottom(false);
       <!-- If no messages, center fallback block -->
       <div
         v-if="chatStore.messages.length === 0"
-        class="flex-grow flex items-center justify-center text-text/40 text-sm"
+        class="text-text/40 flex flex-grow items-center justify-center text-sm"
       >
         Start a conversation ✨
       </div>
 
       <div
         v-if="chatStore.isTyping"
-        class="flex items-center gap-2 text-text/60"
+        class="text-text/60 flex items-center gap-2"
       >
         <div class="typing-indicator">
           <span />
@@ -50,7 +50,7 @@ scrollToBottom(false);
       </div>
     </main>
 
-    <footer class="p-4 bg-background">
+    <footer class="bg-background p-4">
       <MessageInput />
     </footer>
 

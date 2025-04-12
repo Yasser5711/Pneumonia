@@ -1,20 +1,20 @@
 <script setup lang="ts">
-import { ArrowDownIcon } from "lucide-vue-next";
+import { ArrowDownIcon } from 'lucide-vue-next'
 
 defineProps<{
-  onClick: () => void;
-  show: boolean;
-}>();
+  onClick: () => void
+  show: boolean
+}>()
 </script>
 
 <template>
   <Transition name="fade">
     <button
       v-if="show"
-      class="fixed bottom-24 left-1/2 -translate-x-1/2 glass-panel rounded-full p-2 hover:bg-primary/20 transition-all shadow-lg"
+      class="glass-panel hover:bg-primary/20 fixed bottom-24 left-1/2 -translate-x-1/2 rounded-full p-2 shadow-lg transition-all"
       @click="onClick"
     >
-      <ArrowDownIcon class="w-5 h-5" />
+      <ArrowDownIcon class="h-5 w-5" />
     </button>
   </Transition>
 </template>

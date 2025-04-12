@@ -18,7 +18,7 @@ const trpc = createTRPCProxyClient<AppRouter>({
       url: 'http://localhost:3000/trpc',
       headers() {
         return {
-          'x-api-key': process.env.API_KEY || '', // or hardcoded for dev
+          'x-api-key': process.env.API_KEY || 'my-secret-api-key', // or hardcoded for dev
         };
       },
     }),

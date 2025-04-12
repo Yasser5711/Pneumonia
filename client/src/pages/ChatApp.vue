@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import ChatWindow from "../components/ChatWindow.vue";
-import { useTheme } from "../composables/useTheme";
+import ChatWindow from '../components/ChatWindow.vue'
+import { useTheme } from '../composables/useTheme'
 
-const {  themeMode, cycleTheme } = useTheme();
+const { themeMode, cycleTheme } = useTheme()
 </script>
 
 <template>
   <div class="bg-background transition-colors duration-300">
     <button
-      class="absolute top-4 right-4 z-50 p-2 glass-panel rounded-full hover:bg-primary/20 transition-colors hover:scale-105"
+      class="glass-panel hover:bg-primary/20 absolute right-4 top-4 z-50 rounded-full p-2 transition-colors hover:scale-105"
       @click="cycleTheme"
     >
       <span v-if="themeMode === 'light'">🌙</span>

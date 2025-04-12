@@ -16,7 +16,7 @@ The following example assumes a component located at `src/components/MyComponent
 </template>
 
 <script lang="ts" setup>
-  //
+//
 </script>
 ```
 
@@ -30,10 +30,9 @@ When your template is rendered, the component's import will automatically be inl
 </template>
 
 <script lang="ts" setup>
-  import MyComponent from '@/components/MyComponent.vue'
+import MyComponent from '@/components/MyComponent.vue'
 </script>
 ```
-
 
 Let me know if you want:
 

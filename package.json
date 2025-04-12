@@ -1,5 +1,21 @@
 {
-  "devDependencies": {
-    "pino-pretty": "^13.0.0"
+  "name": "t_dev_800",
+  "private": true,
+  "packageManager": "yarn@4.3.1",
+  "type": "module",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "extract:front": "yarn workspace client extract:front",
+    "extract:back": "yarn workspace server extract:back",
+    "dev:front": "yarn workspace client dev",
+    "dev:back": "yarn workspace server dev",
+    "back:check:all": "yarn workspace server check:all",
+    "front:check:all": "yarn workspace client check:all"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
   }
 }

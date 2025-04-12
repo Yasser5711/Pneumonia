@@ -1,0 +1,5 @@
+{
+  "entry": ["src/index.ts"],
+  "project": ["tsconfig.json"],
+  "ignoreDependencies": ["@types/ws", "@fastify/websocket", "pino-pretty", "axios", "sharp", "zod"]
+}

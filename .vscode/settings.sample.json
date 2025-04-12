@@ -22,9 +22,10 @@
 
   "editor.codeActionsOnSave": {
     "source.organizeImports": "always",
-    "source.fixAll.eslint": "explicit"
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.stylelint": "always"
   },
-
+  "stylelint.validate": ["css", "scss", "vue"],
   "python.analysis.typeCheckingMode": "off",
   "eslint.enable": true,
   "eslint.useFlatConfig": true,
@@ -37,7 +38,7 @@
     "typescriptreact"
   ],
   "eslint.workingDirectories": [{ "mode": "auto" }],
-  "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[javascript]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "dbaeumer.vscode-eslint"

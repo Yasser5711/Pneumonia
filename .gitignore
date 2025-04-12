@@ -56,3 +56,5 @@ coverage.json
 *.h5
 __pycache__/
 .ipynb_checkpoints/
+IA/test.py
+IA/test_request.py

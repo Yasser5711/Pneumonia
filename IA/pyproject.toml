@@ -1,6 +1,6 @@
 [tool.ruff]
 line-length = 88
-exclude = [".venv", "__pypackages__", "**/__init__.py","*.ipynb"]
+exclude = [".venv", "__pypackages__", "**/__init__.py","*.ipynb","test.py","test_requests.py","test_*.py"]
 
 # Enable all common rule sets used in modern Python backend projects
 select = [

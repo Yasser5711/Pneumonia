@@ -1,0 +1,11 @@
+
+ignores: [
+    '@types/ws',
+    '@fastify/websocket',
+    '@types/*',
+    'pino-pretty',
+    'eslint*',
+    'knip',
+    'tsx'
+]
+

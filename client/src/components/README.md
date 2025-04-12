@@ -33,3 +33,16 @@ When your template is rendered, the component's import will automatically be inl
   import MyComponent from '@/components/MyComponent.vue'
 </script>
 ```
+
+
+Let me know if you want:
+
+Markdown/code rendering (like in ChatGPT)
+
+Real AI backend integration (OpenAI/Vercel AI SDK)
+
+Streaming responses (like typing effect)
+
+Mobile adjustments
+
+Want the complete Vite + Vuetify project scaffold next?

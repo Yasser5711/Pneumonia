@@ -2,6 +2,7 @@
 import { ImagePlus, SendIcon } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
 import { onMounted, onUnmounted, ref } from 'vue'
+import { useImagePredictor } from '../composables/useImagePredictor'
 import { useChatStore } from '../stores/chatStore'
 import ImagePreview from './ImagePreview.vue'
 const chatStore = useChatStore()
@@ -57,48 +58,72 @@ const removePendingImage = () => {
   }
 }
 
-const simulateUploadProgress = () => {
-  uploadProgress.value = 0
-  const interval = setInterval(() => {
-    if (uploadProgress.value < 90) {
-      uploadProgress.value += Math.random() * 30
-    }
-    if (uploadProgress.value >= 90) {
-      clearInterval(interval)
-    }
-  }, 200)
-  return interval
-}
-
+const { predictFromFile, error } = useImagePredictor()
 const sendMessage = () => {
-  if (pendingImage.value) {
-    const progressInterval = simulateUploadProgress()
-    const reader = new FileReader()
-    reader.onload = e => {
-      // Simulate network delay
-      setTimeout(() => {
-        uploadProgress.value = 100
-        chatStore.addMessage({
-          type: 'image',
-          url: e.target?.result as string,
-          alt: pendingImage.value?.name,
-          sender: 'user',
-        })
-        clearInterval(progressInterval)
-        removePendingImage()
-      }, 500)
-    }
-    reader.readAsDataURL(pendingImage.value)
-  } else {
-    const content = messageInput.value.trim()
-    if (!content) return
+  const file = pendingImage.value
+  const text = messageInput.value.trim()
 
+  if (file) {
+    chatStore.setLoading(true)
+
+    const reader = new FileReader()
+
+    // 💡 Listen to actual file reading progress
+    reader.onprogress = (event: ProgressEvent<FileReader>) => {
+      if (event.lengthComputable) {
+        uploadProgress.value = Math.round((event.loaded / event.total) * 100)
+      }
+    }
+
+    reader.onload = async e => {
+      const base64 = e.target?.result as string
+
+      // push user image into chat
+      chatStore.addMessage({
+        type: 'image',
+        url: base64,
+        alt: file.name,
+        sender: 'user',
+      })
+      removePendingImage()
+      try {
+        chatStore.setTyping(true)
+        const prediction = await predictFromFile(file)
+
+        chatStore.addMessage({
+          type: 'text',
+          content: `🩺 I've analyzed the image, and it appears to show **${prediction.label}**, with a confidence of **${(prediction.probability_pneumonia * 100).toFixed(2)}%**.`,
+          sender: 'assistant',
+        })
+      } catch {
+        chatStore.addMessage({
+          type: 'text',
+          content: `❌ Failed to predict: ${error.value?.message ?? 'Unknown error'}`,
+          sender: 'assistant',
+        })
+      } finally {
+        chatStore.setTyping(false)
+        chatStore.setLoading(false)
+      }
+    }
+
+    reader.onerror = () => {
+      chatStore.addMessage({
+        type: 'text',
+        content: `❌ Error reading image.`,
+        sender: 'assistant',
+      })
+      chatStore.setLoading(false)
+      removePendingImage()
+    }
+
+    reader.readAsDataURL(file)
+  } else if (text) {
     chatStore.addMessage({
       type: 'text',
-      content,
+      content: text,
       sender: 'user',
     })
-
     messageInput.value = ''
   }
 }
@@ -109,6 +134,9 @@ onMounted(() => {
 
 onUnmounted(() => {
   document.removeEventListener('paste', handlePaste)
+})
+watch(uploadProgress, newValue => {
+  console.log('Upload progress:', newValue)
 })
 </script>
 
@@ -143,7 +171,7 @@ onUnmounted(() => {
         class="placeholder:text-text/50 flex-1 border-none bg-transparent px-4 text-text outline-none"
         :disabled="!!pendingImage"
         @keyup.enter="!isTyping ? sendMessage() : null"
-      >
+      />
 
       <input
         ref="fileInput"
@@ -151,7 +179,7 @@ onUnmounted(() => {
         accept="image/jpeg,image/png,image/webp"
         class="hidden"
         @change="handleFileSelect"
-      >
+      />
 
       <div class="group relative hidden md:block">
         <button

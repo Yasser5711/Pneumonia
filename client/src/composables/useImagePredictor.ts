@@ -1,12 +1,14 @@
 import { usePredictPneumonia } from '@/queries/usePredictPneumonia'
 import { ref } from 'vue'
-
+export interface PredictionResult {
+  label: string
+  probability_pneumonia: number
+}
 export const useImagePredictor = () => {
   const selectedFile = ref<File | null>(null)
   const imageUrl = ref('')
-  const showResult = ref(false)
 
-  const { mutate: predict, isPending, data, error } = usePredictPneumonia()
+  const { mutateAsync: predictAsync, isPending, error } = usePredictPneumonia()
 
   const toBase64 = (file: File): Promise<string> =>
     new Promise((resolve, reject) => {
@@ -16,14 +18,14 @@ export const useImagePredictor = () => {
       reader.readAsDataURL(file)
     })
 
-  const predictFromFile = async (file: File | File[] | undefined) => {
+  const predictFromFile = async (file: File | File[]) => {
     const f = Array.isArray(file) ? file[0] : file
     if (!f) return
 
     selectedFile.value = f
     const base64 = await toBase64(f)
-    predict({ imageBase64: base64 })
-    showResult.value = true
+    const result = await predictAsync({ imageBase64: base64 })
+    return result.data
   }
 
   const predictFromUrl = async () => {
@@ -43,9 +45,7 @@ export const useImagePredictor = () => {
     selectedFile,
     predictFromFile,
     predictFromUrl,
-    showResult,
     isPending,
-    data,
     error,
   }
 }

@@ -1,35 +1,35 @@
 File: src\components\ChatMessage.vue
 <script setup lang="ts">
-import { CheckCheckIcon, CheckIcon } from "lucide-vue-next";
-import { computed, ref } from "vue";
-import type { Message } from "../types/chat";
-import HoverImage from "./HoverImage.vue";
-import ImageModal from "./ImageModal.vue";
+import { CheckCheckIcon, CheckIcon } from 'lucide-vue-next'
+import { computed, ref } from 'vue'
+import type { Message } from '../types/chat'
+import HoverImage from './HoverImage.vue'
+import ImageModal from './ImageModal.vue'
 
 const props = defineProps<{
-  message: Message;
-}>();
+  message: Message
+}>()
 
-const showImageModal = ref(false);
+const showImageModal = ref(false)
 
 const statusIcon = computed(() => {
   switch (props.message.status) {
-    case "sent":
-      return CheckIcon;
-    case "delivered":
-    case "read":
-      return CheckCheckIcon;
+    case 'sent':
+      return CheckIcon
+    case 'delivered':
+    case 'read':
+      return CheckCheckIcon
     default:
-      return null;
+      return null
   }
-});
+})
 
 const formattedTime = computed(() => {
-  return new Intl.DateTimeFormat("en", {
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(props.message.timestamp);
-});
+  return new Intl.DateTimeFormat('en', {
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(props.message.timestamp)
+})
 // onMounted(() => {
 //   emit("mounted"); // or emit('messageRendered')
 // });
@@ -38,19 +38,14 @@ const formattedTime = computed(() => {
 <template>
   <div
     v-motion
-    :class="[
-      'flex w-full mb-4',
-      message.sender === 'user' ? 'justify-end' : 'justify-start',
-    ]"
+    :class="['mb-4 flex w-full', message.sender === 'user' ? 'justify-end' : 'justify-start']"
     :initial="{ opacity: 0, y: 20 }"
     :enter="{ opacity: 1, y: 0 }"
   >
     <div
       :class="[
-        'max-w-[70%] rounded-2xl px-4 py-2 glass-panel',
-        message.sender === 'user'
-          ? 'bg-primary/10 rounded-tr-sm'
-          : 'bg-surface rounded-tl-sm',
+        'glass-panel max-w-[70%] rounded-2xl px-4 py-2',
+        message.sender === 'user' ? 'bg-primary/10 rounded-tr-sm' : 'rounded-tl-sm bg-surface',
         message.type === 'text' ? 'hover:scale-105' : '',
       ]"
     >
@@ -69,12 +64,12 @@ const formattedTime = computed(() => {
         />
       </template>
 
-      <div class="flex items-center justify-end gap-1 mt-1">
-        <span class="text-xs text-text/60">{{ formattedTime }}</span>
+      <div class="mt-1 flex items-center justify-end gap-1">
+        <span class="text-text/60 text-xs">{{ formattedTime }}</span>
         <component
           :is="statusIcon"
           v-if="message.sender === 'user' && statusIcon"
-          class="w-4 h-4 text-text/60"
+          class="text-text/60 h-4 w-4"
         />
       </div>
     </div>
@@ -91,28 +86,28 @@ const formattedTime = computed(() => {
 ================================================================================
 File: src\components\ChatWindow.vue
 <script setup lang="ts">
-import { useChatScroll } from "../composables/useChatScroll";
-import { useChatStore } from "../stores/chatStore";
-import ChatMessage from "./ChatMessage.vue";
-import ClockDisplay from "./ClockDisplay.vue";
-import MessageInput from "./MessageInput.vue";
-import ScrollToBottomButton from "./ScrollToBottomButton.vue";
+import { useChatScroll } from '../composables/useChatScroll'
+import { useChatStore } from '../stores/chatStore'
+import ChatMessage from './ChatMessage.vue'
+import ClockDisplay from './ClockDisplay.vue'
+import MessageInput from './MessageInput.vue'
+import ScrollToBottomButton from './ScrollToBottomButton.vue'
 
-const chatStore = useChatStore();
+const chatStore = useChatStore()
 
-const { showScrollButton, scrollToBottom } = useChatScroll();
-scrollToBottom(false);
+const { showScrollButton, scrollToBottom } = useChatScroll()
+scrollToBottom(false)
 </script>
 
 <template>
-  <div class="flex flex-col min-h-screen">
+  <div class="flex min-h-screen flex-col">
     <header class="bg-background p-4">
       <ClockDisplay />
     </header>
 
-    <main class="p-4 space-y-4 flex flex-col grow">
+    <main class="flex grow flex-col space-y-4 p-4">
       <TransitionGroup name="message">
-        <div class="flex flex-col space-y-4 flex-grow">
+        <div class="flex flex-grow flex-col space-y-4">
           <ChatMessage
             v-for="message in chatStore.messages"
             :key="message.id"
@@ -124,14 +119,14 @@ scrollToBottom(false);
       <!-- If no messages, center fallback block -->
       <div
         v-if="chatStore.messages.length === 0"
-        class="flex-grow flex items-center justify-center text-text/40 text-sm"
+        class="text-text/40 flex flex-grow items-center justify-center text-sm"
       >
         Start a conversation ✨
       </div>
 
       <div
         v-if="chatStore.isTyping"
-        class="flex items-center gap-2 text-text/60"
+        class="text-text/60 flex items-center gap-2"
       >
         <div class="typing-indicator">
           <span />
@@ -142,7 +137,7 @@ scrollToBottom(false);
       </div>
     </main>
 
-    <footer class="p-4 bg-background">
+    <footer class="bg-background p-4">
       <MessageInput />
     </footer>
 
@@ -189,14 +184,14 @@ scrollToBottom(false);
 ================================================================================
 File: src\components\ClockDisplay.vue
 <script setup lang="ts">
-import { useClock } from "../composables/useClock";
+import { useClock } from '../composables/useClock'
 
-const { timeParts, fullDate, toggleFormat } = useClock();
+const { timeParts, fullDate, toggleFormat } = useClock()
 </script>
 
 <template>
   <div
-    class="font-mono text-base md:text-lg text-center cursor-pointer select-none group"
+    class="group cursor-pointer select-none text-center font-mono text-base md:text-lg"
     :title="fullDate"
     @click="toggleFormat"
   >
@@ -206,7 +201,7 @@ const { timeParts, fullDate, toggleFormat } = useClock();
     >
       <span
         v-if="part.type === 'literal' && part.value === ':'"
-        class="animate-pulse inline-block px-0.5 group-hover:text-primary"
+        class="inline-block animate-pulse px-0.5 group-hover:text-primary"
       >
         {{ part.value }}
       </span>
@@ -228,91 +223,183 @@ const { timeParts, fullDate, toggleFormat } = useClock();
 ================================================================================
 File: src\components\HelloWorld.vue
 <script setup lang="ts">
+import { useImagePredictor } from '@/composables/useImagePredictor'
+import { useHelloQuery } from '@/queries/useHelloQuery'
 import { ref } from 'vue'
 
-defineProps<{ msg: string }>()
+const showHelloResult = ref(false)
+const { imageUrl, predictFromFile, predictFromUrl, showResult, isPending, data, error } =
+  useImagePredictor()
 
-const count = ref(0)
+const {
+  data: helloData,
+  isLoading: isHelloLoading,
+  isError: isHelloError,
+  refetch,
+} = useHelloQuery()
 </script>
 
 <template>
-  <h1>{{ msg }}</h1>
+  <v-container class="pa-4">
+    <!-- Hello Query -->
+    <v-card
+      class="pa-4 mb-6"
+      elevation="2"
+    >
+      <v-card-title class="text-h6">
+        👋 Hello from tRPC + Vuetify
+      </v-card-title>
+      <v-card-text>
+        <v-btn
+          color="secondary"
+          :loading="isHelloLoading"
+          :disabled="isHelloLoading"
+          @click="refetch().then(() => (showHelloResult = true))"
+        >
+          🔍 Test tRPC Query
+        </v-btn>
 
-  <div class="card">
-    <button type="button" @click="count++">count is {{ count }}</button>
-    <p>
-      Edit
-      <code>components/HelloWorld.vue</code> to test HMR
-    </p>
-  </div>
+        <v-alert
+          v-if="isHelloLoading"
+          type="info"
+          class="mt-4"
+          border="start"
+        >
+          ⏳ Fetching hello...
+        </v-alert>
 
-  <p>
-    Check out
-    <a href="https://vuejs.org/guide/quick-start.html#local" target="_blank"
-      >create-vue</a
-    >, the official Vue + Vite starter
-  </p>
-  <p>
-    Learn more about IDE Support for Vue in the
-    <a
-      href="https://vuejs.org/guide/scaling-up/tooling.html#ide-support"
-      target="_blank"
-      >Vue Docs Scaling up Guide</a
-    >.
-  </p>
-  <p class="read-the-docs">Click on the Vite and Vue logos to learn more</p>
+        <v-alert
+          v-else-if="isHelloError"
+          type="error"
+          class="mt-4"
+          border="start"
+        >
+          ❌ Something went wrong while fetching the hello query.
+        </v-alert>
+
+        <v-alert
+          v-else-if="showHelloResult && helloData"
+          type="success"
+          class="mt-4"
+          border="start"
+        >
+          ✅ Server says: <strong>{{ helloData }}</strong>
+        </v-alert>
+      </v-card-text>
+    </v-card>
+
+    <!-- Pneumonia Prediction -->
+    <v-card
+      class="pa-4"
+      elevation="2"
+    >
+      <v-card-title class="text-h6">
+        🩻 Predict Pneumonia
+      </v-card-title>
+
+      <v-card-text>
+        <v-file-input
+          label="Upload chest X-ray"
+          accept="image/*"
+          prepend-icon="mdi-upload"
+          :disabled="isPending"
+          :loading="isPending"
+          @update:model-value="predictFromFile"
+        />
+
+        <v-text-field
+          v-model="imageUrl"
+          label="Paste image URL"
+          prepend-icon="mdi-link"
+          class="mt-4"
+          :disabled="isPending"
+        />
+        <v-btn
+          class="mt-2"
+          :disabled="!imageUrl || isPending"
+          color="primary"
+          @click="predictFromUrl"
+        >
+          🔗 Predict from URL
+        </v-btn>
+
+        <v-alert
+          v-if="isPending"
+          type="info"
+          class="mt-4"
+          border="start"
+        >
+          ⏳ Predicting...
+        </v-alert>
+
+        <v-alert
+          v-else-if="showResult && data?.data"
+          type="success"
+          class="mt-4"
+          border="start"
+        >
+          🩺 Prediction: <strong>{{ data.data.label }}</strong><br>
+          📊 Confidence:
+          <strong>{{ (data.data.probability_pneumonia * 100).toFixed(2) }}%</strong>
+        </v-alert>
+
+        <v-alert
+          v-else-if="showResult && error"
+          type="error"
+          class="mt-4"
+          border="start"
+        >
+          ❌ Error: {{ error.message }}
+        </v-alert>
+      </v-card-text>
+    </v-card>
+  </v-container>
 </template>
-
-<style scoped>
-.read-the-docs {
-  color: #888;
-}
-</style>
 
 ================================================================================
 File: src\components\HoverImage.vue
 <script setup lang="ts">
-import { useIntersectionObserver } from "@vueuse/core";
-import { EyeIcon } from "lucide-vue-next";
-import { ref } from "vue";
+import { useIntersectionObserver } from '@vueuse/core'
+import { EyeIcon } from 'lucide-vue-next'
+import { ref } from 'vue'
 
 defineProps<{
-  src: string;
-  alt?: string;
+  src: string
+  alt?: string
   // view?: () => void;
-}>();
+}>()
 
-const imageRef = ref<HTMLImageElement | null>(null);
-const isVisible = ref(false);
-const isLoaded = ref(false);
+const imageRef = ref<HTMLImageElement | null>(null)
+const isVisible = ref(false)
+const isLoaded = ref(false)
 
 // Lazy loading with IntersectionObserver
 useIntersectionObserver(imageRef, ([{ isIntersecting }]) => {
   if (isIntersecting) {
-    isVisible.value = true;
+    isVisible.value = true
   }
-});
+})
 
 const handleLoad = () => {
-  isLoaded.value = true;
-};
+  isLoaded.value = true
+}
 </script>
 
 <template>
-  <div class="relative group cursor-pointer overflow-hidden max-w-full">
+  <div class="group relative max-w-full cursor-pointer overflow-hidden">
     <img
       ref="imageRef"
       :src="isVisible ? src : ''"
       :alt="alt"
-      class="transition-all duration-300 object-contain rounded-lg max-w-full max-h-[300px] md:group-hover:blur-sm md:group-hover:scale-105"
+      class="max-h-[300px] max-w-full rounded-lg object-contain transition-all duration-300 md:group-hover:scale-105 md:group-hover:blur-sm"
       :class="{ 'opacity-0': !isLoaded }"
       @load="handleLoad"
     >
 
     <div
-      class="absolute inset-0 flex items-center justify-center opacity-0 md:group-hover:opacity-100 transition-opacity duration-300 bg-black/20"
+      class="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity duration-300 md:group-hover:opacity-100"
     >
-      <EyeIcon class="w-8 h-8 text-white drop-shadow-lg" />
+      <EyeIcon class="h-8 w-8 text-white drop-shadow-lg" />
     </div>
   </div>
 </template>
@@ -320,20 +407,20 @@ const handleLoad = () => {
 ================================================================================
 File: src\components\ImageModal.vue
 <script setup lang="ts">
-import { XIcon } from "lucide-vue-next";
-import { VueFinalModal } from "vue-final-modal";
+import { XIcon } from 'lucide-vue-next'
+import { VueFinalModal } from 'vue-final-modal'
 
 defineProps<{
-  modelValue: boolean;
-  src: string;
-  alt?: string;
-}>();
+  modelValue: boolean
+  src: string
+  alt?: string
+}>()
 
 const emit = defineEmits<{
-  (e: "update:modelValue", value: boolean): void;
-}>();
+  (e: 'update:modelValue', value: boolean): void
+}>()
 
-const close = () => emit("update:modelValue", false);
+const close = () => emit('update:modelValue', false)
 </script>
 
 <template>
@@ -352,18 +439,18 @@ const close = () => emit("update:modelValue", false);
   >
     <!-- Close Button (outside image) -->
     <button
-      class="absolute -top-4 -right-4 z-10 p-2 rounded-full bg-black/50 text-white backdrop-blur-sm hover:bg-black/70 transition-opacity opacity-0 group-hover:opacity-100 md:opacity-0 md:group-hover:opacity-100"
+      class="absolute -right-4 -top-4 z-10 rounded-full bg-black/50 p-2 text-white opacity-0 backdrop-blur-sm transition-opacity hover:bg-black/70 group-hover:opacity-100 md:opacity-0 md:group-hover:opacity-100"
       @click="close"
     >
-      <XIcon class="w-6 h-6" />
+      <XIcon class="h-6 w-6" />
     </button>
 
     <!-- Image Centered -->
-    <div class="flex items-center justify-center w-full h-full">
+    <div class="flex h-full w-full items-center justify-center">
       <img
         :src="src"
         :alt="alt"
-        class="rounded-lg object-contain max-w-full max-h-[90vh]"
+        class="max-h-[90vh] max-w-full rounded-lg object-contain"
       >
     </div>
   </VueFinalModal>
@@ -372,57 +459,57 @@ const close = () => emit("update:modelValue", false);
 ================================================================================
 File: src\components\ImagePreview.vue
 <script setup lang="ts">
-import { XIcon } from "lucide-vue-next";
-import { ref } from "vue";
+import { XIcon } from 'lucide-vue-next'
+import { ref } from 'vue'
 
 const props = defineProps<{
-  file: File;
-  progress?: number;
-  onRemove: () => void;
-}>();
+  file: File
+  progress?: number
+  onRemove: () => void
+}>()
 
-const imageUrl = ref<string>("");
-const isLoading = ref(true);
+const imageUrl = ref<string>('')
+const isLoading = ref(true)
 
 // Create preview URL
-const reader = new FileReader();
-reader.onload = (e) => {
-  imageUrl.value = e.target?.result as string;
-  isLoading.value = false;
-};
-reader.readAsDataURL(props.file);
+const reader = new FileReader()
+reader.onload = e => {
+  imageUrl.value = e.target?.result as string
+  isLoading.value = false
+}
+reader.readAsDataURL(props.file)
 </script>
 
 <template>
-  <div class="relative group w-24 h-24">
+  <div class="group relative h-24 w-24">
     <!-- Preview while loading -->
     <div
       v-if="isLoading"
-      class="w-full h-full rounded-lg bg-surface animate-pulse"
+      class="h-full w-full animate-pulse rounded-lg bg-surface"
     />
 
     <!-- Final image -->
     <div
       v-else
-      class="relative w-full h-full"
+      class="relative h-full w-full"
     >
       <img
         :src="imageUrl"
         :alt="file.name"
-        class="w-full h-full rounded-lg object-cover border border-white/20"
+        class="h-full w-full rounded-lg border border-white/20 object-cover"
         :class="{
-          'blur-[2px] opacity-50': progress !== undefined && progress < 100,
+          'opacity-50 blur-[2px]': progress !== undefined && progress < 100,
         }"
       >
 
       <!-- Centered Loader Overlay -->
       <div
         v-if="progress !== undefined && progress < 100"
-        class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none"
+        class="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
       >
         <div class="flex flex-col items-center gap-1">
           <svg
-            class="w-6 h-6 text-primary animate-spin"
+            class="h-6 w-6 animate-spin text-primary"
             viewBox="0 0 24 24"
           >
             <circle
@@ -440,18 +527,16 @@ reader.readAsDataURL(props.file);
               d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
             />
           </svg>
-          <span class="text-xs font-medium text-primary">
-            {{ Math.round(progress) }}%
-          </span>
+          <span class="text-xs font-medium text-primary"> {{ Math.round(progress) }}% </span>
         </div>
       </div>
 
       <!-- Top-right Close Button (not stretching the row) -->
       <button
-        class="absolute top-1 right-1 p-1.5 rounded-full bg-surface shadow-lg  "
+        class="absolute right-1 top-1 rounded-full bg-surface p-1.5 shadow-lg"
         @click="onRemove"
       >
-        <XIcon class="w-4 h-4" />
+        <XIcon class="h-4 w-4" />
       </button>
     </div>
   </div>
@@ -460,117 +545,117 @@ reader.readAsDataURL(props.file);
 ================================================================================
 File: src\components\MessageInput.vue
 <script setup lang="ts">
-import { ImagePlus, SendIcon } from "lucide-vue-next";
-import { storeToRefs } from "pinia";
-import { onMounted, onUnmounted, ref } from "vue";
-import { useChatStore } from "../stores/chatStore";
-import ImagePreview from "./ImagePreview.vue";
-const chatStore = useChatStore();
-const { isTyping } = storeToRefs(chatStore);
-const messageInput = ref("");
-const fileInput = ref<HTMLInputElement | null>(null);
-const pendingImage = ref<File | null>(null);
-const dragOver = ref(false);
-const uploadProgress = ref(0);
+import { ImagePlus, SendIcon } from 'lucide-vue-next'
+import { storeToRefs } from 'pinia'
+import { onMounted, onUnmounted, ref } from 'vue'
+import { useChatStore } from '../stores/chatStore'
+import ImagePreview from './ImagePreview.vue'
+const chatStore = useChatStore()
+const { isTyping } = storeToRefs(chatStore)
+const messageInput = ref('')
+const fileInput = ref<HTMLInputElement | null>(null)
+const pendingImage = ref<File | null>(null)
+const dragOver = ref(false)
+const uploadProgress = ref(0)
 
-const handlePaste =  (e: ClipboardEvent) => {
-  const items = e.clipboardData?.items;
-  if (!items) return;
+const handlePaste = (e: ClipboardEvent) => {
+  const items = e.clipboardData?.items
+  if (!items) return
 
   for (const item of items) {
-    if (item.type.startsWith("image/")) {
-      const file = item.getAsFile();
+    if (item.type.startsWith('image/')) {
+      const file = item.getAsFile()
       if (file && isValidImage(file)) {
-        pendingImage.value = file;
-        break;
+        pendingImage.value = file
+        break
       }
     }
   }
-};
+}
 
 const handleDrop = (e: DragEvent) => {
-  e.preventDefault();
-  dragOver.value = false;
+  e.preventDefault()
+  dragOver.value = false
 
-  const file = e.dataTransfer?.files[0];
+  const file = e.dataTransfer?.files[0]
   if (file && isValidImage(file)) {
-    pendingImage.value = file;
+    pendingImage.value = file
   }
-};
+}
 
 const handleFileSelect = (e: Event) => {
-  const file = (e.target as HTMLInputElement).files?.[0];
+  const file = (e.target as HTMLInputElement).files?.[0]
   if (file && isValidImage(file)) {
-    pendingImage.value = file;
+    pendingImage.value = file
   }
-};
+}
 
 const isValidImage = (file: File) => {
-  const validTypes = ["image/jpeg", "image/png", "image/webp"];
-  return validTypes.includes(file.type);
-};
+  const validTypes = ['image/jpeg', 'image/png', 'image/webp']
+  return validTypes.includes(file.type)
+}
 
 const removePendingImage = () => {
-  pendingImage.value = null;
-  uploadProgress.value = 0;
+  pendingImage.value = null
+  uploadProgress.value = 0
   if (fileInput.value) {
-    fileInput.value.value = "";
+    fileInput.value.value = ''
   }
-};
+}
 
 const simulateUploadProgress = () => {
-  uploadProgress.value = 0;
+  uploadProgress.value = 0
   const interval = setInterval(() => {
     if (uploadProgress.value < 90) {
-      uploadProgress.value += Math.random() * 30;
+      uploadProgress.value += Math.random() * 30
     }
     if (uploadProgress.value >= 90) {
-      clearInterval(interval);
+      clearInterval(interval)
     }
-  }, 200);
-  return interval;
-};
+  }, 200)
+  return interval
+}
 
-const sendMessage =  () => {
+const sendMessage = () => {
   if (pendingImage.value) {
-    const progressInterval = simulateUploadProgress();
-    const reader = new FileReader();
-    reader.onload = (e) => {
+    const progressInterval = simulateUploadProgress()
+    const reader = new FileReader()
+    reader.onload = e => {
       // Simulate network delay
       setTimeout(() => {
-        uploadProgress.value = 100;
+        uploadProgress.value = 100
         chatStore.addMessage({
-          type: "image",
+          type: 'image',
           url: e.target?.result as string,
           alt: pendingImage.value?.name,
-          sender: "user",
-        });
-        clearInterval(progressInterval);
-        removePendingImage();
-      }, 500);
-    };
-    reader.readAsDataURL(pendingImage.value);
+          sender: 'user',
+        })
+        clearInterval(progressInterval)
+        removePendingImage()
+      }, 500)
+    }
+    reader.readAsDataURL(pendingImage.value)
   } else {
-    const content = messageInput.value.trim();
-    if (!content) return;
+    const content = messageInput.value.trim()
+    if (!content) return
 
     chatStore.addMessage({
-      type: "text",
+      type: 'text',
       content,
-      sender: "user",
-    });
+      sender: 'user',
+    })
 
-    messageInput.value = "";
+    messageInput.value = ''
   }
-};
+}
 
 onMounted(() => {
-  document.addEventListener("paste", handlePaste);
-});
+  document.addEventListener('paste', handlePaste)
+})
 
 onUnmounted(() => {
-  document.removeEventListener("paste", handlePaste);
-});
+  document.removeEventListener('paste', handlePaste)
+})
 </script>
 
 <template>
@@ -593,7 +678,7 @@ onUnmounted(() => {
 
     <div
       :class="[
-        'glass-panel rounded-full p-2 flex items-center gap-2',
+        'glass-panel flex items-center gap-2 rounded-full p-2',
         dragOver && 'ring-2 ring-primary',
       ]"
     >
@@ -601,7 +686,7 @@ onUnmounted(() => {
         v-model="messageInput"
         type="text"
         placeholder="Type a message..."
-        class="flex-1 bg-transparent border-none outline-none px-4 text-text placeholder:text-text/50"
+        class="placeholder:text-text/50 flex-1 border-none bg-transparent px-4 text-text outline-none"
         :disabled="!!pendingImage"
         @keyup.enter="!isTyping ? sendMessage() : null"
       >
@@ -614,75 +699,75 @@ onUnmounted(() => {
         @change="handleFileSelect"
       >
 
-      <div class="relative group hidden md:block">
+      <div class="group relative hidden md:block">
         <button
-          class="p-2 rounded-full hover:bg-primary/20 transition-colors group"
+          class="hover:bg-primary/20 group rounded-full p-2 transition-colors"
           :disabled="!!pendingImage"
           @click="() => fileInput?.click()"
         >
           <template v-if="pendingImage">
             <!-- 3 Dots Loader -->
-            <div class="flex gap-1 items-center justify-center w-5 h-5">
+            <div class="flex h-5 w-5 items-center justify-center gap-1">
               <span
-                class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0ms]"
+                class="h-1.5 w-1.5 animate-bounce rounded-full bg-primary [animation-delay:0ms]"
               />
               <span
-                class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:150ms]"
+                class="h-1.5 w-1.5 animate-bounce rounded-full bg-primary [animation-delay:150ms]"
               />
               <span
-                class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:300ms]"
+                class="h-1.5 w-1.5 animate-bounce rounded-full bg-primary [animation-delay:300ms]"
               />
             </div>
           </template>
           <template v-else>
             <ImagePlus
-              class="w-5 h-5 text-text transition-all group-hover:opacity-70 group-hover:scale-110"
+              class="h-5 w-5 text-text transition-all group-hover:scale-110 group-hover:opacity-70"
             />
           </template>
         </button>
         <!-- Tooltip -->
         <div
-          class="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 text-xs px-2 py-1 rounded bg-surface text-text opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+          class="pointer-events-none absolute bottom-full left-1/2 mb-1 -translate-x-1/2 rounded bg-surface px-2 py-1 text-xs text-text opacity-0 transition-opacity group-hover:opacity-100"
         >
           Upload Image
         </div>
       </div>
 
       <!-- ✉️ Send Icon OR Spinner -->
-      <div class="relative group hidden md:block">
+      <div class="group relative hidden md:block">
         <button
-          class="p-2 rounded-full hover:bg-primary/20 transition-colors group"
+          class="hover:bg-primary/20 group rounded-full p-2 transition-colors"
           :disabled="(!messageInput.trim() && !pendingImage) || isTyping"
           @click="sendMessage"
         >
           <template v-if="isTyping">
             <!-- 3 Dots Loader -->
-            <div class="flex gap-1 items-center justify-center w-5 h-5">
+            <div class="flex h-5 w-5 items-center justify-center gap-1">
               <span
-                class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:0ms]"
+                class="h-1.5 w-1.5 animate-bounce rounded-full bg-primary [animation-delay:0ms]"
               />
               <span
-                class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:150ms]"
+                class="h-1.5 w-1.5 animate-bounce rounded-full bg-primary [animation-delay:150ms]"
               />
               <span
-                class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce [animation-delay:300ms]"
+                class="h-1.5 w-1.5 animate-bounce rounded-full bg-primary [animation-delay:300ms]"
               />
             </div>
           </template>
           <template v-else>
             <SendIcon
-              class="w-5 h-5 text-text transition-all"
+              class="h-5 w-5 text-text transition-all"
               :class="[
                 (!messageInput.trim() && !pendingImage) || isTyping
-                  ? 'opacity-40 cursor-not-allowed'
-                  : 'group-hover:opacity-70 group-hover:scale-110',
+                  ? 'cursor-not-allowed opacity-40'
+                  : 'group-hover:scale-110 group-hover:opacity-70',
               ]"
             />
           </template>
         </button>
         <!-- Tooltip -->
         <div
-          class="absolute bottom-full mb-1 left-1/2 -translate-x-1/2 text-xs px-2 py-1 rounded bg-surface text-text opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+          class="pointer-events-none absolute bottom-full left-1/2 mb-1 -translate-x-1/2 rounded bg-surface px-2 py-1 text-xs text-text opacity-0 transition-opacity group-hover:opacity-100"
         >
           Send Message
         </div>
@@ -709,22 +794,22 @@ onUnmounted(() => {
 ================================================================================
 File: src\components\ScrollToBottomButton.vue
 <script setup lang="ts">
-import { ArrowDownIcon } from "lucide-vue-next";
+import { ArrowDownIcon } from 'lucide-vue-next'
 
 defineProps<{
-  onClick: () => void;
-  show: boolean;
-}>();
+  onClick: () => void
+  show: boolean
+}>()
 </script>
 
 <template>
   <Transition name="fade">
     <button
       v-if="show"
-      class="fixed bottom-24 left-1/2 -translate-x-1/2 glass-panel rounded-full p-2 hover:bg-primary/20 transition-all shadow-lg"
+      class="glass-panel hover:bg-primary/20 fixed bottom-24 left-1/2 -translate-x-1/2 rounded-full p-2 shadow-lg transition-all"
       @click="onClick"
     >
-      <ArrowDownIcon class="w-5 h-5" />
+      <ArrowDownIcon class="h-5 w-5" />
     </button>
   </Transition>
 </template>
@@ -746,114 +831,168 @@ defineProps<{
 
 ================================================================================
 File: src\composables\useChatScroll.ts
-import { onMounted, onUnmounted, ref } from "vue";
+import { onMounted, onUnmounted, ref } from 'vue'
 
 export const useChatScroll = () => {
-  const showScrollButton = ref(false);
-  const isAtBottom = ref(true);
+  const showScrollButton = ref(false)
+  const isAtBottom = ref(true)
 
   const checkScroll = () => {
-    const scrollTop = window.scrollY;
-    const scrollHeight = document.documentElement.scrollHeight;
-    const clientHeight = window.innerHeight;
-    const scrollPosition = scrollHeight - scrollTop - clientHeight;
+    const scrollTop = window.scrollY
+    const scrollHeight = document.documentElement.scrollHeight
+    const clientHeight = window.innerHeight
+    const scrollPosition = scrollHeight - scrollTop - clientHeight
 
-    isAtBottom.value = scrollPosition < 100;
-    showScrollButton.value = !isAtBottom.value;
-  };
+    isAtBottom.value = scrollPosition < 100
+    showScrollButton.value = !isAtBottom.value
+  }
 
   const scrollToBottom = (smooth = true) => {
     window.scrollTo({
       top: document.documentElement.scrollHeight,
-      behavior: smooth ? "smooth" : "auto",
-    });
-  };
+      behavior: smooth ? 'smooth' : 'auto',
+    })
+  }
 
   onMounted(() => {
-    window.addEventListener("scroll", checkScroll);
-    scrollToBottom(false);
-  });
+    window.addEventListener('scroll', checkScroll)
+    scrollToBottom(false)
+  })
 
   onUnmounted(() => {
-    window.removeEventListener("scroll", checkScroll);
-  });
+    window.removeEventListener('scroll', checkScroll)
+  })
 
   return {
     showScrollButton,
     isAtBottom,
     scrollToBottom,
     checkScroll,
-  };
-};
+  }
+}
 
 ================================================================================
 File: src\composables\useClock.ts
-import { computed, onMounted, onUnmounted, ref } from "vue";
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 
-const FORMAT_KEY = "clock-format";
+const FORMAT_KEY = 'clock-format'
 
 export const useClock = () => {
-  const now = ref(new Date());
-  const use12h = ref(localStorage.getItem(FORMAT_KEY) === "12");
+  const now = ref(new Date())
+  const use12h = ref(localStorage.getItem(FORMAT_KEY) === '12')
 
   const toggleFormat = () => {
-    use12h.value = !use12h.value;
-    localStorage.setItem(FORMAT_KEY, use12h.value ? "12" : "24");
-  };
+    use12h.value = !use12h.value
+    localStorage.setItem(FORMAT_KEY, use12h.value ? '12' : '24')
+  }
 
-  let interval: number;
+  let interval: number
 
   onMounted(() => {
     interval = window.setInterval(() => {
-      now.value = new Date();
-    }, 1000);
-  });
+      now.value = new Date()
+    }, 1000)
+  })
 
   onUnmounted(() => {
-    clearInterval(interval);
-  });
+    clearInterval(interval)
+  })
 
   const timeParts = computed(() => {
     const options: Intl.DateTimeFormatOptions = {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
       hour12: use12h.value,
-    };
-    return new Intl.DateTimeFormat("en-US", options).formatToParts(now.value);
-  });
+    }
+    return new Intl.DateTimeFormat('en-US', options).formatToParts(now.value)
+  })
 
   const fullDate = computed(() => {
     return now.value.toLocaleDateString(undefined, {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
-  });
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    })
+  })
 
-  return { timeParts, fullDate, use12h, toggleFormat };
-};
+  return { timeParts, fullDate, use12h, toggleFormat }
+}
+
+================================================================================
+File: src\composables\useImagePredictor.ts
+import { usePredictPneumonia } from '@/queries/usePredictPneumonia'
+import { ref } from 'vue'
+
+export const useImagePredictor = () => {
+  const selectedFile = ref<File | null>(null)
+  const imageUrl = ref('')
+  const showResult = ref(false)
+
+  const { mutate: predict, isPending, data, error } = usePredictPneumonia()
+
+  const toBase64 = (file: File): Promise<string> =>
+    new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result as string)
+      reader.onerror = reject
+      reader.readAsDataURL(file)
+    })
+
+  const predictFromFile = async (file: File | File[] | undefined) => {
+    const f = Array.isArray(file) ? file[0] : file
+    if (!f) return
+
+    selectedFile.value = f
+    const base64 = await toBase64(f)
+    predict({ imageBase64: base64 })
+    showResult.value = true
+  }
+
+  const predictFromUrl = async () => {
+    if (!imageUrl.value) return
+
+    try {
+      const blob = await fetch(imageUrl.value).then(res => res.blob())
+      const file = new File([blob], 'remote.jpg', { type: blob.type })
+      await predictFromFile(file)
+    } catch (err) {
+      console.error('Failed to fetch image from URL', err)
+    }
+  }
+
+  return {
+    imageUrl,
+    selectedFile,
+    predictFromFile,
+    predictFromUrl,
+    showResult,
+    isPending,
+    data,
+    error,
+  }
+}
 
 ================================================================================
 File: src\composables\useTheme.ts
-import { storeToRefs } from "pinia";
-import { useThemeStore } from "../stores/themeStore";
+import { storeToRefs } from 'pinia'
+import { useThemeStore } from '../stores/themeStore'
 
 export const useTheme = () => {
-  const themeStore = useThemeStore();
-  const { themeMode, resolvedTheme, isDark } = storeToRefs(themeStore);
+  const themeStore = useThemeStore()
+  const { themeMode, resolvedTheme, isDark } = storeToRefs(themeStore)
 
   return {
     themeMode,
     resolvedTheme,
     isDark,
     cycleTheme: themeStore.cycleTheme,
-  };
-};
+  }
+}
 
 ================================================================================
-File: src\layouts\default.vue
+File: src\layouts\defaultLayouts.vue
 <template>
   <v-main>
     <router-view />
@@ -863,22 +1002,22 @@ File: src\layouts\default.vue
 </template>
 
 <script lang="ts" setup>
-  //
+//
 </script>
 
 ================================================================================
 File: src\pages\ChatApp.vue
 <script setup lang="ts">
-import ChatWindow from "../components/ChatWindow.vue";
-import { useTheme } from "../composables/useTheme";
+import ChatWindow from '../components/ChatWindow.vue'
+import { useTheme } from '../composables/useTheme'
 
-const {  themeMode, cycleTheme } = useTheme();
+const { themeMode, cycleTheme } = useTheme()
 </script>
 
 <template>
   <div class="bg-background transition-colors duration-300">
     <button
-      class="absolute top-4 right-4 z-50 p-2 glass-panel rounded-full hover:bg-primary/20 transition-colors hover:scale-105"
+      class="glass-panel hover:bg-primary/20 absolute right-4 top-4 z-50 rounded-full p-2 transition-colors hover:scale-105"
       @click="cycleTheme"
     >
       <span v-if="themeMode === 'light'">🌙</span>
@@ -891,7 +1030,7 @@ const {  themeMode, cycleTheme } = useTheme();
 </template>
 
 ================================================================================
-File: src\pages\index.vue
+File: src\pages\IndexPage.vue
 <template>
   <HelloWorld />
 </template>
@@ -909,17 +1048,21 @@ File: src\plugins\index.ts
  */
 
 // Plugins
-import router from "../router";
-import pinia from "../stores";
-import motion from "./motion";
-import vfm from "./vfm";
-import vuetify from "./vuetify";
-
+import router from '../router'
+import pinia from '../stores'
+import motion from './motion'
+import { installTanstack } from './tanstack'
+import { installTRPC } from './trpc'
+import vfm from './vfm'
+import vuetify from './vuetify'
 // Types
-import type { App } from "vue";
+import type { App } from 'vue'
 
 export function registerPlugins(app: App) {
-  app.use(pinia).use(vuetify).use(router).use(motion).use(vfm);
+  // Install plugins
+  installTanstack(app)
+  installTRPC(app)
+  app.use(pinia).use(vuetify).use(router).use(motion).use(vfm)
 }
 
 ================================================================================
@@ -927,6 +1070,40 @@ File: src\plugins\motion.ts
 import { MotionPlugin } from '@vueuse/motion'
 
 export default MotionPlugin
+
+================================================================================
+File: src\plugins\tanstack.ts
+import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query'
+import type { App } from 'vue'
+
+export const queryClient = new QueryClient()
+
+export function installTanstack(app: App) {
+  app.use(VueQueryPlugin, { queryClient })
+}
+
+================================================================================
+File: src\plugins\trpc.ts
+// src/plugins/trpc.ts
+import type { AppRouter } from '@server/router/_app' // ⬅️ adjust path as needed
+import { createTRPCProxyClient, httpBatchLink } from '@trpc/client'
+import type { App } from 'vue'
+
+export const trpc = createTRPCProxyClient<AppRouter>({
+  links: [
+    httpBatchLink({
+      url: 'http://localhost:3000/trpc',
+      headers: () => ({
+        'x-api-key': 'my-secret-api-key',
+      }),
+    }),
+  ],
+})
+
+export function installTRPC(app: App) {
+  // Optional: add to globalProperties for easier access if needed
+  app.config.globalProperties.$trpc = trpc
+}
 
 ================================================================================
 File: src\plugins\vfm.ts
@@ -945,38 +1122,61 @@ File: src\plugins\vuetify.ts
  */
 
 // Styles
-import { useThemeStore } from "@/stores/themeStore";
-import "@mdi/font/css/materialdesignicons.css";
-import { watch } from "vue";
-import "vuetify/styles";
+import { useThemeStore } from '@/stores/themeStore'
+import '@mdi/font/css/materialdesignicons.css'
+import { watch } from 'vue'
+import 'vuetify/styles'
 // Composables
-import { createVuetify } from "vuetify";
+import { createVuetify } from 'vuetify'
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 const vuetify = createVuetify({
   theme: {
-    defaultTheme: "dark",
+    defaultTheme: 'dark',
     themes: {
       light: {}, // use Vuetify defaults
       dark: {}, // use Vuetify defaults
     },
   },
-});
+})
 export default {
   install(app: any) {
-    app.use(vuetify);
+    app.use(vuetify)
 
-    const themeStore = useThemeStore();
+    const themeStore = useThemeStore()
 
     watch(
       () => themeStore.resolvedTheme,
-      (val) => {
-        vuetify.theme.global.name.value = val;
+      val => {
+        vuetify.theme.global.name.value = val
       },
-      { immediate: true },
-    );
+      { immediate: true }
+    )
   },
-};
+}
+
+================================================================================
+File: src\queries\useHelloQuery.ts
+import { trpc } from '@/plugins/trpc'
+import { useQuery } from '@tanstack/vue-query'
+
+export const useHelloQuery = () =>
+  useQuery({
+    queryKey: ['hello'],
+    queryFn: () => trpc.helloWorldRouter.query({ name: 'Test' }),
+    enabled: false, // avoid auto-fetch
+  })
+
+================================================================================
+File: src\queries\usePredictPneumonia.ts
+import { trpc } from '@/plugins/trpc'
+import { useMutation } from '@tanstack/vue-query'
+
+export const usePredictPneumonia = () => {
+  return useMutation({
+    mutationFn: (data: { imageBase64: string }) => trpc.predictPneumonia.mutate(data),
+  })
+}
 
 ================================================================================
 File: src\router\index.ts
@@ -1030,79 +1230,79 @@ export const useAppStore = defineStore('app', {
 
 ================================================================================
 File: src\stores\chatStore.ts
-import { faker } from "@faker-js/faker";
-import { defineStore } from "pinia";
-import { computed, ref } from "vue";
-import { createMessage } from "../helpers/chat";
-import type { ChatState, Message, MessageInput } from "../types/chat";
+import { faker } from '@faker-js/faker'
+import { defineStore } from 'pinia'
+import { computed, ref } from 'vue'
+import { createMessage } from '../helpers/chat'
+import type { ChatState, Message, MessageInput } from '../types/chat'
 
-export const useChatStore = defineStore("chat", () => {
+export const useChatStore = defineStore('chat', () => {
   const state = ref<ChatState>({
     messages: [],
     isTyping: false,
-  });
+  })
 
   const addMessage = (input: MessageInput) => {
-    const newMessage = createMessage(input);
-    state.value.messages.push(newMessage);
+    const newMessage = createMessage(input)
+    state.value.messages.push(newMessage)
 
     setTimeout(() => {
-      const msg = state.value.messages.find((m) => m.id === newMessage.id);
-      if (msg) msg.status = "sent";
-    }, 1000);
+      const msg = state.value.messages.find(m => m.id === newMessage.id)
+      if (msg) msg.status = 'sent'
+    }, 1000)
 
-    if (input.sender === "user") {
-      simulateAssistantReply(input);
+    if (input.sender === 'user') {
+      simulateAssistantReply(input)
     }
-  };
+  }
 
   const simulateAssistantReply = (userInput: MessageInput) => {
-    setTyping(true);
+    setTyping(true)
 
     setTimeout(() => {
-      const isImageReply = userInput.type === "image" || Math.random() < 0.5;
+      const isImageReply = userInput.type === 'image' || Math.random() < 0.5
 
       const reply: Message = isImageReply
         ? createMessage({
-            type: "image",
-            sender: "assistant",
+            type: 'image',
+            sender: 'assistant',
             url: faker.image.urlLoremFlickr({
-              category: "abstract",
+              category: 'abstract',
               width: 600,
               height: 400,
             }),
-            alt: "AI-generated image",
+            alt: 'AI-generated image',
             thumbnail: faker.image.urlLoremFlickr({
-              category: "abstract",
+              category: 'abstract',
               width: 200,
               height: 200,
             }),
           })
         : createMessage({
-            type: "text",
-            sender: "assistant",
-            content: `Echo: ${"content" in userInput ? userInput.content : "Here’s a visual response."}`,
-          });
+            type: 'text',
+            sender: 'assistant',
+            content: `Echo: ${'content' in userInput ? userInput.content : 'Here’s a visual response.'}`,
+          })
 
-      state.value.messages.push(reply);
-      setTyping(false);
-    }, 1200);
-  };
+      state.value.messages.push(reply)
+      setTyping(false)
+    }, 1200)
+  }
 
   const setTyping = (typing: boolean) => {
-    state.value.isTyping = typing;
-  };
+    state.value.isTyping = typing
+  }
 
-  const messages = computed(() => state.value.messages);
-  const isTyping = computed(() => state.value.isTyping);
+  const messages = computed(() => state.value.messages)
+  const isTyping = computed(() => state.value.isTyping)
 
   return {
     messages,
     isTyping,
     addMessage,
     setTyping,
-  };
-});
+  }
+})
 
 ================================================================================
 File: src\stores\index.ts
@@ -1113,91 +1313,87 @@ export default createPinia()
 
 ================================================================================
 File: src\stores\themeStore.ts
-import { usePreferredDark, useStorage } from "@vueuse/core";
-import { defineStore } from "pinia";
-import { computed, ref, watch } from "vue";
+import { usePreferredDark, useStorage } from '@vueuse/core'
+import { defineStore } from 'pinia'
+import { computed, ref, watch } from 'vue'
 
-export type ThemeMode = "light" | "dark" | "auto";
+export type ThemeMode = 'light' | 'dark' | 'auto'
 
-export const useThemeStore = defineStore("theme", () => {
-  const systemPrefersDark = usePreferredDark(); // reactive system theme
-  const themeMode = useStorage<ThemeMode>("theme-mode", "auto"); // persistent
-  const isDark = ref<boolean>(false);
+export const useThemeStore = defineStore('theme', () => {
+  const systemPrefersDark = usePreferredDark() // reactive system theme
+  const themeMode = useStorage<ThemeMode>('theme-mode', 'auto') // persistent
+  const isDark = ref<boolean>(false)
 
   // Computed actual theme in use
   const resolvedTheme = computed(() => {
-    if (themeMode.value === "auto") {
-      return systemPrefersDark.value ? "dark" : "light";
+    if (themeMode.value === 'auto') {
+      return systemPrefersDark.value ? 'dark' : 'light'
     }
-    return themeMode.value;
-  });
+    return themeMode.value
+  })
 
   // Apply class to <html>
   const applyTheme = () => {
-    document.documentElement.classList.toggle("dark", isDark.value);
-  };
+    document.documentElement.classList.toggle('dark', isDark.value)
+  }
 
   // Watch for resolved theme changes
   watch(
     resolvedTheme,
-    (val) => {
-      isDark.value = val === "dark";
-      applyTheme();
+    val => {
+      isDark.value = val === 'dark'
+      applyTheme()
     },
     { immediate: true }
-  );
+  )
 
   // Manual toggle (light ↔ dark ↔ auto)
   const cycleTheme = () => {
     themeMode.value =
-      themeMode.value === "light"
-        ? "dark"
-        : themeMode.value === "dark"
-          ? "auto"
-          : "light";
-  };
+      themeMode.value === 'light' ? 'dark' : themeMode.value === 'dark' ? 'auto' : 'light'
+  }
 
   return {
     themeMode,
     resolvedTheme,
     isDark,
     cycleTheme,
-  };
-});
+  }
+})
 
 ================================================================================
 File: src\types\chat.ts
-export type MessageType = "text" | "image";
+export type MessageType = 'text' | 'image'
 
 export interface BaseMessage {
-  id: string;
-  sender: "user" | "assistant";
-  timestamp: Date;
-  status: "sending" | "sent" | "delivered" | "read";
+  id: string
+  sender: 'user' | 'assistant'
+  timestamp: Date
+  status: 'sending' | 'sent' | 'delivered' | 'read'
 }
 
 export interface TextMessage extends BaseMessage {
-  type: "text";
-  content: string;
+  type: 'text'
+  content: string
 }
 
 export interface ImageMessage extends BaseMessage {
-  type: "image";
-  url: string;
-  alt?: string;
-  thumbnail?: string;
+  type: 'image'
+  url: string
+  alt?: string
+  thumbnail?: string
   //content?: string;
 }
 
-export type Message = TextMessage | ImageMessage;
+export type Message = TextMessage | ImageMessage
 
 export interface ChatState {
-  messages: Message[];
-  isTyping: boolean;
+  messages: Message[]
+  isTyping: boolean
 }
 export type MessageInput =
-  | Omit<TextMessage, "id" | "timestamp" | "status">
-  | Omit<ImageMessage, "id" | "timestamp" | "status">;
+  | Omit<TextMessage, 'id' | 'timestamp' | 'status'>
+  | Omit<ImageMessage, 'id' | 'timestamp' | 'status'>
 
 ================================================================================
 File: src\App.vue
@@ -1208,7 +1404,7 @@ File: src\App.vue
 </template>
 
 <script lang="ts" setup>
-  //
+//
 </script>
 
 ================================================================================
@@ -1240,8 +1436,8 @@ declare global {
   const nextTick: typeof import('vue')['nextTick']
   const onActivated: typeof import('vue')['onActivated']
   const onBeforeMount: typeof import('vue')['onBeforeMount']
-  const onBeforeRouteLeave: typeof import('vue-router')['onBeforeRouteLeave']
-  const onBeforeRouteUpdate: typeof import('vue-router')['onBeforeRouteUpdate']
+  const onBeforeRouteLeave: (typeof import('vue-router'))['onBeforeRouteLeave']
+  const onBeforeRouteUpdate: (typeof import('vue-router'))['onBeforeRouteUpdate']
   const onBeforeUnmount: typeof import('vue')['onBeforeUnmount']
   const onBeforeUpdate: typeof import('vue')['onBeforeUpdate']
   const onDeactivated: typeof import('vue')['onDeactivated']
@@ -1255,6 +1451,7 @@ declare global {
   const onUpdated: typeof import('vue')['onUpdated']
   const onWatcherCleanup: typeof import('vue')['onWatcherCleanup']
   const provide: typeof import('vue')['provide']
+  const queryClient: typeof import('@/plugins/tanstack')['queryClient']
   const reactive: typeof import('vue')['reactive']
   const readonly: typeof import('vue')['readonly']
   const ref: typeof import('vue')['ref']
@@ -1267,12 +1464,13 @@ declare global {
   const toRefs: typeof import('vue')['toRefs']
   const toValue: typeof import('vue')['toValue']
   const triggerRef: typeof import('vue')['triggerRef']
+  const trpc: typeof import('@/plugins/trpc')['trpc']
   const unref: typeof import('vue')['unref']
   const useAttrs: typeof import('vue')['useAttrs']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
   const useId: typeof import('vue')['useId']
-  const useLink: typeof import('vue-router')['useLink']
+  const useLink: (typeof import('vue-router'))['useLink']
   const useModel: typeof import('vue')['useModel']
   const useRoute: typeof import('vue-router/auto')['useRoute']
   const useRouter: typeof import('vue-router/auto')['useRouter']
@@ -1327,6 +1525,7 @@ declare module 'vue' {
     readonly onUpdated: UnwrapRef<typeof import('vue')['onUpdated']>
     readonly onWatcherCleanup: UnwrapRef<typeof import('vue')['onWatcherCleanup']>
     readonly provide: UnwrapRef<typeof import('vue')['provide']>
+    readonly queryClient: UnwrapRef<typeof import('@/plugins/tanstack')['queryClient']>
     readonly reactive: UnwrapRef<typeof import('vue')['reactive']>
     readonly readonly: UnwrapRef<typeof import('vue')['readonly']>
     readonly ref: UnwrapRef<typeof import('vue')['ref']>
@@ -1339,6 +1538,7 @@ declare module 'vue' {
     readonly toRefs: UnwrapRef<typeof import('vue')['toRefs']>
     readonly toValue: UnwrapRef<typeof import('vue')['toValue']>
     readonly triggerRef: UnwrapRef<typeof import('vue')['triggerRef']>
+    readonly trpc: UnwrapRef<typeof import('@/plugins/trpc')['trpc']>
     readonly unref: UnwrapRef<typeof import('vue')['unref']>
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
@@ -1393,13 +1593,13 @@ File: src\main.ts
  */
 
 // Plugins
-import { registerPlugins } from '@/plugins';
+import { registerPlugins } from '@/plugins'
 
 // Components
-import App from './App.vue';
-import "./styles/style.css";
+import App from './App.vue'
+import './styles/style.css'
 // Composables
-import { createApp } from 'vue';
+import { createApp } from 'vue'
 
 const app = createApp(App)
 
@@ -1429,8 +1629,8 @@ declare module 'vue-router/auto-routes' {
    * Route name map generated by unplugin-vue-router
    */
   export interface RouteNamedMap {
-    '/': RouteRecordInfo<'/', '/', Record<never, never>, Record<never, never>>,
     '/ChatApp': RouteRecordInfo<'/ChatApp', '/ChatApp', Record<never, never>, Record<never, never>>,
+    '/IndexPage': RouteRecordInfo<'/IndexPage', '/IndexPage', Record<never, never>, Record<never, never>>,
   }
 }
 

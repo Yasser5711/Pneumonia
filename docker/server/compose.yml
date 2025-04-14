@@ -12,8 +12,13 @@ services:
       - API_KEY=${API_KEY}
       - FRONTEND_ORIGIN=${FRONTEND_ORIGIN}
     volumes:
-      - ../..:/app
+      - ../../server:/app/server
+      - ../../package.json:/app/package.json
+      - ../../yarn.lock:/app/yarn.lock
+      - ../../.yarn:/app/.yarn
+      - ../../.yarnrc.yml:/app/.yarnrc.yml
       - /app/node_modules
+
     command: yarn dev # ✅ override CMD
     restart: always
     networks:

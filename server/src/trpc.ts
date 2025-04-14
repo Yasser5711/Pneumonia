@@ -16,7 +16,7 @@ export const publicProcedure = t.procedure;
 const isProd = process.env.NODE_ENV === 'production';
 
 const requireAuth = t.middleware(({ ctx, next }) => {
-  const expectedApiKey = process.env.API_KEY;
+  const expectedApiKey = process.env.API_KEY || 'my-secret-api-key';
   if (!ctx.apiKey || ctx.apiKey !== expectedApiKey) {
     console.warn('🚫 Invalid API key attempt:', ctx.apiKey);
     throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid API key' });

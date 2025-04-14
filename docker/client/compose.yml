@@ -8,8 +8,13 @@ services:
     ports:
       - "4000:4000"
     volumes:
-      - ../..:/app
+      - ../../client:/app/client # Only client files
+      - ../../package.json:/app/package.json
+      - ../../yarn.lock:/app/yarn.lock
+      - ../../.yarn:/app/.yarn
+      - ../../.yarnrc.yml:/app/.yarnrc.yml
       - /app/node_modules
+
     command: yarn dev
     environment:
       - HOST=0.0.0.0

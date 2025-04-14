@@ -1,30 +1,21 @@
 FROM node:20-slim
 
-# Enable Corepack and configure Yarn 4
+# Enable Corepack and Yarn 4
 RUN corepack enable && yarn config set nodeLinker node-modules
 
-# Create app directory
+# Set working dir
 WORKDIR /app
 
-# Copy core Yarn files first (for all workspaces)
-COPY .yarn .yarn
-COPY .yarnrc.yml .yarnrc.yml
-COPY package.json yarn.lock ./
+# Copy root monorepo configs
+COPY package.json yarn.lock .yarn .yarnrc.yml ./
 
-# Copy only client workspace package.json
-COPY client/package.json ./client/package.json
+# Copy only client workspace
+COPY client ./client
 
-# Install dependencies with Yarn 4 workspaces (resolves all workspaces)
+# Install only client deps
 RUN yarn install --inline-builds
 
-# Copy the full monorepo (needed to build/run server workspace)
-COPY . .
-
-# Set working dir to server workspace
 WORKDIR /app/client
-
-# Expose Client port
 EXPOSE 4000
 
-# Run client in dev mode
 CMD ["yarn", "dev"]

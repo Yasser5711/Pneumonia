@@ -25,6 +25,7 @@
     "source.fixAll.eslint": "explicit",
     "source.fixAll.stylelint": "always"
   },
+  "stylelint.packageManager": "yarn",
   "stylelint.validate": ["css", "scss", "vue"],
   "python.analysis.typeCheckingMode": "off",
   "eslint.enable": true,

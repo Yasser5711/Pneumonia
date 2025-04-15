@@ -25,7 +25,10 @@ export const useImagePredictor = () => {
     selectedFile.value = f
     const base64 = await toBase64(f)
     const result = await predictAsync({ imageBase64: base64 })
-    return result.data
+    return {
+      label: result.prediction.class,
+      probability_pneumonia: result.prediction.probability,
+    } as PredictionResult
   }
 
   const predictFromUrl = async () => {

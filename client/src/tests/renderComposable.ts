@@ -1,9 +1,9 @@
+import type { AppRouter } from '@server/router/_app'
 import { QueryClient, VueQueryPlugin, type VueQueryPluginOptions } from '@tanstack/vue-query'
 import type { TRPCClient } from '@trpc/client'
+import { createPinia } from 'pinia'
 import { type App, createApp } from 'vue'
 import vuetify from '../plugins/vuetify'
-
-import type { AppRouter } from '@server/router/_app'
 
 import { MOCK_TRPC } from './trpc'
 
@@ -38,7 +38,9 @@ export function renderComposable<T>(
     queryClient: innerOptions.queryClient,
   })
 
-  app.provide('trpc', innerOptions.trpc)
+  // app.provide('trpc', innerOptions.trpc)
+  app.config.globalProperties.$trpc = innerOptions.trpc
+  app.use(createPinia())
   app.use(vuetify)
 
   app.mount(document.createElement('div'))

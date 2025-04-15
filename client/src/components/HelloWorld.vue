@@ -10,7 +10,7 @@ const { imageUrl, predictFromFile, predictFromUrl, isPending, error } = useImage
 const handleUpload = async (file: File | File[]) => {
   try {
     const prediction = await predictFromFile(file)
-    data.value = prediction
+    data.value = prediction ?? null
     showResult.value = true
   } catch {
     console.error('Error during prediction:', error)

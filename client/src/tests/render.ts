@@ -3,7 +3,7 @@ import vfm from '@/plugins/vfm'
 import vuetify from '@/plugins/vuetify'
 import { type QueryClientConfig, VueQueryPlugin } from '@tanstack/vue-query'
 import { type RenderOptions, type RenderResult, render as renderVue } from '@testing-library/vue'
-import { createPinia } from 'pinia'
+import { createPinia, setActivePinia } from 'pinia'
 import { createTRPCPlugin } from '../plugins/trpc'
 import { createAppRouter } from '../router'
 
@@ -52,7 +52,7 @@ export function render<Component>(
           vfm,
           motion,
           trpcPlugin,
-          createPinia(),
+          setActivePinia(createPinia()),
           router,
           ...(renderOptions.global?.plugins ?? []),
         ],

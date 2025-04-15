@@ -1,3 +1,4 @@
+import { useTRPC } from '@/composables/useTRPC'
 import { useMutation } from '@tanstack/vue-query'
 
 export const usePredictPneumonia = () => {

@@ -10,12 +10,17 @@ describe('🧪 API key auth', () => {
   });
 
   it('passes with valid key', async () => {
-    const caller = createTestCaller();
+    const caller = createTestCaller('test_api_key');
+    console.log(await caller.predictPneumonia({ imageBase64: 'data:image/png;base64,A==' }));
     await expect(
       caller.predictPneumonia({ imageBase64: 'data:image/png;base64,A==' }),
     ).resolves.toEqual({
-      probability_pneumonia: 0.42,
-      label: 'Normal',
+      model: 'yassermekhfi/pneumonia',
+      model_version: 'latest',
+      prediction: {
+        class: 'Normal',
+        probability: 0.42,
+      },
     });
   });
 });

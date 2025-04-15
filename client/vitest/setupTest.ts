@@ -1,4 +1,6 @@
-import '@testing-library/jest-dom/vitest'
+import '@mdi/font/css/materialdesignicons.css'
+import 'vuetify/styles'
+
 import { cleanup, configure } from '@testing-library/vue'
 import { afterEach, beforeAll, beforeEach, vi } from 'vitest'
 
@@ -19,6 +21,7 @@ beforeEach(() => {
       return this.dummy
     }
   }
+
   Object.defineProperty(window, 'IntersectionObserver', {
     writable: true,
     configurable: true,

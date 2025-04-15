@@ -1,7 +1,7 @@
-import { trpc } from '@/plugins/trpc'
 import { useMutation } from '@tanstack/vue-query'
 
 export const usePredictPneumonia = () => {
+  const trpc = useTRPC()
   return useMutation({
     mutationFn: (data: { imageBase64: string }) => trpc.predictPneumonia.mutate(data),
   })

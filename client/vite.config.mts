@@ -23,10 +23,10 @@ export default defineConfig({
         'vue',
         {
           'vue-router/auto': ['useRoute', 'useRouter'],
-          '@/plugins/trpc': ['trpc'],
           '@/plugins/tanstack': ['queryClient'],
         },
       ],
+      dirs: ['src/composables', 'src/stores'],
       dts: 'src/auto-imports.d.ts',
       eslintrc: {
         enabled: true,

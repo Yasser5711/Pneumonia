@@ -15,6 +15,16 @@ export const predictRouter = protectedProcedure
         }),
     }),
   )
+  .output(
+    z.object({
+      model: z.string(),
+      model_version: z.string(),
+      prediction: z.object({
+        class: z.string(),
+        probability: z.number(),
+      }),
+    }),
+  )
   .mutation(async ({ input }) => {
     console.log('✅ predictRouter loaded');
 

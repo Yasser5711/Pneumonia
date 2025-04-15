@@ -6,6 +6,11 @@ export const helloWorldRouter = publicProcedure
       name: z.string().min(1).max(100).optional(),
     }),
   )
+  .output(
+    z.object({
+      message: z.string(),
+    }),
+  )
   .query(async ({ input }) => {
     const { name } = input;
 

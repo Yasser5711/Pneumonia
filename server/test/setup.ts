@@ -10,8 +10,12 @@ beforeAll(() => {
         post: vi.fn(() =>
           Promise.resolve({
             data: {
-              probability_pneumonia: 0.42,
-              label: 'Normal',
+              model: 'yassermekhfi/pneumonia',
+              model_version: 'latest',
+              prediction: {
+                class: 'Normal',
+                probability: 0.42,
+              },
             },
           }),
         ),

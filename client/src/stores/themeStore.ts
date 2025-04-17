@@ -1,20 +1,21 @@
-import { usePreferredDark, useStorage } from '@vueuse/core'
+import { usePreferredDark } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { computed, ref, watch } from 'vue'
-
+import { useStorageStore } from './storageStore'
 export type ThemeMode = 'light' | 'dark' | 'auto'
 
 export const useThemeStore = defineStore('theme', () => {
+  const storageStore = useStorageStore()
   const systemPrefersDark = usePreferredDark() // reactive system theme
-  const themeMode = useStorage<ThemeMode>('theme-mode', 'auto') // persistent
+  const themeMode = storageStore.getKeyFromLocalStorage('theme', { mode: 'auto' })
   const isDark = ref<boolean>(false)
 
   // Computed actual theme in use
   const resolvedTheme = computed(() => {
-    if (themeMode.value === 'auto') {
+    if (themeMode.value.mode === 'auto') {
       return systemPrefersDark.value ? 'dark' : 'light'
     }
-    return themeMode.value
+    return themeMode.value.mode
   })
 
   // Apply class to <html>
@@ -34,8 +35,8 @@ export const useThemeStore = defineStore('theme', () => {
 
   // Manual toggle (light ↔ dark ↔ auto)
   const cycleTheme = () => {
-    themeMode.value =
-      themeMode.value === 'light' ? 'dark' : themeMode.value === 'dark' ? 'auto' : 'light'
+    themeMode.value.mode =
+      themeMode.value.mode === 'light' ? 'dark' : themeMode.value.mode === 'dark' ? 'auto' : 'light'
   }
 
   return {

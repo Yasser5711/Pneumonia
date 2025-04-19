@@ -4,9 +4,6 @@ on:
   pull_request:
     paths:
       - "server/**"
-  workflow_run:
-    workflows: ["Lint Commit Messages"]
-    types: [completed]
 
 permissions:
   contents: read
@@ -142,6 +139,7 @@ jobs:
         if: always()
         uses: davelosert/vitest-coverage-report-action@v2
         with:
+          name: "Server Coverage Report"
           json-summary-path: server/coverage/coverage-summary.json
           json-summary-compare-path: server/coverage/coverage-summary.json
           json-final-path: server/coverage/coverage-final.json

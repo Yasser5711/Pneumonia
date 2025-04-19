@@ -8,6 +8,17 @@ export default mergeConfig(
     plugins: [vue()],
     test: {
       coverage: {
+        thresholds: {
+          global: {
+            branches: 80,
+            functions: 80,
+            lines: 80,
+            statements: 80,
+          },
+        },
+        reporter: ['text', 'lcov', 'json-summary', 'json'],
+        reportOnFailure: true,
+        reportsDirectory: './coverage',
         exclude: [
           'dist/',
           'eslint.config.js',

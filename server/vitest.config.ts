@@ -8,6 +8,14 @@ export default mergeConfig(
       environment: 'node',
       setupFiles: ['./test/setup.ts'],
       coverage: {
+        thresholds: {
+          global: {
+            branches: 80,
+            functions: 80,
+            lines: 80,
+            statements: 80,
+          },
+        },
         exclude: [
           'dist/',
           'eslint.config.js',

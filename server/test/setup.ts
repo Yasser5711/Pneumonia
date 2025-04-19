@@ -1,6 +1,15 @@
 import { afterAll, beforeAll, vi } from 'vitest';
-
+import { setLogger } from '../src/logger';
 beforeAll(() => {
+  setLogger({
+    info: vi.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+    fatal: vi.fn(),
+    trace: vi.fn(),
+    child: () => ({}),
+  } as any);
   // eslint-disable-next-line no-console
   console.log('🧪 Test suite starting...');
   process.env.API_KEY = 'test_api_key';

@@ -2813,7 +2813,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vitest/coverage-v8@npm:3.1.1":
+"@vitest/coverage-v8@npm:3.1.1, @vitest/coverage-v8@npm:^3.1.1":
   version: 3.1.1
   resolution: "@vitest/coverage-v8@npm:3.1.1"
   dependencies:
@@ -4018,6 +4018,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:^8.30.1"
     "@typescript-eslint/parser": "npm:^8.30.1"
     "@vitejs/plugin-vue": "npm:^5.2.3"
+    "@vitest/coverage-v8": "npm:^3.1.1"
     "@vue/tsconfig": "npm:^0.7.0"
     "@vueuse/core": "npm:^13.1.0"
     "@vueuse/motion": "npm:^3.0.3"

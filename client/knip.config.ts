@@ -20,6 +20,7 @@ const config: KnipConfig = {
     'lucide-vue-next',
     'vue-eslint-parser',
     'vue-tsc',
+    '@vitest/coverage-v8',
   ],
   ignoreBinaries: [
     'vite',

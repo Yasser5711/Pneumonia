@@ -1,12 +1,9 @@
-name: 🧩 Frontend CI (Client)
+name: 🎨 Frontend CI (Client)
 
 on:
   pull_request:
     paths:
       - "client/**"
-  workflow_run:
-    workflows: ["Lint Commit Messages"]
-    types: [completed]
 
 permissions:
   contents: read
@@ -122,8 +119,22 @@ jobs:
         working-directory: client
         run: yarn check:test
 
-      - name: 📊 Upload coverage artifact
+      - name: 📊 ReportGenerator
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.4.5
+        with:
+          reports: client/coverage/lcov.info
+          targetdir: client/coverage/report
+          reporttypes: Html_Dark;lcov;XML;JsonSummary;Badges
+          sourcedirs: client
+          title: Client Coverage Report
+      - name: 📈 Upload coverage report artifact
         uses: actions/upload-artifact@v4
         with:
-          name: vitest-coverage-client
-          path: client/coverage/
+          name: client-coverage-report
+          path: client/coverage/report/
+      - name: "Report Coverage"
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          working-directory: client
+          name: Client Coverage Report

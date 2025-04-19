@@ -11,4 +11,5 @@ ignores: [
   'stylelint-config-*',
   'core-js',
   'prettier-plugin-sort-json',
+  '@vitest/coverage-v8',
 ]

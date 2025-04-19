@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { XIcon } from "lucide-vue-next";
-import { VueFinalModal } from "vue-final-modal";
+import { XIcon } from 'lucide-vue-next'
+import { VueFinalModal } from 'vue-final-modal'
 
 defineProps<{
-  modelValue: boolean;
-  src: string;
-  alt?: string;
-}>();
+  modelValue: boolean
+  src: string
+  alt?: string
+}>()
 
 const emit = defineEmits<{
-  (e: "update:modelValue", value: boolean): void;
-}>();
+  (e: 'update:modelValue', value: boolean): void
+}>()
 
-const close = () => emit("update:modelValue", false);
+const close = () => emit('update:modelValue', false)
 </script>
 
 <template>
@@ -31,19 +31,19 @@ const close = () => emit("update:modelValue", false);
   >
     <!-- Close Button (outside image) -->
     <button
-      class="absolute -top-4 -right-4 z-10 p-2 rounded-full bg-black/50 text-white backdrop-blur-sm hover:bg-black/70 transition-opacity opacity-0 group-hover:opacity-100 md:opacity-0 md:group-hover:opacity-100"
+      class="absolute -right-4 -top-4 z-10 rounded-full bg-black/50 p-2 text-white opacity-0 backdrop-blur-sm transition-opacity hover:bg-black/70 group-hover:opacity-100 md:opacity-0 md:group-hover:opacity-100"
       @click="close"
     >
-      <XIcon class="w-6 h-6" />
+      <XIcon class="h-6 w-6" />
     </button>
 
     <!-- Image Centered -->
-    <div class="flex items-center justify-center w-full h-full">
+    <div class="flex h-full w-full items-center justify-center">
       <img
         :src="src"
         :alt="alt"
-        class="rounded-lg object-contain max-w-full max-h-[90vh]"
-      >
+        class="max-h-[90vh] max-w-full rounded-lg object-contain"
+      />
     </div>
   </VueFinalModal>
 </template>

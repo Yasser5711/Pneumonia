@@ -1,8 +1,9 @@
 import axios from 'axios';
+import * as dotenv from 'dotenv';
 import sharp from 'sharp';
 import { z } from 'zod';
 import { protectedProcedure } from '../trpc';
-
+dotenv.config();
 export const predictRouter = protectedProcedure
   .input(
     z.object({
@@ -15,9 +16,19 @@ export const predictRouter = protectedProcedure
         }),
     }),
   )
+  .output(
+    z.object({
+      model: z.string(),
+      model_version: z.string(),
+      prediction: z.object({
+        class: z.string(),
+        probability: z.number(),
+      }),
+    }),
+  )
   .mutation(async ({ input }) => {
-    console.log('✅ predictRouter loaded');
-
+    const PREDICT_URL = process.env.CNN_PREDICT_URL;
+    if (!PREDICT_URL) throw new Error('CNN_PREDICT_URL is not set');
     const { imageBase64 } = input;
 
     const imageBuffer = Buffer.from(imageBase64.replace(/^data:image\/\w+;base64,/, ''), 'base64');
@@ -39,10 +50,6 @@ export const predictRouter = protectedProcedure
       imageArray.push(row);
     }
 
-    const response = await axios.post(
-      'https://yassermekhfi.us-east-1.aws.modelbit.com/v1/predict_pneumonia/latest',
-      { data: [{ image_array: imageArray }] },
-    );
-
-    return response.data;
+    const response = await axios.post(PREDICT_URL, { data: [{ image_array: imageArray }] });
+    return response.data.data;
   });

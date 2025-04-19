@@ -1,10 +1,11 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{vue,js,ts,jsx,tsx}",
+  content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
+  safelist: [
+    'group-hover:opacity-100',
+    'group-hover:blur-sm',
+    'group-hover:scale-105',
   ],
-  safelist: ['group-hover:opacity-100', 'group-hover:blur-sm', 'group-hover:scale-105'],
   darkMode: 'class',
   theme: {
     extend: {
@@ -17,7 +18,7 @@ export default {
       },
       backdropBlur: {
         xs: '2px',
-      }
+      },
     },
   },
   plugins: [],

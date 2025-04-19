@@ -1,22 +1,19 @@
 <script setup lang="ts">
-import { useClock } from "../composables/useClock";
+import { useClock } from '../composables/useClock'
 
-const { timeParts, fullDate, toggleFormat } = useClock();
+const { timeParts, fullDate, toggleFormat } = useClock()
 </script>
 
 <template>
   <div
-    class="font-mono text-base md:text-lg text-center cursor-pointer select-none group"
+    class="group cursor-pointer select-none text-center font-mono text-base md:text-lg"
     :title="fullDate"
     @click="toggleFormat"
   >
-    <span
-      v-for="part in timeParts"
-      :key="part.type"
-    >
+    <span v-for="part in timeParts" :key="part.type">
       <span
         v-if="part.type === 'literal' && part.value === ':'"
-        class="animate-pulse inline-block px-0.5 group-hover:text-primary"
+        class="inline-block animate-pulse px-0.5 group-hover:text-primary"
       >
         {{ part.value }}
       </span>

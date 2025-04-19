@@ -1,0 +1,140 @@
+name: 🎨 Frontend CI (Client)
+
+on:
+  pull_request:
+    paths:
+      - "client/**"
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  lint:
+    name: 🧼 Lint Code + CSS
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-yarn
+        with:
+          working-directory: client
+
+      - name: 🧼 Run ESLint, Prettier, Stylelint
+        working-directory: client
+        run: yarn check:lint
+
+  typecheck:
+    name: 🧠 Type Check
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-yarn
+        with:
+          working-directory: client
+
+      - name: 🧠 Run Type Check
+        working-directory: client
+        run: yarn check:types
+
+  build:
+    name: 🏗️ Build Project
+    runs-on: ubuntu-latest
+    needs: typecheck
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-yarn
+        with:
+          working-directory: client
+
+      - name: 🏗️ Build Frontend
+        working-directory: client
+        run: yarn check:build
+
+  pwa:
+    name: ⚙️ PWA Check
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-yarn
+        with:
+          working-directory: client
+
+      - name: ⚙️ Run PWA Build Check
+        working-directory: client
+        run: yarn check:pwa
+
+  knip:
+    name: ✂️ Unused Code (Knip + ts-prune)
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-yarn
+        with:
+          working-directory: client
+
+      - name: ✂️ Run Knip
+        working-directory: client
+        run: yarn check:knip
+
+      - name: 🌿 Run ts-prune
+        working-directory: client
+        run: yarn check:prune
+
+  depcheck:
+    name: 📦 Dependency Check
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-yarn
+        with:
+          working-directory: client
+
+      - name: 📦 Run depcheck
+        working-directory: client
+        run: yarn check:dep
+
+  test:
+    name: 🧪 Run Tests
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck, knip, depcheck]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/setup-yarn
+        with:
+          working-directory: client
+
+      - name: 🧪 Run Vitest + Coverage
+        working-directory: client
+        run: yarn check:test
+
+      - name: 📊 ReportGenerator
+        uses: danielpalme/ReportGenerator-GitHub-Action@5.4.5
+        with:
+          reports: client/coverage/lcov.info
+          targetdir: client/coverage/report
+          reporttypes: Html_Dark;lcov;XML;JsonSummary;Badges
+          sourcedirs: client
+          title: Client Coverage Report
+      - name: 📈 Upload coverage report artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: client-coverage-report
+          path: client/coverage/report/
+      - name: "Report Coverage"
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2
+        with:
+          working-directory: client
+          name: Client Coverage Report

@@ -5,14 +5,19 @@
     "dev": "nodemon --watch src -e ts,js --exec \"tsx src/index.ts\" --legacy-watch",
     "test:predict": "tsx test/test.ts",
     "build": "tsc",
-    "check:lint": "eslint . --ext .ts && prettier --check \"src/**/*.{ts,js,json,md,yml,yaml}\"",
-    "check:types": "tsc -p tsconfig.typecheck.json",
+    "build:types": "tsc -b tsconfig.build.json",
+    "check:lint": "eslint . --ext .ts && prettier --check \"src/**/*.{ts,js,json,md,yml,yaml}\" && echo 🚨✅ Lint check passed!",
+    "check:types": "tsc -p tsconfig.typecheck.json && echo 🧠✅ Type check passed!",
     "fix": "eslint . --ext .ts --fix",
     "format": "prettier --write .",
-    "check:knip": "knip",
-    "check:dep": "depcheck",
-    "check:prune": "ts-prune ./src",
-    "check:all": "yarn check:lint && yarn check:types && yarn check:knip && yarn check:dep && yarn check:prune"
+    "check:knip": "knip && echo ✂️✅ Unused code check passed!",
+    "check:dep": "depcheck && echo 📦✅ Dependency check passed!",
+    "check:prune": "ts-prune ./src && echo 🌿✅ Prune check passed!",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:ui": "vitest --ui",
+    "check:test": "vitest run --silent --coverage && echo 🧪✅ Tests passed!",
+    "check:all": "yarn check:lint && yarn check:types && yarn check:knip && yarn check:dep && yarn check:prune && echo 🧰✨ All checks passed! || echo '❌ Fix the above issues before committing 💡'"
   },
   "type": "module",
   "dependencies": {
@@ -32,6 +37,9 @@
     "@types/node": "^22.14.1",
     "@types/ws": "^8.18.1",
     "@typescript-eslint/parser": "^8.29.1",
+    "@vitest/coverage-istanbul": "^3.1.1",
+    "@vitest/coverage-v8": "3.1.1",
+    "@vitest/ui": "^3.1.1",
     "depcheck": "^1.4.7",
     "eslint": "^9.24.0",
     "eslint-config-prettier": "^10.1.2",
@@ -41,6 +49,7 @@
     "prettier": "^3.5.3",
     "ts-prune": "^0.10.3",
     "tsx": "^4.19.3",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^3.1.1"
   }
 }

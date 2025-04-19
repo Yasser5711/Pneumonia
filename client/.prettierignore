@@ -1,0 +1,7 @@
+node_modules/
+dist/
+.yarn/
+.vite/
+coverage/
+*.log
+*.d.ts

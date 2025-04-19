@@ -1,12 +1,21 @@
-FROM node:18-alpine
+FROM node:20-slim
 
+# Enable Corepack and Yarn 4
+RUN corepack enable && yarn config set nodeLinker node-modules
+
+# Set working dir
 WORKDIR /app
 
-COPY package.json yarn.lock ./
-RUN yarn install
+# Copy root monorepo configs
+COPY package.json yarn.lock .yarn .yarnrc.yml ./
 
-COPY . .
+# Copy only client workspace
+COPY client ./client
 
-EXPOSE 5173
+# Install only client deps
+RUN yarn install --inline-builds
+
+WORKDIR /app/client
+EXPOSE 4000
 
 CMD ["yarn", "dev"]

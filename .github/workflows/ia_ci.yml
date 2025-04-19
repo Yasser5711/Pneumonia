@@ -4,10 +4,6 @@ on:
   pull_request:
     paths:
       - "IA/**"
-  workflow_run:
-    workflows: ["Lint Commit Messages"]
-    types:
-      - completed
 
 permissions:
   contents: read

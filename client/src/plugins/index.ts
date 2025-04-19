@@ -5,15 +5,28 @@
  */
 
 // Plugins
-import router from "../router";
-import pinia from "../stores";
-import motion from "./motion";
-import vfm from "./vfm";
-import vuetify from "./vuetify";
-
+import { createAppRouter } from '../router'
+import pinia from '../stores'
+import motion from './motion'
+import { installTanstack } from './tanstack'
+import { createTRPCPlugin } from './trpc'
+import vfm from './vfm'
+import vuetify from './vuetify'
 // Types
-import type { App } from "vue";
-
+import type { App } from 'vue'
+const trpcPlugin = createTRPCPlugin({
+  apiKey: import.meta.env.VITE_API_KEY,
+  url: 'http://localhost:3000/trpc',
+})
 export function registerPlugins(app: App) {
-  app.use(pinia).use(vuetify).use(router).use(motion).use(vfm);
+  // Install plugins
+  installTanstack(app)
+
+  app
+    .use(pinia)
+    .use(vuetify)
+    .use(createAppRouter())
+    .use(motion)
+    .use(vfm)
+    .use(trpcPlugin)
 }

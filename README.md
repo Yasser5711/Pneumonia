@@ -1,14 +1,30 @@
-<h1 align="center">T-DEV-801</h1>
+<h1 align="center">🫁 Pneumonia Detection App</h1>
 
-## To start project run:
+<p align="center">An AI-powered web application for detecting pneumonia from chest X-rays 💡</p>
+
+---
+
+## 🚀 Getting Started
+
+To start the project with **Docker Compose**, run:
+
 ```bash
-docker-compose --profile front --env-file .env up -d
+docker-compose --profile front --profile back --env-file .env up -d
 ```
 
+## 📦 Tech Stack
 
-lo link the node_modules 
-```bash
-yarn config set nodeLinker node-modules
+- 🖥️ Vue 3 + Vite + TypeScript
+- 🎨 TailwindCSS + Vuetify
+- 🧪 Vitest for Testing
+- 🔬 tRPC + Fastify for Backend
+- 🧠 Modelbit for AI Prediction
+- 🐳 Dockerized Frontend & Backend
 
-```
+## 🛠️ Features
 
+- 🔍 Upload chest X-ray images
+- 🤖 AI-based pneumonia prediction
+- 💬 Real-time assistant feedback
+- 🌓 Light/Dark theme toggle
+- 📊 Code quality checks & CI

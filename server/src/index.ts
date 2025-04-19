@@ -3,6 +3,7 @@ import rateLimit from '@fastify/rate-limit';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import * as dotenv from 'dotenv';
 import Fastify from 'fastify';
+import { setLogger } from './logger';
 import { appRouter } from './router/_app';
 import { createContext } from './trpc';
 // eslint-disable-next-line no-unused-vars
@@ -19,20 +20,21 @@ const fastify = Fastify({
           options: {
             translateTime: 'HH:MM:ss Z',
             ignore: 'pid,hostname',
+            colorize: true,
           },
         },
       }
     : true, // raw JSON logs in prod
   bodyLimit: 10 * 1024 * 1024, // 10 MB
 });
-
+setLogger(fastify.log);
 async function main() {
   await fastify.register(cors, {
     origin: (origin, cb) => {
       //   const allowedOrigin = isProd
       //     ? process.env.FRONTEND_ORIGIN // e.g. https://app.myfrontend.com
       //     : "http://localhost:5173"; // or whatever your local port is
-      const allowedOrigin = process.env.FRONTEND_ORIGIN || 'http://localhost:5173';
+      const allowedOrigin = process.env.FRONTEND_ORIGIN || 'http://localhost:4000';
 
       if (!origin || origin === allowedOrigin) {
         cb(null, true);
@@ -63,9 +65,11 @@ async function main() {
 
   fastify.get('/', async () => ({ status: '🚀 Server is running' }));
 
-  await fastify.listen({ port: 3000 });
+  await fastify.listen({ port: 3000, host: '0.0.0.0' });
+  // eslint-disable-next-line no-console
   console.log('✅ Fastify + tRPC server running on http://localhost:3000');
-  console.log('🧩 tRPC router keys:', Object.keys(appRouter._def.procedures));
+  // eslint-disable-next-line no-console
+  console.log(`🧩 tRPC router keys: ${Object.keys(appRouter._def.procedures).join(', ')}`);
 }
 
 main();

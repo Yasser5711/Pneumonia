@@ -8,7 +8,6 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
-    AppFooter: typeof import('./components/AppFooter.vue')['default']
     ChatMessage: typeof import('./components/ChatMessage.vue')['default']
     ChatWindow: typeof import('./components/ChatWindow.vue')['default']
     ClockDisplay: typeof import('./components/ClockDisplay.vue')['default']
@@ -20,7 +19,5 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ScrollToBottomButton: typeof import('./components/ScrollToBottomButton.vue')['default']
-    Sidebar: typeof import('./components/SidebarChat.vue')['default']
-    SidebarChat: typeof import('./components/SidebarChat.vue')['default']
   }
 }

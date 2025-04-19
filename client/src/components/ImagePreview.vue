@@ -1,57 +1,51 @@
 <script setup lang="ts">
-import { XIcon } from "lucide-vue-next";
-import { ref } from "vue";
+import { XIcon } from 'lucide-vue-next'
+import { ref } from 'vue'
 
 const props = defineProps<{
-  file: File;
-  progress?: number;
-  onRemove: () => void;
-}>();
+  file: File
+  progress?: number
+  onRemove: () => void
+}>()
 
-const imageUrl = ref<string>("");
-const isLoading = ref(true);
+const imageUrl = ref<string>('')
+const isLoading = ref(true)
 
 // Create preview URL
-const reader = new FileReader();
+const reader = new FileReader()
 reader.onload = (e) => {
-  imageUrl.value = e.target?.result as string;
-  isLoading.value = false;
-};
-reader.readAsDataURL(props.file);
+  imageUrl.value = e.target?.result as string
+  isLoading.value = false
+}
+reader.readAsDataURL(props.file)
 </script>
 
 <template>
-  <div class="relative group w-24 h-24">
+  <div class="group relative h-24 w-24">
     <!-- Preview while loading -->
     <div
       v-if="isLoading"
-      class="w-full h-full rounded-lg bg-surface animate-pulse"
+      class="h-full w-full animate-pulse rounded-lg bg-surface"
     />
 
     <!-- Final image -->
-    <div
-      v-else
-      class="relative w-full h-full"
-    >
+    <div v-else class="relative h-full w-full">
       <img
         :src="imageUrl"
         :alt="file.name"
-        class="w-full h-full rounded-lg object-cover border border-white/20"
+        class="h-full w-full rounded-lg border border-white/20 object-cover"
         :class="{
-          'blur-[2px] opacity-50': progress !== undefined && progress < 100,
+          'opacity-50 blur-[2px]': progress !== undefined && progress < 100,
         }"
-      >
+      />
 
       <!-- Centered Loader Overlay -->
       <div
         v-if="progress !== undefined && progress < 100"
-        class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none"
+        class="pointer-events-none absolute inset-0 z-10 flex items-center justify-center"
       >
         <div class="flex flex-col items-center gap-1">
-          <svg
-            class="w-6 h-6 text-primary animate-spin"
-            viewBox="0 0 24 24"
-          >
+          <svg class="h-6 w-6 animate-spin text-primary" viewBox="0 0 24 24">
             <circle
               class="opacity-25"
               cx="12"
@@ -75,10 +69,10 @@ reader.readAsDataURL(props.file);
 
       <!-- Top-right Close Button (not stretching the row) -->
       <button
-        class="absolute top-1 right-1 p-1.5 rounded-full bg-surface shadow-lg  "
+        class="absolute right-1 top-1 rounded-full bg-surface p-1.5 shadow-lg"
         @click="onRemove"
       >
-        <XIcon class="w-4 h-4" />
+        <XIcon class="h-4 w-4" />
       </button>
     </div>
   </div>

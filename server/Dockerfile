@@ -1,21 +1,15 @@
 FROM node:20-slim
 
-# Enable Corepack for Yarn 4
 RUN corepack enable && yarn config set nodeLinker node-modules
 
 WORKDIR /app
 
-# Copy package files first
-COPY package.json yarn.lock ./
+COPY package.json yarn.lock .yarn .yarnrc.yml ./
+COPY server ./server
 
-# Install dependencies (including dev for tsx)
-RUN yarn install
+RUN yarn install --inline-builds
 
-# Copy the rest of the source
-COPY . .
-
-# Expose Fastify port
+WORKDIR /app/server
 EXPOSE 3000
 
-# Run dev mode using tsx (no build needed)
 CMD ["yarn", "dev"]

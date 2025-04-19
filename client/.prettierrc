@@ -1,0 +1,8 @@
+{
+  "endOfLine": "lf",
+
+  "jsonRecursiveSort": true,
+  "plugins": ["prettier-plugin-tailwindcss", "prettier-plugin-sort-json"],
+  "semi": false,
+  "singleQuote": true
+}

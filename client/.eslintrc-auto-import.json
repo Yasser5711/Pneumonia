@@ -73,6 +73,20 @@
     "useModel": true,
     "useTemplateRef": true,
     "Slot": true,
-    "Slots": true
+    "Slots": true,
+    "queryClient": true,
+    "trpc": true,
+    "PredictionResult": true,
+    "ThemeMode": true,
+    "stores": true,
+    "useAppStore": true,
+    "useChatScroll": true,
+    "useChatStore": true,
+    "useClock": true,
+    "useImagePredictor": true,
+    "useTRPC": true,
+    "useTheme": true,
+    "useThemeStore": true,
+    "useStorageStore": true
   }
 }

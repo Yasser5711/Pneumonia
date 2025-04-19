@@ -1,0 +1,15 @@
+# Ignore common clutter
+node_modules
+.yarn/cache
+*.log
+
+# Ignore builds
+dist
+build
+
+# Ignore Docker config (won’t be needed inside)
+docker
+
+# Optional: ignore env/local config files
+.env
+*.local.*

@@ -3,29 +3,29 @@ import type {
   TextMessage,
   ImageMessage,
   MessageInput,
-} from "../types/chat";
+} from '../types/chat'
 
 export function createMessage(input: MessageInput): Message {
   const base = {
     id: crypto.randomUUID(),
     timestamp: new Date(),
-    status: "sending" as const,
-  };
-
-  if (input.type === "text") {
-    return {
-      ...base,
-      ...input,
-    } satisfies TextMessage;
+    status: 'sending' as const,
   }
 
-  if (input.type === "image") {
+  if (input.type === 'text') {
     return {
       ...base,
       ...input,
-    } satisfies ImageMessage;
+    } satisfies TextMessage
+  }
+
+  if (input.type === 'image') {
+    return {
+      ...base,
+      ...input,
+    } satisfies ImageMessage
   }
 
   // If we ever add more types, this will protect us
-  throw new Error("Unsupported message type");
+  throw new Error('Unsupported message type')
 }

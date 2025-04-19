@@ -58,3 +58,4 @@ __pycache__/
 .ipynb_checkpoints/
 IA/test.py
 IA/test_request.py
+node_modules

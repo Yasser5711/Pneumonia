@@ -69,6 +69,7 @@ declare global {
   const useRoute: typeof import('vue-router/auto')['useRoute']
   const useRouter: typeof import('vue-router/auto')['useRouter']
   const useSlots: typeof import('vue')['useSlots']
+  const useStorageStore: typeof import('./stores/storageStore')['useStorageStore']
   const useTRPC: typeof import('./composables/useTRPC')['useTRPC']
   const useTemplateRef: typeof import('vue')['useTemplateRef']
   const useTheme: typeof import('./composables/useTheme')['useTheme']
@@ -156,6 +157,7 @@ declare module 'vue' {
     readonly useRoute: UnwrapRef<typeof import('vue-router/auto')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router/auto')['useRouter']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
+    readonly useStorageStore: UnwrapRef<typeof import('./stores/storageStore')['useStorageStore']>
     readonly useTRPC: UnwrapRef<typeof import('./composables/useTRPC')['useTRPC']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
     readonly useTheme: UnwrapRef<typeof import('./composables/useTheme')['useTheme']>

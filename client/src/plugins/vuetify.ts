@@ -31,10 +31,10 @@ export default {
 
     watch(
       () => themeStore.resolvedTheme,
-      val => {
+      (val) => {
         vuetify.theme.global.name.value = val
       },
-      { immediate: true }
+      { immediate: true },
     )
   },
 }

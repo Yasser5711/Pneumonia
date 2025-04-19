@@ -8,11 +8,6 @@ export default mergeConfig(
       environment: 'node',
       setupFiles: ['./test/setup.ts'],
       coverage: {
-        enabled: true,
-        provider: 'istanbul',
-        reporter: ['text', 'text-summary', 'lcov', 'json', 'json-summary'],
-        reportsDirectory: './coverage',
-        reportOnFailure: true,
         exclude: [
           'dist/',
           'eslint.config.js',

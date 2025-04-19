@@ -1,17 +1,16 @@
-// eslint.config.js
+import tsPlugin from '@typescript-eslint/eslint-plugin'; // ✅ plugin import
 import parser from '@typescript-eslint/parser';
 import eslintPluginPrettier from 'eslint-plugin-prettier';
 
 /** @type {import("eslint").Linter.FlatConfig[]} */
 export default [
   {
-    ignores: ['**/node_modules/**', '**/dist/**', 'test/test.ts',"coverage/**"],
+    ignores: ['**/node_modules/**', '**/dist/**', 'test/test.ts', 'coverage/**'],
   },
   {
     files: ['**/*.ts'],
-    // ignores: ['**/node_modules/**', '**/dist/**','./test/test.ts'],
     languageOptions: {
-      parser, // ✅ imported parser object, not a string
+      parser,
       parserOptions: {
         ecmaVersion: 'latest',
         sourceType: 'module',
@@ -19,11 +18,13 @@ export default [
     },
     plugins: {
       prettier: eslintPluginPrettier,
+      ts: tsPlugin, // ✅ register plugin with a key
     },
     rules: {
       'prettier/prettier': 'error',
       'no-unused-vars': 'warn',
-      'no-console': 'off',
+      'no-console': 'error',
+      'ts/ban-ts-comment': 'error', // ✅ use alias, not @typescript-eslint
     },
   },
 ];

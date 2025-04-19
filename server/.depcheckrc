@@ -8,6 +8,7 @@ ignores: [
     'knip',
     'tsx',
     '@vitest/coverage-v8',
-    '@vitest/coverage-istanbul'
+    '@vitest/coverage-istanbul',
+    '@typescript-eslint/eslint-plugin'
 ]
 

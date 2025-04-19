@@ -1,6 +1,6 @@
-import { useHelloQuery } from '@/queries/useHelloQuery'
-import { renderComposable } from '@/tests/renderComposable'
 import { describe, expect, it, vitest } from 'vitest'
+import { useHelloQuery } from '../queries/useHelloQuery'
+import { renderComposable } from '../tests/renderComposable'
 
 describe('useHelloQuery', () => {
   it('should not auto-fetch when enabled: false', async () => {
@@ -41,7 +41,9 @@ describe('useHelloQuery', () => {
     await vitest.waitFor(() => {
       expect(query.isError.value).toBe(true)
     })
-    expect(query.error.value).toEqual(new Error('Failed to fetch hello message'))
+    expect(query.error.value).toEqual(
+      new Error('Failed to fetch hello message'),
+    )
     app.unmount()
   })
 })

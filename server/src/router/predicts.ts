@@ -26,8 +26,6 @@ export const predictRouter = protectedProcedure
     }),
   )
   .mutation(async ({ input }) => {
-    console.log('✅ predictRouter loaded');
-
     const { imageBase64 } = input;
 
     const imageBuffer = Buffer.from(imageBase64.replace(/^data:image\/\w+;base64,/, ''), 'base64');

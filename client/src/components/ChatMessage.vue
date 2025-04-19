@@ -37,14 +37,19 @@ const formattedTime = computed(() => {
 <template>
   <div
     v-motion
-    :class="['mb-4 flex w-full', message.sender === 'user' ? 'justify-end' : 'justify-start']"
+    :class="[
+      'mb-4 flex w-full',
+      message.sender === 'user' ? 'justify-end' : 'justify-start',
+    ]"
     :initial="{ opacity: 0, y: 20 }"
     :enter="{ opacity: 1, y: 0 }"
   >
     <div
       :class="[
         'glass-panel max-w-[70%] rounded-2xl px-4 py-2',
-        message.sender === 'user' ? 'bg-primary/10 rounded-tr-sm' : 'rounded-tl-sm bg-surface',
+        message.sender === 'user'
+          ? 'bg-primary/10 rounded-tr-sm'
+          : 'rounded-tl-sm bg-surface',
         message.type === 'text' ? 'hover:scale-105' : '',
       ]"
     >

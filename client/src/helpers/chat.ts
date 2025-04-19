@@ -1,4 +1,9 @@
-import type { Message, TextMessage, ImageMessage, MessageInput } from '../types/chat'
+import type {
+  Message,
+  TextMessage,
+  ImageMessage,
+  MessageInput,
+} from '../types/chat'
 
 export function createMessage(input: MessageInput): Message {
   const base = {

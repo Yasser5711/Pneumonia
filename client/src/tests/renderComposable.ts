@@ -1,5 +1,9 @@
 import type { AppRouter } from '@server/router/_app'
-import { QueryClient, VueQueryPlugin, type VueQueryPluginOptions } from '@tanstack/vue-query'
+import {
+  QueryClient,
+  VueQueryPlugin,
+  type VueQueryPluginOptions,
+} from '@tanstack/vue-query'
 import type { TRPCClient } from '@trpc/client'
 import { createPinia } from 'pinia'
 import { type App, createApp } from 'vue'
@@ -14,7 +18,7 @@ interface RenderComposableOptions {
 
 export function renderComposable<T>(
   composable: () => T,
-  options: Partial<RenderComposableOptions> = {}
+  options: Partial<RenderComposableOptions & { useVuetify?: boolean }> = {},
 ): [T, App<Element>] {
   let result: T | undefined = undefined
 
@@ -41,7 +45,9 @@ export function renderComposable<T>(
   // app.provide('trpc', innerOptions.trpc)
   app.config.globalProperties.$trpc = innerOptions.trpc
   app.use(createPinia())
-  app.use(vuetify)
+  if (options.useVuetify) {
+    app.use(vuetify)
+  }
 
   app.mount(document.createElement('div'))
 

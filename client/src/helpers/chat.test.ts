@@ -1,6 +1,6 @@
-import { createMessage } from '@/helpers/chat'
-import type { ImageMessage, MessageInput, TextMessage } from '@/types/chat'
 import { describe, expect, it } from 'vitest'
+import { createMessage } from '../helpers/chat'
+import type { ImageMessage, MessageInput, TextMessage } from '../types/chat'
 
 describe('createMessage', () => {
   it('should create a text message with base fields', () => {

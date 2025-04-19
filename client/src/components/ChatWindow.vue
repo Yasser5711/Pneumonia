@@ -9,7 +9,9 @@ import ScrollToBottomButton from './ScrollToBottomButton.vue'
 const chatStore = useChatStore()
 
 const { showScrollButton, scrollToBottom } = useChatScroll()
-scrollToBottom(false)
+onMounted(() => {
+  scrollToBottom(false)
+})
 </script>
 
 <template>
@@ -18,7 +20,7 @@ scrollToBottom(false)
       <ClockDisplay />
     </header>
 
-    <main class="flex grow flex-col space-y-4 p-4">
+    <main class="flex grow flex-col space-y-4 overflow-y-auto p-4">
       <TransitionGroup name="message">
         <div class="flex flex-grow flex-col space-y-4">
           <ChatMessage
@@ -54,10 +56,7 @@ scrollToBottom(false)
       <MessageInput />
     </footer>
 
-    <ScrollToBottomButton
-      :show="showScrollButton"
-      :on-click="scrollToBottom"
-    />
+    <ScrollToBottomButton :show="showScrollButton" :on-click="scrollToBottom" />
   </div>
 </template>
 
@@ -71,13 +70,14 @@ scrollToBottom(false)
   width: 4px;
   height: 4px;
   border-radius: 50%;
-  background-color: currentColor;
+  background-color: currentcolor;
   animation: bounce 1.4s infinite ease-in-out;
 }
 
 .typing-indicator span:nth-child(1) {
   animation-delay: -0.32s;
 }
+
 .typing-indicator span:nth-child(2) {
   animation-delay: -0.16s;
 }
@@ -88,6 +88,7 @@ scrollToBottom(false)
   100% {
     transform: scale(0);
   }
+
   40% {
     transform: scale(1);
   }

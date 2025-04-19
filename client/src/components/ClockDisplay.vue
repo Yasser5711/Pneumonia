@@ -10,10 +10,7 @@ const { timeParts, fullDate, toggleFormat } = useClock()
     :title="fullDate"
     @click="toggleFormat"
   >
-    <span
-      v-for="part in timeParts"
-      :key="part.type"
-    >
+    <span v-for="part in timeParts" :key="part.type">
       <span
         v-if="part.type === 'literal' && part.value === ':'"
         class="inline-block animate-pulse px-0.5 group-hover:text-primary"

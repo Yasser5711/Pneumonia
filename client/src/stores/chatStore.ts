@@ -18,7 +18,7 @@ export const useChatStore = defineStore('chat', () => {
     state.value.messages.push(newMessage)
 
     setTimeout(() => {
-      const msg = state.value.messages.find(m => m.id === newMessage.id)
+      const msg = state.value.messages.find((m) => m.id === newMessage.id)
       if (msg) msg.status = 'sent'
     }, 1000)
     if (input.sender === 'user' && input.type === 'text') {

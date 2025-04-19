@@ -4,7 +4,6 @@ on:
   pull_request:
     paths:
       - "server/**"
-  workflow_dispatch:
   workflow_run:
     workflows: ["Lint Commit Messages"]
     types: [completed]

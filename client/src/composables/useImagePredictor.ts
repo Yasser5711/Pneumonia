@@ -35,9 +35,9 @@ export const useImagePredictor = () => {
     if (!imageUrl.value) return
 
     try {
-      const blob = await fetch(imageUrl.value).then(res => res.blob())
+      const blob = await fetch(imageUrl.value).then((res) => res.blob())
       const file = new File([blob], 'remote.jpg', { type: blob.type })
-      await predictFromFile(file)
+      return await predictFromFile(file)
     } catch (err) {
       console.error('Failed to fetch image from URL', err)
     }

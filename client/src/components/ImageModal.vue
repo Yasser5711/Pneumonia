@@ -43,7 +43,7 @@ const close = () => emit('update:modelValue', false)
         :src="src"
         :alt="alt"
         class="max-h-[90vh] max-w-full rounded-lg object-contain"
-      >
+      />
     </div>
   </VueFinalModal>
 </template>

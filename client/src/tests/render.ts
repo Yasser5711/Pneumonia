@@ -2,7 +2,11 @@ import motion from '@/plugins/motion'
 import vfm from '@/plugins/vfm'
 import vuetify from '@/plugins/vuetify'
 import { type QueryClientConfig, VueQueryPlugin } from '@tanstack/vue-query'
-import { type RenderOptions, type RenderResult, render as renderVue } from '@testing-library/vue'
+import {
+  type RenderOptions,
+  type RenderResult,
+  render as renderVue,
+} from '@testing-library/vue'
 import { createPinia, setActivePinia } from 'pinia'
 import { createTRPCPlugin } from '../plugins/trpc'
 import { createAppRouter } from '../router'
@@ -30,7 +34,7 @@ type InnerRenderOptions<Component> = RenderOptions<Component> & {
 
 export function render<Component>(
   component: Component,
-  renderOptions: InnerRenderOptions<Component> = {}
+  renderOptions: InnerRenderOptions<Component> = {},
 ): RenderResult & { router: ReturnType<typeof createAppRouter> } {
   const router = createAppRouter(renderOptions.baseUrl || '/')
 
@@ -47,7 +51,10 @@ export function render<Component>(
       global: {
         ...renderOptions.global,
         plugins: [
-          [VueQueryPlugin, { queryClientConfig: defaultOptions.queryClientConfig }],
+          [
+            VueQueryPlugin,
+            { queryClientConfig: defaultOptions.queryClientConfig },
+          ],
           vuetify,
           vfm,
           motion,

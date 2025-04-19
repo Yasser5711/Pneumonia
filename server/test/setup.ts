@@ -1,7 +1,7 @@
-// test/setup.ts
 import { afterAll, beforeAll, vi } from 'vitest';
 
 beforeAll(() => {
+  // eslint-disable-next-line no-console
   console.log('🧪 Test suite starting...');
   process.env.API_KEY = 'test_api_key';
   vi.mock('axios', async () => {
@@ -39,8 +39,6 @@ beforeAll(() => {
 });
 
 afterAll(() => {
+  // eslint-disable-next-line no-console
   console.log('✅ All tests done');
 });
-
-// Mock global modules here if needed
-// Example: vi.mock('axios')

@@ -1,83 +1,85 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import type { RemovableRef } from '@vueuse/core'
+import {
+  afterEach,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+  type Mock,
+} from 'vitest'
+import { ref } from 'vue'
+import { useStorageStore } from '../stores/storageStore'
 import { renderComposable } from '../tests/renderComposable'
+import type { StorageMap } from '../types/app'
 import { useClock } from './useClock'
 
-// client/src/composables/useClock.test.ts
+vi.mock('@/stores/storageStore', () => ({
+  useStorageStore: vi.fn(),
+}))
 
 describe('useClock', () => {
-  let setItemSpy: ReturnType<typeof vi.spyOn>
-  let getItemSpy: ReturnType<typeof vi.spyOn>
-  let clearIntervalSpy: ReturnType<typeof vi.spyOn>
-  let setIntervalSpy: ReturnType<typeof vi.spyOn>
-  const fakeInterval = 123
-  let nowDate: Date
+  let mockClockRef: RemovableRef<StorageMap['clock']>
 
   beforeEach(() => {
-    nowDate = new Date('2023-01-01T12:34:56')
     vi.useFakeTimers()
-    vi.setSystemTime(nowDate)
-    setItemSpy = vi.spyOn(window.localStorage.__proto__, 'setItem')
-    getItemSpy = vi.spyOn(window.localStorage.__proto__, 'getItem')
-    setIntervalSpy = vi.spyOn(window, 'setInterval').mockImplementation((cb, ms) => {
-      return fakeInterval
-    })
-    clearIntervalSpy = vi.spyOn(window, 'clearInterval')
-    getItemSpy.mockImplementation((key: string) => {
-      if (key === 'clock-format') return null
-      return null
+
+    mockClockRef = ref({
+      local: 'en-US',
+      showSeconds: true,
+      showDate: true,
+      options: {
+        hour: 'numeric',
+        minute: 'numeric',
+        hour12: false,
+        weekday: 'short',
+        year: '2-digit',
+        month: '2-digit',
+        day: '2-digit',
+        second: '2-digit',
+      },
+    }) as RemovableRef<StorageMap['clock']>
+    ;(useStorageStore as unknown as Mock).mockReturnValue({
+      getKeyFromLocalStorage: vi.fn().mockReturnValue(mockClockRef),
     })
   })
 
   afterEach(() => {
-    vi.clearAllMocks()
     vi.useRealTimers()
+    vi.resetAllMocks()
   })
 
-  it('defaults to 24h if localStorage is not set', () => {
-    const [clock] = renderComposable(() => useClock())
-    expect(clock.use12h.value).toBe(false)
-  })
+  it('initializes with formatted time and updates every second', async () => {
+    const [clock, app] = renderComposable(() => useClock(), {
+      useVuetify: false,
+    })
 
-  it('reads 12h format from localStorage', () => {
-    getItemSpy.mockImplementation((key: string) => (key === 'clock-format' ? '12' : null))
-    const [clock] = renderComposable(() => useClock())
-    expect(clock.use12h.value).toBe(true)
-  })
+    const initialParts = clock.timeParts.value.map((p) => p.type)
 
-  it('toggleFormat switches format and updates localStorage', () => {
-    const [clock] = renderComposable(() => useClock())
-    expect(clock.use12h.value).toBe(false)
-    clock.toggleFormat()
-    expect(clock.use12h.value).toBe(true)
-    expect(setItemSpy).toHaveBeenCalledWith('clock-format', '12')
-    clock.toggleFormat()
-    expect(clock.use12h.value).toBe(false)
-    expect(setItemSpy).toHaveBeenCalledWith('clock-format', '24')
-  })
+    expect(initialParts).toContain('hour')
+    expect(initialParts).toContain('minute')
+    expect(initialParts).toContain('second')
+    expect(initialParts).toContain('weekday')
+    expect(initialParts).toContain('year')
 
-  it('timeParts reflects the current time and format', () => {
-    const [clock] = renderComposable(() => useClock())
-    const parts = clock.timeParts.value
-    const hourPart = parts.find(p => p.type === 'hour')
-    expect(hourPart?.value).toBe('12')
-    clock.toggleFormat()
-    const parts12 = clock.timeParts.value
-    expect(parts12.find(p => p.type === 'hour')?.value).toBe('12')
-  })
+    const firstValue = clock.fullDate.value
 
-  it('fullDate returns the correct formatted date', () => {
-    const [clock] = renderComposable(() => useClock())
-    expect(clock.fullDate.value).toMatch(/Sunday, January 1, 2023/)
-  })
-
-  it('updates now every second and clears interval on unmount', () => {
-    let app: any
-    const [clock, _app] = renderComposable(() => useClock())
-    app = _app
-    const oldNow = clock.timeParts.value
     vi.advanceTimersByTime(1000)
-    expect(clock.timeParts.value).not.toEqual(oldNow)
+    await Promise.resolve()
+
+    const updatedValue = clock.fullDate.value
+    expect(updatedValue).not.toEqual(firstValue)
     app.unmount()
-    expect(clearIntervalSpy).toHaveBeenCalledWith(fakeInterval)
+  })
+
+  it('toggles hour12 format', () => {
+    const [clock, app] = renderComposable(() => useClock())
+
+    expect(mockClockRef.value.options.hour12).toBe(false)
+
+    clock.toggleFormat()
+
+    expect(mockClockRef.value.options.hour12).toBe(true)
+    app.unmount()
   })
 })

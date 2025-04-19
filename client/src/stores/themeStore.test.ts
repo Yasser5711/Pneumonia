@@ -1,11 +1,12 @@
-import { useThemeStore } from '@/stores/themeStore'
 import { usePreferredDark } from '@vueuse/core'
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest'
 import { nextTick, ref } from 'vue'
+import { useThemeStore } from '../stores/themeStore'
 
 vi.mock('@vueuse/core', async () => {
-  const actual = await vi.importActual<typeof import('@vueuse/core')>('@vueuse/core')
+  const actual =
+    await vi.importActual<typeof import('@vueuse/core')>('@vueuse/core')
   return {
     ...actual,
     usePreferredDark: vi.fn(),
@@ -32,7 +33,7 @@ describe('useThemeStore', () => {
 
     await nextTick()
 
-    expect(store.themeMode).toBe('auto')
+    expect(store.themeMode.mode).toBe('auto')
     expect(store.resolvedTheme).toBe('dark')
     expect(store.isDark).toBe(true)
     expect(document.documentElement.classList.contains('dark')).toBe(true)
@@ -49,14 +50,14 @@ describe('useThemeStore', () => {
     mockSystemDark(false)
     const store = useThemeStore()
 
-    store.themeMode = 'dark'
+    store.themeMode.mode = 'dark'
     await nextTick()
 
     expect(store.resolvedTheme).toBe('dark')
     expect(store.isDark).toBe(true)
     expect(document.documentElement.classList.contains('dark')).toBe(true)
 
-    store.themeMode = 'light'
+    store.themeMode.mode = 'light'
     await nextTick()
 
     expect(store.resolvedTheme).toBe('light')
@@ -68,30 +69,31 @@ describe('useThemeStore', () => {
     mockSystemDark(true)
     const store = useThemeStore()
 
-    store.themeMode = 'light'
+    store.themeMode.mode = 'light'
     store.cycleTheme()
-    expect(store.themeMode).toBe('dark')
+    expect(store.themeMode.mode).toBe('dark')
 
     store.cycleTheme()
-    expect(store.themeMode).toBe('auto')
+    expect(store.themeMode.mode).toBe('auto')
 
     store.cycleTheme()
-    expect(store.themeMode).toBe('light')
+    expect(store.themeMode.mode).toBe('light')
   })
 
   it('should persist themeMode using localStorage', async () => {
     mockSystemDark(false)
     const store = useThemeStore()
 
-    store.themeMode = 'dark'
+    store.themeMode.mode = 'dark'
     await nextTick()
 
-    const saved = localStorage.getItem('theme-mode')
-    expect(saved).toBe('dark')
+    const saved = localStorage.getItem('theme')
+    expect(saved).toBe('{"mode":"dark"}')
+    expect(store.themeMode.mode).toBe('dark')
 
     setActivePinia(createPinia())
     const newStore = useThemeStore()
 
-    expect(newStore.themeMode).toBe('dark')
+    expect(newStore.themeMode.mode).toBe('dark')
   })
 })

@@ -86,6 +86,7 @@
     "useImagePredictor": true,
     "useTRPC": true,
     "useTheme": true,
-    "useThemeStore": true
+    "useThemeStore": true,
+    "useStorageStore": true
   }
 }

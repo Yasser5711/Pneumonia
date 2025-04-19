@@ -1,0 +1,14 @@
+ignores: [
+  'autoprefixer',
+  'postcss',
+  'postcss-html',
+  'postcss-scss',
+  'tailwindcss',
+  'vite-plugin-pwa',
+  '@server/*',
+  'virtual:generated-layouts',
+  'prettier-plugin-tailwindcss',
+  'stylelint-config-*',
+  'core-js',
+  'prettier-plugin-sort-json',
+]

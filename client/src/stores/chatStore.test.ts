@@ -1,8 +1,8 @@
-import { useChatStore } from '@/stores/chatStore'
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { useChatStore } from '../stores/chatStore'
 
-import type { ImageMessage, MessageInput, TextMessage } from '@/types/chat'
+import type { ImageMessage, MessageInput, TextMessage } from '../types/chat'
 
 describe('useChatStore', () => {
   beforeEach(() => {
@@ -93,7 +93,7 @@ describe('useChatStore', () => {
 
     vi.advanceTimersByTime(1000)
 
-    const updated = store.messages.find(m => m.id === addedMessage.id)
+    const updated = store.messages.find((m) => m.id === addedMessage.id)
     expect(updated?.status).toBe('sent')
   })
 })

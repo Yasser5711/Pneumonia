@@ -34,7 +34,7 @@ const handleLoad = () => {
       class="max-h-[300px] max-w-full rounded-lg object-contain transition-all duration-300 md:group-hover:scale-105 md:group-hover:blur-sm"
       :class="{ 'opacity-0': !isLoaded }"
       @load="handleLoad"
-    >
+    />
 
     <div
       class="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity duration-300 md:group-hover:opacity-100"

@@ -5,7 +5,11 @@ export default defineConfig({
     globals: true,
     // environment: "jsdom",
     coverage: {
-      reporter: ["text", "html"],
+      enabled: true,
+      provider: "istanbul",
+      reporter: ["text", "text-summary", "lcov", "json", "json-summary"],
+      reportsDirectory: "./coverage",
+      reportOnFailure: true,
     },
   },
 });

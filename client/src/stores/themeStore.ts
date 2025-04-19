@@ -7,7 +7,9 @@ export type ThemeMode = 'light' | 'dark' | 'auto'
 export const useThemeStore = defineStore('theme', () => {
   const storageStore = useStorageStore()
   const systemPrefersDark = usePreferredDark() // reactive system theme
-  const themeMode = storageStore.getKeyFromLocalStorage('theme', { mode: 'auto' })
+  const themeMode = storageStore.getKeyFromLocalStorage('theme', {
+    mode: 'auto',
+  })
   const isDark = ref<boolean>(false)
 
   // Computed actual theme in use
@@ -26,17 +28,21 @@ export const useThemeStore = defineStore('theme', () => {
   // Watch for resolved theme changes
   watch(
     resolvedTheme,
-    val => {
+    (val) => {
       isDark.value = val === 'dark'
       applyTheme()
     },
-    { immediate: true }
+    { immediate: true },
   )
 
   // Manual toggle (light ↔ dark ↔ auto)
   const cycleTheme = () => {
     themeMode.value.mode =
-      themeMode.value.mode === 'light' ? 'dark' : themeMode.value.mode === 'dark' ? 'auto' : 'light'
+      themeMode.value.mode === 'light'
+        ? 'dark'
+        : themeMode.value.mode === 'dark'
+          ? 'auto'
+          : 'light'
   }
 
   return {

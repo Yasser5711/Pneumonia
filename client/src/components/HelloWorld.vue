@@ -1,12 +1,16 @@
 <script setup lang="ts">
-import { useImagePredictor, type PredictionResult } from '@/composables/useImagePredictor'
+import {
+  useImagePredictor,
+  type PredictionResult,
+} from '@/composables/useImagePredictor'
 import { useHelloQuery } from '@/queries/useHelloQuery'
 import { ref } from 'vue'
 
 const showHelloResult = ref(false)
 const showResult = ref(false)
 const data = ref(<PredictionResult | null>null)
-const { imageUrl, predictFromFile, predictFromUrl, isPending, error } = useImagePredictor()
+const { imageUrl, predictFromFile, predictFromUrl, isPending, error } =
+  useImagePredictor()
 const handleUpload = async (file: File | File[]) => {
   try {
     const prediction = await predictFromFile(file)
@@ -16,6 +20,7 @@ const handleUpload = async (file: File | File[]) => {
     console.error('Error during prediction:', error)
   }
 }
+
 const {
   data: helloData,
   isLoading: isHelloLoading,
@@ -28,7 +33,9 @@ const {
   <v-container class="pa-4">
     <!-- Hello Query -->
     <v-card class="pa-4 mb-6" elevation="2">
-      <v-card-title class="text-h6"> 👋 Hello from tRPC + Vuetify </v-card-title>
+      <v-card-title class="text-h6">
+        👋 Hello from tRPC + Vuetify
+      </v-card-title>
       <v-card-text>
         <v-btn
           color="secondary"
@@ -43,7 +50,12 @@ const {
           ⏳ Fetching hello...
         </v-alert>
 
-        <v-alert v-else-if="isHelloError" type="error" class="mt-4" border="start">
+        <v-alert
+          v-else-if="isHelloError"
+          type="error"
+          class="mt-4"
+          border="start"
+        >
           ❌ Something went wrong while fetching the hello query.
         </v-alert>
 
@@ -93,14 +105,24 @@ const {
           ⏳ Predicting...
         </v-alert>
 
-        <v-alert v-else-if="showResult && data" type="success" class="mt-4" border="start">
+        <v-alert
+          v-else-if="showResult && data"
+          type="success"
+          class="mt-4"
+          border="start"
+        >
           🩺 Prediction: <strong>{{ data?.label }}</strong
           ><br />
           📊 Confidence:
           <strong>{{ (data.probability_pneumonia * 100).toFixed(2) }}%</strong>
         </v-alert>
 
-        <v-alert v-else-if="showResult && error" type="error" class="mt-4" border="start">
+        <v-alert
+          v-else-if="showResult && error"
+          type="error"
+          class="mt-4"
+          border="start"
+        >
           ❌ Error: {{ error.message }}
         </v-alert>
       </v-card-text>

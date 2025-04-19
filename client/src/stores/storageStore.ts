@@ -6,13 +6,17 @@ export const useStorageStore = defineStore('app', () => {
 
   function getKeyFromLocalStorage<K extends StorageKeys>(
     key: K,
-    defaultValue: StorageMap[K]
+    defaultValue: StorageMap[K],
   ): RemovableRef<StorageMap[K]> {
     if (storageCache.has(key)) {
       return storageCache.get(key)
     }
 
-    const storageRef = useStorage<StorageMap[K]>(key, defaultValue, localStorage)
+    const storageRef = useStorage<StorageMap[K]>(
+      key,
+      defaultValue,
+      localStorage,
+    )
     storageCache.set(key, storageRef)
     return storageRef
   }

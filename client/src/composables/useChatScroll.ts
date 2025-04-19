@@ -5,9 +5,9 @@ export const useChatScroll = () => {
   const isAtBottom = ref(true)
 
   const checkScroll = () => {
-    const scrollTop = window.scrollY
-    const scrollHeight = document.documentElement.scrollHeight
-    const clientHeight = window.innerHeight
+    const scrollTop = window.scrollY //1100
+    const scrollHeight = document.documentElement.scrollHeight //2000
+    const clientHeight = window.innerHeight //800
     const scrollPosition = scrollHeight - scrollTop - clientHeight
 
     isAtBottom.value = scrollPosition < 100

@@ -75,7 +75,7 @@ const sendMessage = () => {
       }
     }
 
-    reader.onload = async e => {
+    reader.onload = async (e) => {
       const base64 = e.target?.result as string
 
       // push user image into chat
@@ -89,7 +89,9 @@ const sendMessage = () => {
       try {
         chatStore.setTyping(true)
         const prediction = await predictFromFile(file)
-
+        if (!prediction) {
+          throw new Error('No prediction received')
+        }
         chatStore.addMessage({
           type: 'text',
           content: `🩺 I've analyzed the image, and it appears to show **${prediction.label}**, with a confidence of **${(prediction.probability_pneumonia * 100).toFixed(2)}%**.`,
@@ -134,9 +136,6 @@ onMounted(() => {
 
 onUnmounted(() => {
   document.removeEventListener('paste', handlePaste)
-})
-watch(uploadProgress, newValue => {
-  console.log('Upload progress:', newValue)
 })
 </script>
 
@@ -263,6 +262,7 @@ watch(uploadProgress, newValue => {
   100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-3px);
   }

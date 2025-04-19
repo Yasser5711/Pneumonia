@@ -1,6 +1,6 @@
-import { usePredictPneumonia } from '@/queries/usePredictPneumonia'
-import { renderComposable } from '@/tests/renderComposable'
 import { describe, expect, it } from 'vitest'
+import { renderComposable } from '../tests/renderComposable'
+import { usePredictPneumonia } from './usePredictPneumonia'
 
 describe('usePredictPneumonia', () => {
   it('should successfully mutate and return prediction result', async () => {

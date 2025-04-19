@@ -10,7 +10,8 @@ describe('🧪 API key auth', () => {
   });
 
   it('passes with valid key', async () => {
-    const caller = createTestCaller('test_api_key');
+    const caller = createTestCaller();
+    // eslint-disable-next-line no-console
     console.log(await caller.predictPneumonia({ imageBase64: 'data:image/png;base64,A==' }));
     await expect(
       caller.predictPneumonia({ imageBase64: 'data:image/png;base64,A==' }),

@@ -13,6 +13,7 @@ beforeAll(() => {
   // eslint-disable-next-line no-console
   console.log('🧪 Test suite starting...');
   process.env.API_KEY = 'test_api_key';
+  process.env.CNN_PREDICT_URL = 'http://localhost:8000/predict';
   vi.mock('axios', async () => {
     return {
       default: {

@@ -1,0 +1,72 @@
+name: Deploy Client to Netlify
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+    secrets:
+      NETLIFY_AUTH_TOKEN:
+        required: true
+      NETLIFY_STAGING_SITE_ID:
+        required: true
+permissions:
+  contents: read
+  pull-requests: write
+  deployments: write
+  statuses: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ inputs.environment }}
+      url: ${{ inputs.environment == 'production' && 'https://penumoniacnn.netlify.app/' || 'https://staging-penumoniacnn.netlify.app/' }}
+    defaults:
+      run:
+        working-directory: client
+
+    steps:
+      # - name: Log deploy commit
+      #   run: "echo Deploying SHA: ${{ inputs.ref }}"
+
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Setup Yarn
+        uses: ./.github/actions/setup-yarn
+        with:
+          working-directory: client
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Build Client
+        run: yarn build
+
+      - name: Deploy to Netlify (${{ inputs.environment }})
+        uses: nwtgck/actions-netlify@v3.0
+        with:
+          publish-dir: "client/dist"
+          production-branch: master
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          deploy-message: "Deploy to ${{ inputs.environment }} from GitHub Actions"
+          enable-pull-request-comment: false
+          enable-commit-comment: false
+          overwrites-pull-request-comment: true
+          netlify-config-path: "./netlify.toml"
+          production-deploy: true
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_STAGING_SITE_ID }}

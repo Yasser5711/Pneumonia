@@ -1,0 +1,63 @@
+name: 🚀 Deploy Client to Production
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Git ref to deploy"
+        required: true
+        default: main
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+  deployments: write
+  statuses: write
+
+jobs:
+  verify-and-deploy:
+    name: 🔎 Run Client CI + Deploy
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://penumoniacnn.netlify.app/
+    defaults:
+      run:
+        working-directory: client
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Setup Yarn
+        uses: ./.github/actions/setup-yarn
+        with:
+          working-directory: client
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: 🛡️ Lint & Type Check
+        run: yarn check:all
+
+      - name: 🧪 Tests
+        run: yarn check:test
+
+      - name: 🚀 Deploy to Netlify (Production)
+        uses: nwtgck/actions-netlify@v3.0
+        with:
+          publish-dir: "client/dist"
+          production-branch: master
+          deploy-message: "Manual production deploy from GitHub Actions"
+          enable-pull-request-comment: false
+          enable-commit-comment: false
+          production-deploy: true
+          netlify-config-path: "./netlify.toml"
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_PRODUCTION_SITE_ID }}

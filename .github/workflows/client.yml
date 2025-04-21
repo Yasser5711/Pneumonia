@@ -8,6 +8,8 @@ on:
 permissions:
   contents: read
   pull-requests: write
+  deployments: write
+  statuses: write
 
 jobs:
   lint:
@@ -138,3 +140,14 @@ jobs:
         with:
           working-directory: client
           name: Client Coverage Report
+  deploy-to-staging:
+    name: 🚀 Deploy to Staging
+    needs: [test, pwa]
+    if: ${{ success() && github.event_name == 'pull_request' }}
+    uses: ./.github/workflows/deploy-client-staging.yml
+    with:
+      ref: ${{ github.event.pull_request.head.sha }}
+      environment: staging
+    secrets:
+      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      NETLIFY_STAGING_SITE_ID: ${{ secrets.NETLIFY_STAGING_SITE_ID }}

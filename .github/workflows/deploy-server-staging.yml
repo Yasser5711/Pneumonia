@@ -1,0 +1,98 @@
+name: Deploy Server to Render (Staging)
+
+on:
+  workflow_call:
+    inputs:
+      ref:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+    secrets:
+      DOCKER_USERNAME:
+        required: true
+      DOCKER_PASSWORD:
+        required: true
+      RENDER_DEPLOY_HOOK:
+        required: true
+      SERVER_STAGING_URL:
+        required: true
+permissions:
+  contents: read
+  pull-requests: write
+  deployments: write
+  statuses: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    # defaults:
+    #   run:
+    #     working-directory: server
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Create GitHub Deployment (start backend)
+        id: server_deployment_start
+        uses: bobheadxi/deployments@v1
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: "staging"
+          desc: "Deploying backend to Render staging server"
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Enable BuildKit
+        run: echo "DOCKER_BUILDKIT=1" >> $GITHUB_ENV
+
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/pneumoniacnn-staging:${{ github.sha }} -f server/Dockerfile .
+      - name: Push Docker image
+        run: |
+          echo "Pushing Docker image to Docker Hub..."
+          docker tag ${{ secrets.DOCKER_USERNAME }}/pneumoniacnn-staging:${{ github.sha }} ${{ secrets.DOCKER_USERNAME }}/pneumoniacnn-staging:latest
+          docker push ${{ secrets.DOCKER_USERNAME }}/pneumoniacnn-staging:latest
+
+      - name: Deploy to Render (Staging)
+        run: |
+          echo "Deploying to Render at: ${{ secrets.RENDER_DEPLOY_HOOK }}"
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
+      - name: Finish GitHub Deployment (success backend)
+        if: success()
+        uses: bobheadxi/deployments@v1
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: "staging"
+          status: "success"
+          deployment_id: ${{ steps.server_deployment_start.outputs.deployment_id }}
+          env_url: https://your-staging-backend-url.onrender.com
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Finish GitHub Deployment (failure backend)
+        if: failure()
+        uses: bobheadxi/deployments@v1
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: "staging"
+          status: "failure"
+          deployment_id: ${{ steps.server_deployment_start.outputs.deployment_id }}
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Comment Backend Deploy URL on PR
+        if: success()
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          header: deploy-preview-server
+          message: |
+            🖥️ **Backend Staging Deploy**
+
+            - 🖥️ **Backend (Render)**: [View Staging Server](${{ secrets.SERVER_STAGING_URL }}) (⚡ might take ~1 min to deploy)

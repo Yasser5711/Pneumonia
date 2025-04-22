@@ -8,7 +8,8 @@ on:
 permissions:
   contents: read
   pull-requests: write
-
+  deployments: write
+  statuses: write
 jobs:
   # install:
   #   name: 📦 Install Dependencies
@@ -145,3 +146,17 @@ jobs:
           json-final-path: server/coverage/coverage-final.json
           vite-config-path: server/vitest.config.ts
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy-to-staging:
+    name: 🚀 Deploy to Staging
+    # needs: test
+    if: ${{ github.event_name == 'pull_request' && success() }}
+    uses: ./.github/workflows/deploy-server-staging.yml
+    with:
+      ref: ${{ github.event.pull_request.head.sha }}
+      environment: staging
+    secrets:
+      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_STAGING }}
+      SERVER_STAGING_URL: ${{ secrets.SERVER_STAGING_URL }}

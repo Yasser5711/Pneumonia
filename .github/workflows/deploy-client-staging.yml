@@ -14,6 +14,10 @@ on:
         required: true
       NETLIFY_STAGING_SITE_ID:
         required: true
+      VITE_API_URL:
+        required: true
+      VITE_API_KEY:
+        required: true
 permissions:
   contents: read
   pull-requests: write
@@ -25,15 +29,11 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: ${{ inputs.environment }}
-      url: ${{ inputs.environment == 'production' && 'https://penumoniacnn.netlify.app/' || 'https://staging-penumoniacnn.netlify.app/' }}
     defaults:
       run:
         working-directory: client
 
     steps:
-      # - name: Log deploy commit
-      #   run: "echo Deploying SHA: ${{ inputs.ref }}"
-
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
@@ -51,22 +51,73 @@ jobs:
 
       - name: Install Dependencies
         run: yarn install
-
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
       - name: Build Client
         run: yarn build
+        env:
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
+          VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
 
-      - name: Deploy to Netlify (${{ inputs.environment }})
+      - name: Create GitHub Deployment
+        id: client_deployment_start
+        uses: bobheadxi/deployments@v1
+        with:
+          step: start
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: "staging"
+          desc: "Deploying Netlify preview for PR"
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v3.0
+        id: netlify-deploy
         with:
           publish-dir: "client/dist"
-          production-branch: master
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: "Deploy to ${{ inputs.environment }} from GitHub Actions"
-          enable-pull-request-comment: false
+          deploy-message: "Deploy from GitHub Actions"
+          enable-github-deployment: false
+          enable-commit-status: false
           enable-commit-comment: false
+          enable-pull-request-comment: true
           overwrites-pull-request-comment: true
+          alias: deploy-preview-${{ github.event.number }}
           netlify-config-path: "./netlify.toml"
-          production-deploy: true
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_STAGING_SITE_ID }}
+
+      - name: Finish GitHub Deployment
+        if: success()
+        uses: bobheadxi/deployments@v1
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: "staging"
+          status: "success"
+          deployment_id: ${{ steps.client_deployment_start.outputs.deployment_id }}
+          env_url: ${{ steps.netlify-deploy.outputs.deploy-url }}
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Finish GitHub Deployment (failure)
+        if: failure()
+        uses: bobheadxi/deployments@v1
+        with:
+          step: finish
+          token: ${{ secrets.GITHUB_TOKEN }}
+          env: "staging"
+          status: "failure"
+          deployment_id: ${{ steps.client_deployment_start.outputs.deployment_id }}
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Comment Frontend Deploy URL on PR
+        if: success()
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          header: deploy-preview-client
+          message: |
+            🚀 **Frontend Deploy Preview**
+
+            - 🌍 **Frontend (Netlify)**: [View Preview](${{ steps.netlify-deploy.outputs.deploy-url }})

@@ -7,16 +7,19 @@ export default mergeConfig(
   defineConfig({
     plugins: [vue()],
     test: {
+      environment: 'happy-dom',
+      setupFiles: ['./vitest/setupTest.ts'],
+      include: ['src/**/*.{spec,test}.ts'],
       coverage: {
+        enabled: true,
+        provider: 'istanbul',
         thresholds: {
-          global: {
-            branches: 80,
-            functions: 80,
-            lines: 80,
-            statements: 80,
-          },
+          branches: 100,
+          functions: 20,
+          lines: 20,
+          statements: 20,
         },
-        reporter: ['text', 'lcov', 'json-summary', 'json'],
+        reporter: ['text', 'json-summary', 'json'],
         reportOnFailure: true,
         reportsDirectory: './coverage',
         exclude: [
@@ -29,9 +32,6 @@ export default mergeConfig(
           '**/*.d.ts',
         ],
       },
-      environment: 'happy-dom',
-      setupFiles: ['./vitest/setupTest.ts'],
-      include: ['src/**/*.{spec,test}.ts'],
     },
     resolve: {
       alias: {

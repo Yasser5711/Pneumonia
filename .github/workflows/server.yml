@@ -149,7 +149,7 @@ jobs:
 
   deploy-to-staging:
     name: 🚀 Deploy to Staging
-    # needs: test
+    needs: test
     if: ${{ github.event_name == 'pull_request' && success() }}
     uses: ./.github/workflows/deploy-server-staging.yml
     with:

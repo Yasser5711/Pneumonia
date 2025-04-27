@@ -13,9 +13,6 @@ const t = initTRPC.context<Context>().create();
 export const router = t.router;
 export const publicProcedure = t.procedure;
 
-// eslint-disable-next-line no-unused-vars
-const isProd = process.env.NODE_ENV === 'production';
-
 const requireAuth = t.middleware(({ ctx, next }) => {
   const expectedApiKey = process.env.API_KEY || 'my-secret-api-key';
   if (!ctx.apiKey || ctx.apiKey !== expectedApiKey) {

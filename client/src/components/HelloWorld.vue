@@ -20,8 +20,6 @@ const handleUpload = async (file: File | File[]) => {
     console.error('Error during prediction:', error)
   }
 }
-// eslint-disable-next-line no-console
-console.log(import.meta.env)
 const {
   data: helloData,
   isLoading: isHelloLoading,

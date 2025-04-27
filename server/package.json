@@ -16,7 +16,7 @@
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:ui": "vitest --ui",
-    "check:test": "vitest run --silent --coverage && echo 🧪✅ Tests passed! || echo '❌ Fix the above issues before committing 💡'",
+    "check:test": "vitest run --silent --coverage && echo 🧪✅ Tests passed! || (echo '❌ Fix the above issues before committing 💡' && exit 1)",
     "check:all": "yarn check:lint && yarn check:types && yarn check:knip && yarn check:dep && yarn check:prune && echo 🧰✨ All checks passed! || echo '❌ Fix the above issues before committing 💡'"
   },
   "type": "module",

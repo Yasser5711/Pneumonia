@@ -16,7 +16,7 @@
     "check:types": "vue-tsc --noEmit && echo 🧠✅ Type check passed!",
     "check:build": "vite build && echo 🏗️✅ Build passed!",
     "check:pwa": "vite build && echo ⚙️✅ PWA build passed!",
-    "check:test": "vitest run --coverage && echo 🧪✅ Tests passed! || echo '❌ Fix the above issues before committing 💡'",
+    "check:test": "vitest run --coverage && echo 🧪✅ Tests passed! || (echo '❌ Fix the above issues before committing 💡' && exit 1)",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:ui": "vitest --ui",

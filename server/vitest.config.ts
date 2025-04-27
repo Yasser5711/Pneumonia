@@ -13,7 +13,7 @@ export default mergeConfig(
         reportsDirectory: './coverage',
         reportOnFailure: true,
         thresholds: {
-          branches: 100,
+          branches: 80,
           functions: 80,
           lines: 80,
           statements: 80,

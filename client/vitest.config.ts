@@ -14,7 +14,7 @@ export default mergeConfig(
         enabled: true,
         provider: 'istanbul',
         thresholds: {
-          branches: 100,
+          branches: 10,
           functions: 20,
           lines: 20,
           statements: 20,

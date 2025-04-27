@@ -10,6 +10,9 @@ permissions:
   pull-requests: write
   deployments: write
   statuses: write
+concurrency:
+  group: backend-ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 jobs:
   # install:
   #   name: 📦 Install Dependencies

@@ -6,6 +6,9 @@ permissions:
   contents: read
   pull-requests: read
 
+concurrency:
+  group: commitlint-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
 jobs:
   commitlint:
     name: ✅ Lint Commit Messages

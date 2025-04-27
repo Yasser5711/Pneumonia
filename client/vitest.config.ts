@@ -26,7 +26,6 @@ export default mergeConfig(
           'dist/',
           'eslint.config.js',
           'vite.config.ts',
-          '**/index.ts',
           'vitest/',
           'tests/',
           '**/*.d.ts',

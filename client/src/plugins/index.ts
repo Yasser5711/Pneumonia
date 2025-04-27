@@ -16,7 +16,7 @@ import vuetify from './vuetify'
 import type { App } from 'vue'
 const trpcPlugin = createTRPCPlugin({
   apiKey: import.meta.env.VITE_API_KEY,
-  url: `${import.meta.env.VITE_API_URL ?? 'http://localhost:3000'}/trpc`,
+  url: `${import.meta.env.VITE_API_URL}/trpc`,
 })
 export function registerPlugins(app: App) {
   // Install plugins

@@ -8,7 +8,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=${NODE_ENV:-production}
       - API_KEY=${API_KEY}
       - FRONTEND_ORIGIN=${FRONTEND_ORIGIN}
       - CNN_PREDICT_URL=${CNN_PREDICT_URL}
@@ -20,7 +20,6 @@ services:
       - ../../.yarnrc.yml:/app/.yarnrc.yml
       - /app/node_modules
 
-    command: yarn dev # ✅ override CMD
     restart: always
     networks:
       - app_network

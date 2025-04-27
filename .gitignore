@@ -59,3 +59,4 @@ __pycache__/
 IA/test.py
 IA/test_request.py
 node_modules
+**/.wireit

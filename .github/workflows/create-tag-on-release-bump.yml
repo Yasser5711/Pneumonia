@@ -1,0 +1,65 @@
+name: 🏷️ Tag and Create Release After Version Bump
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "package.json"
+      - "package-lock.json"
+      - "yarn.lock"
+permissions:
+  contents: write
+
+jobs:
+  create-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🧰 Setup Yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: 📖 Read New Version
+        id: new_version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: 📋 Generate Changelog from Commits
+        id: changelog
+        run: |
+          LOG=$(git log $(git describe --tags --abbrev=0)..HEAD --pretty=format:"- %s")
+          echo "log<<EOF" >> $GITHUB_OUTPUT
+          echo "$LOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: 🏷️ Create Git Tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git tag v${{ steps.new_version.outputs.version }}
+          git push origin v${{ steps.new_version.outputs.version }}
+
+      - name: 🚀 Create GitHub Release with Beautiful Changelog
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.new_version.outputs.version }}
+          name: Release v${{ steps.new_version.outputs.version }}
+          body: |
+            🎉 **New Production Release!**
+
+            🔖 **Version**: v${{ steps.new_version.outputs.version }}
+
+            ## 🚀 What's New
+            ${{ steps.changelog.outputs.log }}
+
+            ---
+            _Auto-generated after merging release bump PR._
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

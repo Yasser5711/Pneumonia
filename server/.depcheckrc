@@ -9,6 +9,7 @@ ignores: [
     'tsx',
     '@vitest/coverage-v8',
     '@vitest/coverage-istanbul',
-    '@typescript-eslint/eslint-plugin'
+    '@typescript-eslint/eslint-plugin',
+    'wireit'
 ]
 

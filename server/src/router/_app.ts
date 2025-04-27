@@ -8,5 +8,7 @@ export const appRouter = router({
 });
 
 export type AppRouter = typeof appRouter;
+// ts-prune-ignore-next
 export type RouterInputs = inferRouterInputs<AppRouter>;
+// ts-prune-ignore-next
 export type RouterOutputs = inferRouterOutputs<AppRouter>;

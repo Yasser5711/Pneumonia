@@ -1,19 +1,25 @@
 {
-  "extends": "@vue/tsconfig/tsconfig.dom.json",
-  "include": ["env.d.ts", "src/**/*", "src/**/*.vue", "../server/src/router/_app.ts",
-  "../server/src/router/helloworld.ts",
-  "../server/src/router/predicts.ts",
-  "../server/src/trpc.ts",
-  "../server/src/logger.ts", "src/types/vue.d.ts"],
-  "exclude": ["src/**/__tests__/*"],
   "compilerOptions": {
-    "composite": true,
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
-
     "baseUrl": ".",
+    "composite": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@server/*": ["../server/src/*"],
-    }
-  }
+      "@server/*": ["../server/src/*"]
+    },
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo"
+  },
+  "exclude": ["src/**/__tests__/*"],
+  "extends": "@vue/tsconfig/tsconfig.dom.json",
+  "include": [
+    "env.d.ts",
+    "src/**/*",
+    "src/**/*.vue",
+    "../server/src/router/_app.ts",
+    "../server/src/router/helloworld.ts",
+    "../server/src/router/predicts.ts",
+    "../server/src/trpc.ts",
+    "../server/src/env.ts",
+    "../server/src/logger.ts",
+    "src/types/vue.d.ts"
+  ]
 }

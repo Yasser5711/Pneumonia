@@ -18,6 +18,10 @@ export function createAppRouter(baseUrl: string = import.meta.env.BASE_URL) {
         path: '/',
         component: () => import('@/pages/IndexPage.vue'),
       },
+      {
+        path: '/:pathMatch(.*)*',
+        redirect: '/',
+      },
     ]),
   })
 

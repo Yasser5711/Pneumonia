@@ -1,14 +1,14 @@
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
-import * as dotenv from 'dotenv';
+import { env } from './env';
+
 import Fastify from 'fastify';
 import { setLogger } from './logger';
 import { appRouter } from './router/_app';
 import { createContext } from './trpc';
 
-const isDev = process.env.NODE_ENV !== 'production';
-dotenv.config();
+const isDev = env.NODE_ENV !== 'production';
 
 const fastify = Fastify({
   logger: isDev
@@ -35,7 +35,7 @@ async function main() {
         cb(null, true);
         return;
       }
-      const allowedOrigin = process.env.FRONTEND_ORIGIN || 'http://localhost:3000';
+      const allowedOrigin = env.FRONTEND_ORIGIN || 'http://localhost:3000';
 
       if (!origin || origin === allowedOrigin) {
         cb(null, true);

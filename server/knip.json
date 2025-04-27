@@ -5,12 +5,11 @@
     "nodemon",
     "tsx",
     "tsc",
-    "eslint",
     "prettier",
-    "knip",
     "depcheck",
     "ts-prune",
-    "vitest"
+    "vitest",
+    "wireit"
   ],
   "ignoreDependencies": [
     "@types/ws",
@@ -23,8 +22,6 @@
     "zod",
     "@vitest/ui",
     "depcheck",
-    "eslint-config-prettier",
-    "prettier",
     "ts-prune",
     "tsx",
     "nodemon"

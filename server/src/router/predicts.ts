@@ -3,6 +3,8 @@ import * as dotenv from 'dotenv';
 import sharp from 'sharp';
 import { z } from 'zod';
 import { protectedProcedure } from '../trpc';
+
+import { env } from '../env';
 dotenv.config();
 export const predictRouter = protectedProcedure
   .input(
@@ -27,7 +29,7 @@ export const predictRouter = protectedProcedure
     }),
   )
   .mutation(async ({ input }) => {
-    const PREDICT_URL = process.env.CNN_PREDICT_URL;
+    const PREDICT_URL = env.CNN_PREDICT_URL;
     if (!PREDICT_URL) throw new Error('CNN_PREDICT_URL is not set');
     const { imageBase64 } = input;
 

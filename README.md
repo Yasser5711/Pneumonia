@@ -29,6 +29,10 @@ docker-compose --profile front --profile back --env-file .env up -d
 - 🌓 Light/Dark theme toggle
 - 📊 Code quality checks & CI
 
+## Secrets and Actions
+
+- Please refer to [`workflows/SECRETS.md`](./workflows/SECRETS.md) for GitHub Action secrets documentation.
+
 ## 🧑‍💻 Contributing
 
 Please read [CONTRIBUTING.md](./CONTRIBUTING.md) before creating commits or Pull Requests.

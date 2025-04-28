@@ -1,6 +1,7 @@
 name: 🏷️ Tag and Create Release After Version Bump
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
@@ -27,16 +28,21 @@ jobs:
       - name: 📖 Read New Version
         id: new_version
         run: |
-          VERSION=$(node -p "require('./package.json').version")
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          VERSION=$(node -p "require('./server/package.json').version")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: 📋 Generate Changelog from Commits
         id: changelog
         run: |
-          LOG=$(git log $(git describe --tags --abbrev=0)..HEAD --pretty=format:"- %s")
-          echo "log<<EOF" >> $GITHUB_OUTPUT
-          echo "$LOG" >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          LAST_TAG=$(git describe --tags --abbrev=0 || echo "")
+          if [ -z "$LAST_TAG" ]; then
+            LOG=$(git log --pretty=format:"- %s")
+          else
+            LOG=$(git log $LAST_TAG..HEAD --pretty=format:"- %s")
+          fi
+          echo "log<<EOF" >> "$GITHUB_OUTPUT"
+          echo "$LOG" >> "$GITHUB_OUTPUT"
+          echo "EOF" >> "$GITHUB_OUTPUT"
 
       - name: 🏷️ Create Git Tag
         run: |

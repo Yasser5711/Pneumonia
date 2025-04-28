@@ -2,13 +2,13 @@ name: 🏷️ Tag and Create Release After Version Bump
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - master
-    paths:
-      - "package.json"
-      - "package-lock.json"
-      - "yarn.lock"
+  # push:
+  #   branches:
+  #     - master
+  # paths:
+  #   - "package.json"
+  #   - "package-lock.json"
+  #   - "yarn.lock"
 permissions:
   contents: write
 

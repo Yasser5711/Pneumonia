@@ -15,10 +15,8 @@ services:
       - ../../.yarnrc.yml:/app/.yarnrc.yml
       - /app/node_modules
 
-    command: yarn dev
     environment:
       - HOST=0.0.0.0
-      - VITE_API_KEY=${VITE_API_KEY}
     profiles:
       - front
     networks:

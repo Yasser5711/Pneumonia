@@ -1,4 +1,5 @@
-import { afterAll, beforeAll, vi } from 'vitest';
+import { afterAll, afterEach, beforeAll, vi } from 'vitest';
+
 import { setLogger } from '../src/logger';
 beforeAll(() => {
   setLogger({
@@ -10,10 +11,16 @@ beforeAll(() => {
     trace: vi.fn(),
     child: () => ({}),
   } as any);
+
+  vi.mock('../src/env', () => ({
+    env: {
+      NODE_ENV: 'test',
+      API_KEY: 'test_api_key',
+      CNN_PREDICT_URL: 'http://localhost:8000/predict',
+    },
+  }));
   // eslint-disable-next-line no-console
   console.log('🧪 Test suite starting...');
-  process.env.API_KEY = 'test_api_key';
-  process.env.CNN_PREDICT_URL = 'http://localhost:8000/predict';
   vi.mock('axios', async () => {
     return {
       default: {
@@ -49,7 +56,10 @@ beforeAll(() => {
     };
   });
 });
-
+afterEach(() => {
+  vi.clearAllMocks();
+  vi.restoreAllMocks();
+});
 afterAll(() => {
   // eslint-disable-next-line no-console
   console.log('✅ All tests done');

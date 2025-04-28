@@ -1,15 +1,14 @@
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
-import * as dotenv from 'dotenv';
+import { env } from './env';
+
 import Fastify from 'fastify';
 import { setLogger } from './logger';
 import { appRouter } from './router/_app';
 import { createContext } from './trpc';
-// eslint-disable-next-line no-unused-vars
-const _isProd = process.env.NODE_ENV === 'production';
-const isDev = process.env.NODE_ENV !== 'production';
-dotenv.config();
+
+const isDev = env.NODE_ENV !== 'production';
 
 const fastify = Fastify({
   logger: isDev
@@ -31,15 +30,18 @@ setLogger(fastify.log);
 async function main() {
   await fastify.register(cors, {
     origin: (origin, cb) => {
-      //   const allowedOrigin = isProd
-      //     ? process.env.FRONTEND_ORIGIN // e.g. https://app.myfrontend.com
-      //     : "http://localhost:5173"; // or whatever your local port is
-      const allowedOrigin = process.env.FRONTEND_ORIGIN || 'http://localhost:4000';
+      const isPreview = origin?.includes('.netlify.app');
+      if (isDev || isPreview) {
+        cb(null, true);
+        return;
+      }
+      const allowedOrigin = env.FRONTEND_ORIGIN || 'http://localhost:3000';
 
       if (!origin || origin === allowedOrigin) {
         cb(null, true);
       } else {
-        cb(new Error('Not allowed'), false);
+        fastify.log.warn(`❌ CORS blocked origin: ${origin}`);
+        cb(new Error(`Origin ${origin} not allowed by CORS`), false);
       }
     },
   });

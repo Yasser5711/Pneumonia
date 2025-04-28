@@ -20,7 +20,6 @@ const handleUpload = async (file: File | File[]) => {
     console.error('Error during prediction:', error)
   }
 }
-
 const {
   data: helloData,
   isLoading: isHelloLoading,
@@ -34,7 +33,7 @@ const {
     <!-- Hello Query -->
     <v-card class="pa-4 mb-6" elevation="2">
       <v-card-title class="text-h6">
-        👋 Hello from tRPC + Vuetify
+        👋 Hello from tRPC + Vuetifyyyy
       </v-card-title>
       <v-card-text>
         <v-btn

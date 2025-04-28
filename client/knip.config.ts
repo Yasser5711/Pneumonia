@@ -25,7 +25,6 @@ const config: KnipConfig = {
   ],
   ignoreBinaries: [
     'vite',
-    'run-p',
     'vue-tsc',
     'eslint',
     'prettier',
@@ -34,6 +33,7 @@ const config: KnipConfig = {
     'knip',
     'depcheck',
     'ts-prune',
+    'wireit',
   ],
 }
 

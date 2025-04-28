@@ -1,10 +1,11 @@
 {
   "name": "client",
   "private": true,
-  "version": "1.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "wireit",
+    "client:dev": "vite",
     "build": "vue-tsc --build --force & vite build",
     "preview": "vite preview",
     "build-only": "vite build",
@@ -16,15 +17,21 @@
     "check:types": "vue-tsc --noEmit && echo 🧠✅ Type check passed!",
     "check:build": "vite build && echo 🏗️✅ Build passed!",
     "check:pwa": "vite build && echo ⚙️✅ PWA build passed!",
-    "check:test": "vitest run --silent --coverage && echo 🧪✅ Tests passed!",
+    "check:test": "vitest run --coverage && echo 🧪✅ Tests passed! || (echo '❌ Fix the above issues before committing 💡' && exit 1)",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:ui": "vitest --ui",
     "check:knip": "knip && echo ✂️✅ Unused code check passed!",
     "check:dep": "depcheck && echo 📦✅ Dependency check passed!",
-    "check:prune": "ts-prune ./src && echo 🌿✅ Prune check passed!",
-    "check:all": "yarn check:lint && yarn check:types && yarn check:build && yarn check:pwa && yarn check:knip && yarn check:dep && yarn check:prune && echo 🧰✨ All checks passed! || echo '❌ Fix the above issues before committing 💡'",
+    "check:prune": "ts-prune -e ./src && echo 🌿✅ Prune check passed!",
+    "check:all": "yarn check:lint && yarn check:types && yarn check:build && yarn check:pwa && yarn check:knip && yarn check:dep && yarn check:prune && echo 🧰✨ All checks passed! || (echo '❌ Fix the above issues before committing 💡' && exit 1)",
     "extract:front": "node test.js"
+  },
+  "wireit": {
+    "dev": {
+      "command": "concurrently --names \"client\" --prefix-colors \"magenta\" \"vite\"",
+      "service": true
+    }
   },
   "dependencies": {
     "@mdi/font": "7.4.47",

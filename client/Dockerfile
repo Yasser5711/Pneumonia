@@ -18,4 +18,4 @@ RUN yarn install --inline-builds
 WORKDIR /app/client
 EXPOSE 4000
 
-CMD ["yarn", "dev"]
+CMD ["yarn", "client:dev"]

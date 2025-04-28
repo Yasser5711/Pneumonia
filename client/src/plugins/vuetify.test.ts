@@ -2,7 +2,6 @@ import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest'
 import { ref, type App } from 'vue'
 import plugin from './vuetify'
 
-// Mock the store
 const resolvedTheme = ref<'light' | 'dark'>('light')
 vi.mock('@/stores/themeStore', () => ({
   useThemeStore: () => ({

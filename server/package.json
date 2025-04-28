@@ -1,8 +1,10 @@
 {
   "name": "server",
+  "version": "0.0.1",
   "packageManager": "yarn@4.3.1",
   "scripts": {
-    "dev": "nodemon --watch src -e ts,js --exec \"tsx src/index.ts\" --legacy-watch",
+    "dev": "wireit",
+    "server:dev": "nodemon --watch src -e ts,js --exec \"tsx src/index.ts\" --legacy-watch",
     "test:predict": "tsx test/test.ts",
     "build": "tsc",
     "build:types": "tsc -b tsconfig.build.json",
@@ -12,12 +14,18 @@
     "format": "prettier --write .",
     "check:knip": "knip && echo ✂️✅ Unused code check passed!",
     "check:dep": "depcheck && echo 📦✅ Dependency check passed!",
-    "check:prune": "ts-prune ./src && echo 🌿✅ Prune check passed!",
+    "check:prune": "ts-prune -e ./src  && echo 🌿✅ Prune check passed!",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:ui": "vitest --ui",
-    "check:test": "vitest run --silent --coverage && echo 🧪✅ Tests passed!",
-    "check:all": "yarn check:lint && yarn check:types && yarn check:knip && yarn check:dep && yarn check:prune && echo 🧰✨ All checks passed! || echo '❌ Fix the above issues before committing 💡'"
+    "check:test": "vitest run --silent --coverage && echo 🧪✅ Tests passed! || (echo '❌ Fix the above issues before committing 💡' && exit 1)",
+    "check:all": "yarn check:lint && yarn check:types && yarn check:knip && yarn check:dep && yarn check:prune && echo 🧰✨ All checks passed! || (echo '❌ Fix the above issues before committing 💡' && exit 1)"
+  },
+  "wireit": {
+    "dev": {
+      "command": "concurrently --names \"server\" --prefix-colors \"cyan\" \"nodemon --watch src -e ts,js --exec tsx src/index.ts --legacy-watch",
+      "service": true
+    }
   },
   "type": "module",
   "dependencies": {

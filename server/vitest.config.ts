@@ -4,17 +4,19 @@ export default mergeConfig(
   baseConfig,
   defineConfig({
     test: {
-      globals: true,
       environment: 'node',
       setupFiles: ['./test/setup.ts'],
       coverage: {
+        enabled: true,
+        provider: 'istanbul',
+        reporter: ['text', 'text-summary', 'lcov', 'json', 'json-summary'],
+        reportsDirectory: './coverage',
+        reportOnFailure: true,
         thresholds: {
-          global: {
-            branches: 80,
-            functions: 80,
-            lines: 80,
-            statements: 80,
-          },
+          branches: 80,
+          functions: 80,
+          lines: 80,
+          statements: 80,
         },
         exclude: [
           'types/',

@@ -28,3 +28,7 @@ docker-compose --profile front --profile back --env-file .env up -d
 - 💬 Real-time assistant feedback
 - 🌓 Light/Dark theme toggle
 - 📊 Code quality checks & CI
+
+## 🧑‍💻 Contributing
+
+Please read [CONTRIBUTING.md](./CONTRIBUTING.md) before creating commits or Pull Requests.

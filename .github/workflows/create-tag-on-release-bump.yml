@@ -1,6 +1,7 @@
 name: 🏷️ Tag and Create Release After Version Bump
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master

@@ -3,7 +3,7 @@ name: 🚀 Deploy Production (Client + Server)
 on:
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
   pull-requests: write
   deployments: write
   statuses: write
@@ -107,7 +107,7 @@ jobs:
   create-release-pr:
     name: 🚀 Create Release PR (Changesets Auto Version)
     runs-on: ubuntu-latest
-    needs: [deploy-client, deploy-server]
+    # needs: [deploy-client, deploy-server]
 
     steps:
       - name: 📥 Checkout code
@@ -133,6 +133,7 @@ jobs:
       - name: 🚀 Create Pull Request for release
         uses: peter-evans/create-pull-request@v5
         with:
+          token: ${{ secrets.GH_PAT }}
           commit-message: "chore(release): version bump [skip ci]"
           title: "chore(release): version bump for production"
           body: |

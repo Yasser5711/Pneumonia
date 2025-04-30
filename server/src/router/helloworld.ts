@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { publicProcedure } from '../trpc';
+
 export const helloWorldRouter = publicProcedure
   .input(
     z.object({
@@ -13,7 +14,6 @@ export const helloWorldRouter = publicProcedure
   )
   .query(async ({ input }) => {
     const { name } = input;
-
     return {
       message: `Hello, ${name || 'Guest'}!`,
     };

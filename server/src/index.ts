@@ -1,13 +1,14 @@
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
-import { env } from './env';
-
 import Fastify from 'fastify';
+
+import { renderTrpcPanel } from 'trpc-ui';
+import { env } from './env';
 import { setLogger } from './logger';
+
 import { appRouter } from './router/_app';
 import { createContext } from './trpc';
-
 const isDev = env.NODE_ENV !== 'production';
 
 const fastify = Fastify({
@@ -60,10 +61,18 @@ async function main() {
     prefix: '/trpc',
     trpcOptions: {
       router: appRouter,
-
       createContext,
     },
   });
+  if (isDev) {
+    fastify.get('/panel', (_req, reply) => {
+      reply.type('text/html').send(
+        renderTrpcPanel(appRouter, {
+          url: `/trpc`,
+        }),
+      );
+    });
+  }
 
   fastify.get('/', async () => ({ status: '🚀 Server is running' }));
 

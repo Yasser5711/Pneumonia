@@ -1,4 +1,4 @@
-import { type inferAsyncReturnType, initTRPC, TRPCError } from '@trpc/server';
+import { initTRPC, TRPCError } from '@trpc/server';
 import { type FastifyRequest } from 'fastify';
 import { env } from './env';
 import { logger } from './logger';
@@ -7,7 +7,7 @@ export const createContext = ({ req }: { req: FastifyRequest }) => {
     apiKey: req.headers['x-api-key'] as string | undefined,
   };
 };
-type Context = inferAsyncReturnType<typeof createContext>;
+type Context = Awaited<ReturnType<typeof createContext>>;
 
 const t = initTRPC.context<Context>().create();
 

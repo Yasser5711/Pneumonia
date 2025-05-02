@@ -58,3 +58,7 @@ __pycache__/
 
 node_modules
 **/.wireit
+test.js
+IA/test.py
+IA/test_request.py
+.yarn/install-state.gz

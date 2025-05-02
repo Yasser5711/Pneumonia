@@ -13,5 +13,6 @@ ignores: [
   'prettier-plugin-sort-json',
   '@vitest/coverage-v8',
   '@trpc/server',
-  'wireit'
+  'wireit',
+  '@vitest/coverage-istanbul',
 ]

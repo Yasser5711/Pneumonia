@@ -1,16 +1,12 @@
 import { afterAll, afterEach, beforeAll, vi } from 'vitest';
-
+import { mockDeep, mockReset } from 'vitest-mock-extended';
 import { setLogger } from '../src/logger';
+
+import { FastifyBaseLogger } from 'fastify';
+
+const mockLogger = mockDeep<FastifyBaseLogger>();
 beforeAll(() => {
-  setLogger({
-    info: vi.fn(),
-    error: vi.fn(),
-    warn: vi.fn(),
-    debug: vi.fn(),
-    fatal: vi.fn(),
-    trace: vi.fn(),
-    child: () => ({}),
-  } as any);
+  setLogger(mockLogger);
 
   vi.mock('../src/env', () => ({
     env: {
@@ -57,6 +53,7 @@ beforeAll(() => {
   });
 });
 afterEach(() => {
+  mockReset(mockLogger);
   vi.clearAllMocks();
   vi.restoreAllMocks();
 });

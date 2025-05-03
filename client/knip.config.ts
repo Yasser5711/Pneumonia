@@ -22,6 +22,7 @@ const config: KnipConfig = {
     'vue-tsc',
     '@vitest/coverage-v8',
     '@trpc/server',
+    'vitest-mock-extended',
   ],
   ignoreBinaries: [
     'vite',

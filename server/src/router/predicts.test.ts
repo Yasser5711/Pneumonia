@@ -1,6 +1,18 @@
-import { describe, expect, it, vi } from 'vitest';
+import axios from 'axios';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createTestCaller } from '../../test/caller';
 import { env } from '../env';
+let originalEnv: typeof env;
+
+beforeEach(() => {
+  // Deep clone env to reset later
+  originalEnv = { ...env };
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
+  Object.assign(env, originalEnv); // reset env
+});
 describe('🧪 API key auth', () => {
   it('fails with invalid key', async () => {
     const caller = createTestCaller('wrong_key');
@@ -31,5 +43,14 @@ describe('🧪 API key auth', () => {
     ).rejects.toThrow('CNN_PREDICT_URL is not set');
 
     vi.restoreAllMocks();
+  });
+  it('fails when post request fails', async () => {
+    const postSpy = vi.spyOn(axios, 'post');
+    postSpy.mockRejectedValueOnce(new Error('Error in CNN prediction'));
+    const caller = createTestCaller();
+    await expect(
+      caller.predictPneumonia({ imageBase64: 'data:image/png;base64,A==' }),
+    ).rejects.toThrow('Error in CNN prediction');
+    vi.resetModules();
   });
 });

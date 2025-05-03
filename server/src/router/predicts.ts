@@ -52,6 +52,10 @@ export const predictRouter = protectedProcedure
       imageArray.push(row);
     }
 
-    const response = await axios.post(PREDICT_URL, { data: [{ image_array: imageArray }] });
+    const response = await axios
+      .post(PREDICT_URL, { data: [{ image_array: imageArray }] })
+      .catch(() => {
+        throw new Error('Error in CNN prediction');
+      });
     return response.data.data;
   });

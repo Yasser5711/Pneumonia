@@ -15,4 +15,5 @@ ignores: [
   '@trpc/server',
   'wireit',
   '@vitest/coverage-istanbul',
+  'vitest-mock-extended',
 ]

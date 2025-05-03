@@ -50,7 +50,6 @@ const formattedTime = computed(() => {
         message.sender === 'user'
           ? 'bg-primary/10 rounded-tr-sm'
           : 'rounded-tl-sm bg-surface',
-        message.type === 'text' ? 'hover:scale-105' : '',
       ]"
     >
       <template v-if="message.type === 'text'">

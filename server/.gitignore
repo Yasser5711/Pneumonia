@@ -16,3 +16,4 @@ tsconfig.typecheck.tsbuildinfo
 coverage
 types
 tsconfig.build.tsbuildinfo
+**/migrations/meta/

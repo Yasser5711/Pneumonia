@@ -1,12 +1,12 @@
+import { protectedProcedureAPI } from '@middlewares/index';
 import axios from 'axios';
 import * as dotenv from 'dotenv';
 import sharp from 'sharp';
 import { z } from 'zod';
-import { protectedProcedure } from '../trpc';
 
-import { env } from '../env';
+import { env } from '@env';
 dotenv.config();
-export const predictRouter = protectedProcedure
+export const predictRouter = protectedProcedureAPI
   .input(
     z.object({
       imageBase64: z

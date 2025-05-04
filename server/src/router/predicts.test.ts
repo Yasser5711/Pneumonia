@@ -1,7 +1,7 @@
+import { env } from '@env';
 import axios from 'axios';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createTestCaller } from '../../test/caller';
-import { env } from '../env';
 let originalEnv: typeof env;
 
 beforeEach(() => {

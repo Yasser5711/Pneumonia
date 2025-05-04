@@ -18,6 +18,8 @@ on:
         required: true
       SERVER_STAGING_URL:
         required: true
+      DATABASE_URL:
+        required: true
 permissions:
   contents: read
   pull-requests: write
@@ -25,11 +27,38 @@ permissions:
   statuses: write
 
 jobs:
+  db-migrate-detect:
+    name: 🗄️ Detect DB Migrations
+    runs-on: ubuntu-latest
+    outputs:
+      db-migrations: ${{ steps.filter.outputs.db-migrations }}
+    steps:
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          working-directory: server
+          filters: |
+            db-migrations:
+              - 'src/db/migrations/**'
+  db-migrate:
+    name: 🧬 Run DB Migrations
+    runs-on: ubuntu-latest
+    needs: db-migrate-detect
+    if: ${{ needs.db-migrate-detect.outputs.db-migrations == 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-yarn
+        with:
+          working-directory: server
+      - name: 🧬 Run DB Migrations
+        working-directory: server
+        run: yarn db:push
+        env:
+          NODE_ENV: staging
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
   deploy:
     runs-on: ubuntu-latest
-    # defaults:
-    #   run:
-    #     working-directory: server
+    if: ${{ needs.db-migrate.result == 'success' || needs.db-migrate.result == 'skipped' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -96,3 +125,9 @@ jobs:
             🖥️ **Backend Staging Deploy**
 
             - 🖥️ **Backend (Render)**: [View Staging Server](${{ secrets.SERVER_STAGING_URL }}) (⚡ might take ~1 min to deploy)
+
+          # - name: 🔍 List applied migrations
+          #   working-directory: server
+          #   run: psql $DATABASE_URL -c "SELECT * FROM drizzle.__drizzle_migrations ORDER BY created_at DESC LIMIT 5;"
+          #   env:
+          #     DATABASE_URL: ${{ secrets.DATABASE_URL }}

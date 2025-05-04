@@ -29,6 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: ${{ inputs.environment }}
+      url: ${{ steps.netlify-deploy.outputs.deploy-url }}
     defaults:
       run:
         working-directory: client

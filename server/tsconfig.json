@@ -1,8 +1,16 @@
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "./dist"
-    // "rootDir": "./src"
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "paths": {
+      "@services/*": ["./src/db/services/*"],
+      "@repositories/*": ["./src/db/repositories/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@middlewares/*": ["./src/middlewares/*"],
+      "@logger": ["./src/logger.ts"],
+      "@env": ["./src/env.ts"]
+    }
   },
   "include": ["src", "test", "package.json"],
   "exclude": ["dist", "node_modules"]

@@ -108,35 +108,12 @@ jobs:
     needs: [lint, typecheck, knip, depcheck]
     steps:
       - uses: actions/checkout@v4
-
       - uses: ./.github/actions/setup-yarn
         with:
           working-directory: server
-
       - name: 🧪 Run Tests
         working-directory: server
         run: yarn check:test
-
-      # - name: 📊 Check coverage threshold
-      #   working-directory: server
-      #   run: |
-      #     THRESHOLD=75
-      #     COVERAGE_FILE="coverage/coverage-summary.json"
-
-      #     if [ ! -f "$COVERAGE_FILE" ]; then
-      #       echo "❌ Coverage file not found: $COVERAGE_FILE"
-      #       exit 1
-      #     fi
-
-      #     COVERAGE=$(jq -r '.total.lines.pct' "$COVERAGE_FILE" | cut -d'.' -f1)
-      #     echo "✅ Code coverage: ${COVERAGE}%"
-
-      #     if [ "$COVERAGE" -lt "$THRESHOLD" ]; then
-      #       echo "❌ Coverage below threshold (${THRESHOLD}%). Failing."
-      #       exit 1
-      #     fi
-      #   shell: bash
-
       - name: 📈 Report Coverage
         if: always()
         uses: davelosert/vitest-coverage-report-action@v2
@@ -161,3 +138,4 @@ jobs:
       DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_STAGING }}
       SERVER_STAGING_URL: ${{ secrets.SERVER_STAGING_URL }}
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}

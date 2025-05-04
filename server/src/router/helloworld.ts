@@ -1,7 +1,7 @@
+import { protectedProcedureAPI } from '@middlewares/index';
 import { z } from 'zod';
-import { publicProcedure } from '../trpc';
 
-export const helloWorldRouter = publicProcedure
+export const helloWorldRouter = protectedProcedureAPI
   .input(
     z.object({
       name: z.string().min(1).max(100).optional(),

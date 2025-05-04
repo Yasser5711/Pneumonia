@@ -1,8 +1,10 @@
+import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig, mergeConfig } from 'vitest/config';
 import baseConfig from '../vitest.config';
 export default mergeConfig(
   baseConfig,
   defineConfig({
+    plugins: [tsconfigPaths()],
     test: {
       environment: 'node',
       setupFiles: ['./test/setup.ts'],
@@ -26,6 +28,10 @@ export default mergeConfig(
           'src/env.ts',
           '**/index.ts',
           'test/test.ts',
+          'src/db/migrations/**',
+          'src/db/schema/**',
+          'src/db/index.ts',
+          'scripts/**',
         ],
       },
     },

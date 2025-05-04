@@ -3,8 +3,8 @@ import rateLimit from '@fastify/rate-limit';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import Fastify from 'fastify';
 
+import { env } from '@env';
 import { renderTrpcPanel } from 'trpc-ui';
-import { env } from './env';
 import { setLogger } from './logger';
 
 import { appRouter } from './router/_app';

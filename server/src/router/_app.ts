@@ -1,5 +1,5 @@
+import { router } from '@middlewares/index';
 import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
-import { router } from '../trpc';
 import { helloWorldRouter } from './helloworld';
 import { predictRouter } from './predicts';
 export const appRouter = router({

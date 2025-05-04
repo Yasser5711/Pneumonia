@@ -9,6 +9,7 @@ const envSchema = z.object({
   API_KEY: z.string().min(1),
   CNN_PREDICT_URL: z.string().url(),
   DATABASE_URL: z.string().url(),
+  SALT_ROUNDS: z.number().gte(4).lte(120).default(12),
 });
 
 const parsed = envSchema.safeParse(process.env);

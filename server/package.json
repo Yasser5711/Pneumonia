@@ -3,10 +3,13 @@
   "version": "1.0.0",
   "packageManager": "yarn@4.3.1",
   "scripts": {
-    "db:push": "drizzle-kit push",
+    "create:api-key": "tsx scripts/createApiKey.ts",
     "db:generate": "drizzle-kit generate",
+    "db:push": "yarn db:generate && drizzle-kit push",
     "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
+    "db:reset": "tsx scripts/dbReset.ts",
+    "db:seed": "tsx scripts/dbSeed.ts",
     "db:introspect": "drizzle-kit introspect",
     "dev": "wireit",
     "server:dev": "nodemon --watch src -e ts,js --exec \"tsx src/index.ts\" --legacy-watch",
@@ -39,8 +42,10 @@
     "@trpc/client": "^11.1.2",
     "@trpc/server": "^11.1.2",
     "axios": "^1.8.4",
+    "bcrypt": "^5.1.1",
     "dotenv": "^16.5.0",
     "drizzle-orm": "^0.43.1",
+    "execa": "^9.5.2",
     "fastify": "^5.3.2",
     "nodemon": "^3.1.10",
     "postgres": "^3.4.5",
@@ -48,7 +53,9 @@
     "zod": "^3.24.3"
   },
   "devDependencies": {
+    "@electric-sql/pglite": "^0.3.0",
     "@fastify/websocket": "^11.0.2",
+    "@types/bcrypt": "^5",
     "@types/node": "^22.14.1",
     "@types/ws": "^8.18.1",
     "@typescript-eslint/parser": "^8.29.1",
@@ -67,6 +74,7 @@
     "ts-prune": "^0.10.3",
     "tsx": "^4.19.4",
     "typescript": "^5.8.3",
+    "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.1.2",
     "vitest-mock-extended": "^3.1.0"
   }

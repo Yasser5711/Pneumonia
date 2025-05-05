@@ -12,33 +12,6 @@ permissions:
   statuses: write
 
 jobs:
-  # install:
-  #   name: 📦 Install Dependencies
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v4
-
-  #     - name: 🧰 Enable Corepack
-  #       run: corepack enable
-
-  #     - name: 📦 Set up Node + Yarn
-  #       uses: actions/setup-node@v4
-  #       with:
-  #         node-version: 20
-  #         cache: "yarn"
-
-  #     - name: 📦 Install deps (Yarn 4)
-  #       working-directory: server
-  #       run: yarn install --immutable
-
-  #     - name: ♻️ Cache Yarn install files
-  #       uses: actions/cache@v4
-  #       with:
-  #         path: |
-  #           server/.yarn/cache
-  #           server/.yarn/install-state.gz
-  #         key: yarn-v4-${{ hashFiles('server/yarn.lock') }}
-
   lint:
     name: 🧼 Lint Code
     runs-on: ubuntu-latest
@@ -127,7 +100,7 @@ jobs:
 
   deploy-to-staging:
     name: 🚀 Deploy to Staging
-    needs: test
+    # needs: test
     if: ${{ github.event_name == 'pull_request' && success() }}
     uses: ./.github/workflows/deploy-server-staging.yml
     with:

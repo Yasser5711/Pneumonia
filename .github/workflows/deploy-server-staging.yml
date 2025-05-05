@@ -20,6 +20,7 @@ on:
         required: true
       DATABASE_URL:
         required: true
+
 permissions:
   contents: read
   pull-requests: write
@@ -36,10 +37,9 @@ jobs:
       - uses: dorny/paths-filter@v3
         id: filter
         with:
-          working-directory: server
           filters: |
             db-migrations:
-              - 'src/db/migrations/**'
+              - 'server/src/db/migrations/**'
   db-migrate:
     name: 🧬 Run DB Migrations
     runs-on: ubuntu-latest
@@ -50,12 +50,26 @@ jobs:
       - uses: ./.github/actions/setup-yarn
         with:
           working-directory: server
+      - name: ❌ Fail if required secrets are missing
+        run: |
+          if [ -z "${{ secrets.DATABASE_URL }}" ]; then
+            echo "Missing required secrets: DATABASE_URL"
+            exit 1
+          fi
+
+      - name: create env file
+        working-directory: server
+        run: |
+          echo "NODE_ENV=staging" > .env
+          echo "DATABASE_URL="${{ secrets.DATABASE_URL }}"" >> .env
+          echo "SALT_ROUNDS="${{ 12 }}"" >> .env
       - name: 🧬 Run DB Migrations
         working-directory: server
-        run: yarn db:push
-        env:
-          NODE_ENV: staging
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          ls -la
+          echo "Running DB migrations..."
+          yarn db:push
+
   deploy:
     runs-on: ubuntu-latest
     if: ${{ needs.db-migrate.result == 'success' || needs.db-migrate.result == 'skipped' }}

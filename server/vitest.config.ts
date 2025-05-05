@@ -30,7 +30,6 @@ export default mergeConfig(
           'test/test.ts',
           'src/db/migrations/**',
           'src/db/schema/**',
-          'src/db/index.ts',
           'scripts/**',
         ],
       },

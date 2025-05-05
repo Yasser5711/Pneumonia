@@ -6,7 +6,6 @@ dotenv.config();
 const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production', 'preview']),
   FRONTEND_ORIGIN: z.string().optional(),
-  API_KEY: z.string().min(1),
   CNN_PREDICT_URL: z.string().url(),
   DATABASE_URL: z.string().url(),
   SALT_ROUNDS: z.number().gte(4).lte(120).default(12),

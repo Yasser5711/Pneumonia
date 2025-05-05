@@ -1,27 +1,39 @@
 import { PGlite } from '@electric-sql/pglite';
 import { drizzle } from 'drizzle-orm/pglite';
-import { migrate } from 'drizzle-orm/pglite/migrator';
-import * as schema from '../src/db/schema';
+import { readdirSync, readFileSync } from 'fs';
+import { join } from 'path';
+import { apiKeysTable, usersTable } from 'src/db/schema';
 
-import { dirname, resolve } from 'path';
-import { fileURLToPath } from 'url';
+const MIGRATIONS_DIR = 'src/db/migrations';
+// ts-prune-ignore-next
+export const dbClient = new PGlite('memory://');
+export const db = drizzle(dbClient, {
+  schema: { apiKeysTable, usersTable },
+});
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-const migrationsPath = resolve(__dirname, '../src/db/migrations');
-type DatabaseClient = ReturnType<typeof drizzle>;
+let hasMigrated = false;
 
-async function initDatabase(): Promise<DatabaseClient> {
-  const client = new PGlite();
-  const db = drizzle(client, { schema });
+export const applyMigration = async () => {
+  if (hasMigrated) return;
 
-  await migrate(db, {
-    migrationsFolder: migrationsPath,
-  });
+  const files = readdirSync(MIGRATIONS_DIR).filter((f) => f.endsWith('.sql'));
+  for (const file of files) {
+    const content = readFileSync(join(MIGRATIONS_DIR, file), 'utf-8');
 
-  return db;
-}
+    const statements = content
+      .split(/;\s*$/gm)
+      .map((s) => s.trim())
+      .filter(Boolean);
 
-export async function initTestDatabase(): Promise<DatabaseClient> {
-  return initDatabase();
+    for (const statement of statements) {
+      await db.execute(statement);
+    }
+  }
+
+  hasMigrated = true;
+};
+
+export async function resetDb() {
+  await db.delete(apiKeysTable);
+  await db.delete(usersTable);
 }

@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { apiKeyService } from '../src/db/services/apiKey.service';
+import { apiKeyService } from '../src/db/services/';
 
 import { db } from '../src/db';
 db;

@@ -1,8 +1,12 @@
 import { eq, InferInsertModel } from 'drizzle-orm';
-import { db } from '../index';
+// import type { PgliteDatabase } from 'drizzle-orm/pglite';
+// import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+import { db as DB } from '../index';
+// import type * as schema from '../schema';
 import { apiKeysTable } from '../schema';
+// type DrizzlePgDatabase = PostgresJsDatabase<typeof schema> | PgliteDatabase<typeof schema>;
 type ApiKeyInsert = InferInsertModel<typeof apiKeysTable>;
-export const apiKeysRepo = {
+export const createApiKeysRepo = (db: any = DB) => ({
   create: async (
     data: Pick<ApiKeyInsert, 'name' | 'hashedKey' | 'keyPrefix'> &
       Partial<Omit<ApiKeyInsert, 'name' | 'hashedKey' | 'keyPrefix'>>,
@@ -15,6 +19,8 @@ export const apiKeysRepo = {
       expiresAt: apiKeysTable.expiresAt,
       active: apiKeysTable.active,
       description: apiKeysTable.description,
+      lastUsedAt: apiKeysTable.lastUsedAt,
+      lastUsedIp: apiKeysTable.lastUsedIp,
     });
   },
 
@@ -36,6 +42,8 @@ export const apiKeysRepo = {
       expiresAt: res.expiresAt,
       active: res.active,
       description: res.description,
+      lastUsedAt: res.lastUsedAt,
+      lastUsedIp: res.lastUsedIp,
     }));
   },
 
@@ -47,6 +55,8 @@ export const apiKeysRepo = {
       expiresAt: apiKeysTable.expiresAt,
       active: apiKeysTable.active,
       description: apiKeysTable.description,
+      lastUsedAt: apiKeysTable.lastUsedAt,
+      lastUsedIp: apiKeysTable.lastUsedIp,
     });
   },
-};
+});

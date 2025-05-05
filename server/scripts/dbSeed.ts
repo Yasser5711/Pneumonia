@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { config } from 'dotenv';
-import { apiKeysRepo } from '../src/db/repositories/apiKey.repository';
+import { apiKeysRepo } from '../src/db/repositories/';
 import { hashApiKey } from '../src/utils/hash';
 
 config();

@@ -17,49 +17,49 @@ permissions:
   statuses: write
 
 jobs:
-  # db-migrate-detect:
-  #   name: 🗄️ Detect DB Migrations
-  #   runs-on: ubuntu-latest
-  #   environment:
-  #     name: ${{ inputs.environment }}
-  #   outputs:
-  #     db-migrations: ${{ steps.filter.outputs.db-migrations }}
-  #   steps:
-  #     - uses: dorny/paths-filter@v3
-  #       id: filter
-  #       with:
-  #         filters: |
-  #           db-migrations:
-  #             - 'server/src/db/migrations/**'
-  # db-migrate:
-  #   name: 🧬 Run DB Migrations
-  #   runs-on: ubuntu-latest
-  #   needs: db-migrate-detect
-  #   environment:
-  #     name: ${{ inputs.environment }}
-  #   if: ${{ needs.db-migrate-detect.outputs.db-migrations == 'true' }}
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         path: .
-  #     - uses: ./.github/actions/setup-yarn
-  #       with:
-  #         working-directory: server
+  db-migrate-detect:
+    name: 🗄️ Detect DB Migrations
+    runs-on: ubuntu-latest
+    environment:
+      name: ${{ inputs.environment }}
+    outputs:
+      db-migrations: ${{ steps.filter.outputs.db-migrations }}
+    steps:
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            db-migrations:
+              - 'server/src/db/migrations/**'
+  db-migrate:
+    name: 🧬 Run DB Migrations
+    runs-on: ubuntu-latest
+    needs: db-migrate-detect
+    environment:
+      name: ${{ inputs.environment }}
+    if: ${{ needs.db-migrate-detect.outputs.db-migrations == 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: .
+      - uses: ./.github/actions/setup-yarn
+        with:
+          working-directory: server
 
-  #     - name: create env file
-  #       working-directory: server
-  #       run: |
-  #         cat <<EOF > .env
-  #         NODE_ENV=preview
-  #         DATABASE_URL=${{ secrets.DATABASE_URL_STAG }}
-  #         EOF
-  #     - name: 🧬 Run DB Migrations
-  #       working-directory: server
-  #       run: |
-  #         yarn db:migrate
-  #       env:
-  #         DATABASE_URL: ${{ secrets.DATABASE_URL_STAG }}
-  #         NODE_ENV: preview
+      - name: create env file
+        working-directory: server
+        run: |
+          cat <<EOF > .env
+          NODE_ENV=preview
+          DATABASE_URL=${{ secrets.DATABASE_URL_STAG_MIG }}
+          EOF
+      - name: 🧬 Run DB Migrations
+        working-directory: server
+        run: |
+          yarn db:push
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_STAG_MIG }}
+          NODE_ENV: preview
 
   deploy:
     runs-on: ubuntu-latest

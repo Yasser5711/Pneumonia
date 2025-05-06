@@ -9,15 +9,6 @@ on:
       environment:
         required: true
         type: string
-    secrets:
-      NETLIFY_AUTH_TOKEN:
-        required: true
-      NETLIFY_STAGING_SITE_ID:
-        required: true
-      VITE_API_URL:
-        required: true
-      VITE_API_KEY:
-        required: true
 permissions:
   contents: read
   pull-requests: write
@@ -29,7 +20,6 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: ${{ inputs.environment }}
-      url: ${{ steps.netlify-deploy.outputs.deploy-url }}
     defaults:
       run:
         working-directory: client
@@ -48,13 +38,13 @@ jobs:
       - name: Install Dependencies
         run: yarn install
         env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
-          VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL_STAG }}
+          VITE_API_KEY: ${{ secrets.VITE_API_KEY_STAG }}
       - name: Build Client
         run: yarn build
         env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL }}
-          VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL_STAG }}
+          VITE_API_KEY: ${{ secrets.VITE_API_KEY_STAG }}
 
       - name: Create GitHub Deployment
         id: client_deployment_start

@@ -1,12 +1,12 @@
-import * as defaultServices from '@services/index';
 import { initTRPC } from '@trpc/server';
 import type { FastifyRequest } from 'fastify';
+import * as defaultServices from './db/services/index';
 export const createContext = ({
   req,
   services,
 }: {
   req: FastifyRequest;
-  services?: typeof import('@services/index');
+  services?: typeof import('./db/services/index');
 }) => {
   return {
     apiKey: req.headers['x-api-key'] as string | undefined,

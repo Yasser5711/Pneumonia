@@ -12,6 +12,7 @@ services:
       - API_KEY=${API_KEY}
       - FRONTEND_ORIGIN=${FRONTEND_ORIGIN}
       - CNN_PREDICT_URL=${CNN_PREDICT_URL}
+      - DATABASE_URL=${DATABASE_URL}
     volumes:
       - ../../server:/app/server
       - ../../package.json:/app/package.json

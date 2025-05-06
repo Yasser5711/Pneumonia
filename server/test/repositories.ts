@@ -1,5 +1,5 @@
-import { createApiKeysRepo } from '@repositories/apiKey.repository';
 import { mockDeep, type DeepMockProxy } from 'vitest-mock-extended';
+import { createApiKeysRepo } from '../src/db/repositories/apiKey.repository';
 
 type ApiKeyRepo = ReturnType<typeof createApiKeysRepo>;
 

@@ -1,9 +1,9 @@
-import { logger } from '@logger';
+import { logger } from '../../logger';
 
-import { compareApiKey, hashApiKey } from '@utils/hash';
 import { randomBytes } from 'crypto';
+import { compareApiKey, hashApiKey } from '../../utils/hash';
 export const createApiKeyService = (
-  apiKeysRepo: ReturnType<typeof import('@repositories/apiKey.repository').createApiKeysRepo>,
+  apiKeysRepo: ReturnType<typeof import('../repositories/apiKey.repository').createApiKeysRepo>,
 ) => ({
   generateKey: async ({ name, description }: { name: string; description?: string }) => {
     const rawKey = randomBytes(32).toString('hex');

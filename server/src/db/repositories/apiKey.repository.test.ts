@@ -1,5 +1,5 @@
-import { applyMigration, db, resetDb } from '@tests/db';
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+import { applyMigration, db, resetDb } from '../../../test/db';
 import { apiKeysTable } from '../schema';
 import { createApiKeysRepo } from './apiKey.repository';
 

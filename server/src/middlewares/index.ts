@@ -1,5 +1,5 @@
-import { requireAuth } from '@middlewares/auth.middleware';
 import { t } from '../trpc';
+import { requireAuth } from './auth.middleware';
 
 export const router = t.router;
 // ts-prune-ignore-next

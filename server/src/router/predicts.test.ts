@@ -1,8 +1,8 @@
-import { env } from '@env';
-import { createTestCaller } from '@tests/caller';
-import { mockApiKeyService } from '@tests/services';
 import axios from 'axios';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { createTestCaller } from '../../test/caller';
+import { mockApiKeyService } from '../../test/services';
+import { env } from '../env';
 let originalEnv: typeof env;
 vi.unmock('../src/middlewares/auth.middleware.ts');
 beforeEach(() => {

@@ -1,10 +1,10 @@
-import { mockApiKeyRepo } from '@tests/repositories';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { mockApiKeyRepo } from '../../../test/repositories';
 import { createApiKeyService } from './apiKey.service';
 
 const service = createApiKeyService(mockApiKeyRepo);
 
-vi.mock('@utils/hash', async () => {
+vi.mock('../../utils/hash', async () => {
   return {
     hashApiKey: vi.fn(async (key) => `hashed-${key}`),
     compareApiKey: vi.fn(async (key, hash) => hash === `hashed-${key}`),

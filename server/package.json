@@ -6,13 +6,14 @@
     "create:api-key": "tsx scripts/createApiKey.ts",
     "db:generate": "drizzle-kit generate",
     "db:push": "yarn db:generate && drizzle-kit push",
-    "db:migrate": "drizzle-kit migrate",
+    "db:migrate": "tsx scripts/dbMigrate.ts",
     "db:studio": "drizzle-kit studio",
     "db:reset": "tsx scripts/dbReset.ts",
     "db:seed": "tsx scripts/dbSeed.ts",
     "db:introspect": "drizzle-kit introspect",
     "dev": "wireit",
     "server:dev": "nodemon --watch src -e ts,js --exec \"tsx src/index.ts\" --legacy-watch",
+    "server:start": "tsx -r tsconfig-paths/register src/index.ts",
     "test:predict": "tsx test/test.ts",
     "build": "tsc",
     "build:types": "tsc -b tsconfig.build.json",
@@ -50,6 +51,7 @@
     "nodemon": "^3.1.10",
     "postgres": "^3.4.5",
     "sharp": "^0.34.1",
+    "tsconfig-paths": "^4.2.0",
     "zod": "^3.24.3"
   },
   "devDependencies": {

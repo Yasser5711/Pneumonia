@@ -5,7 +5,7 @@ export const apiKeysTable = pgTable(
   {
     id: uuid('id').defaultRandom().primaryKey(),
     hashedKey: text('hashed_key').notNull().unique(), // hashed API key
-    keyPrefix: varchar('key_prefix', { length: 16 }).notNull().unique(), // first 12 characters of the API key
+    keyPrefix: varchar('key_prefix', { length: 12 }).notNull().unique(), // first 12 characters of the API key
     name: text('name').notNull(), // e.g., "Admin Panel" or "CLI Token"
     createdAt: timestamp('created_at').defaultNow(),
     expiresAt: timestamp('expires_at'), // optional expiration

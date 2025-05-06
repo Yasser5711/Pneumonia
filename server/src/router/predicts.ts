@@ -1,11 +1,11 @@
-import { protectedProcedureAPI } from '@middlewares/index';
 import axios from 'axios';
-import * as dotenv from 'dotenv';
+import { protectedProcedureAPI } from '../middlewares/index';
+
 import sharp from 'sharp';
 import { z } from 'zod';
 
-import { env } from '@env';
-dotenv.config();
+import { env } from '../env';
+
 export const predictRouter = protectedProcedureAPI
   .input(
     z.object({

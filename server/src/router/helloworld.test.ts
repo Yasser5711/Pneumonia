@@ -1,6 +1,6 @@
-import { createTestCaller } from '@tests/caller';
-import { mockApiKeyService } from '@tests/services';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { createTestCaller } from '../../test/caller';
+import { mockApiKeyService } from '../../test/services';
 
 describe('hello world', () => {
   beforeEach(() => {

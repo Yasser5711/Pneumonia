@@ -3,11 +3,14 @@ import { z } from 'zod';
 dotenv.config();
 
 const envSchema = z.object({
-  NODE_ENV: z.enum(['development', 'test', 'production', 'preview']),
+  NODE_ENV: z.enum(['development', 'test', 'production', 'preview']).optional(),
   FRONTEND_ORIGIN: z.string().optional(),
   CNN_PREDICT_URL: z.string().url().optional(),
-  DATABASE_URL: z.string().url(),
-  SALT_ROUNDS: z.number().gte(4).lte(120).default(12),
+  DATABASE_URL: z
+    .string()
+    .url()
+    .optional()
+    .default('postgres://postgres:postgres@localhost:5432/postgres'),
 });
 
 const parsed = envSchema.safeParse(process.env);

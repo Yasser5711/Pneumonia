@@ -1,6 +1,5 @@
-import { env } from '@env';
 import bcrypt from 'bcrypt';
-const SALT_ROUNDS = env.SALT_ROUNDS;
+const SALT_ROUNDS = 12;
 
 export const hashApiKey = async (key: string): Promise<string> => {
   return bcrypt.hash(key, SALT_ROUNDS);

@@ -9,17 +9,6 @@ on:
       environment:
         required: true
         type: string
-    secrets:
-      DOCKER_USERNAME:
-        required: true
-      DOCKER_PASSWORD:
-        required: true
-      RENDER_DEPLOY_HOOK:
-        required: true
-      SERVER_STAGING_URL:
-        required: true
-      DATABASE_URL:
-        required: true
 
 permissions:
   contents: read
@@ -28,51 +17,55 @@ permissions:
   statuses: write
 
 jobs:
-  db-migrate-detect:
-    name: 🗄️ Detect DB Migrations
-    runs-on: ubuntu-latest
-    outputs:
-      db-migrations: ${{ steps.filter.outputs.db-migrations }}
-    steps:
-      - uses: dorny/paths-filter@v3
-        id: filter
-        with:
-          filters: |
-            db-migrations:
-              - 'server/src/db/migrations/**'
-  db-migrate:
-    name: 🧬 Run DB Migrations
-    runs-on: ubuntu-latest
-    needs: db-migrate-detect
-    if: ${{ needs.db-migrate-detect.outputs.db-migrations == 'true' }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/setup-yarn
-        with:
-          working-directory: server
-      - name: ❌ Fail if required secrets are missing
-        run: |
-          if [ -z "${{ secrets.DATABASE_URL }}" ]; then
-            echo "Missing required secrets: DATABASE_URL"
-            exit 1
-          fi
+  # db-migrate-detect:
+  #   name: 🗄️ Detect DB Migrations
+  #   runs-on: ubuntu-latest
+  #   environment:
+  #     name: ${{ inputs.environment }}
+  #   outputs:
+  #     db-migrations: ${{ steps.filter.outputs.db-migrations }}
+  #   steps:
+  #     - uses: dorny/paths-filter@v3
+  #       id: filter
+  #       with:
+  #         filters: |
+  #           db-migrations:
+  #             - 'server/src/db/migrations/**'
+  # db-migrate:
+  #   name: 🧬 Run DB Migrations
+  #   runs-on: ubuntu-latest
+  #   needs: db-migrate-detect
+  #   environment:
+  #     name: ${{ inputs.environment }}
+  #   if: ${{ needs.db-migrate-detect.outputs.db-migrations == 'true' }}
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         path: .
+  #     - uses: ./.github/actions/setup-yarn
+  #       with:
+  #         working-directory: server
 
-      - name: create env file
-        working-directory: server
-        run: |
-          echo "NODE_ENV=staging" > .env
-          echo "DATABASE_URL="${{ secrets.DATABASE_URL }}"" >> .env
-          echo "SALT_ROUNDS="${{ 12 }}"" >> .env
-      - name: 🧬 Run DB Migrations
-        working-directory: server
-        run: |
-          ls -la
-          echo "Running DB migrations..."
-          yarn db:push
+  #     - name: create env file
+  #       working-directory: server
+  #       run: |
+  #         cat <<EOF > .env
+  #         NODE_ENV=preview
+  #         DATABASE_URL=${{ secrets.DATABASE_URL_STAG }}
+  #         EOF
+  #     - name: 🧬 Run DB Migrations
+  #       working-directory: server
+  #       run: |
+  #         yarn db:migrate
+  #       env:
+  #         DATABASE_URL: ${{ secrets.DATABASE_URL_STAG }}
+  #         NODE_ENV: preview
 
   deploy:
     runs-on: ubuntu-latest
-    if: ${{ needs.db-migrate.result == 'success' || needs.db-migrate.result == 'skipped' }}
+    environment:
+      name: ${{ inputs.environment }}
+    # if: ${{ needs.db-migrate.result == 'success' || needs.db-migrate.result == 'skipped' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -106,8 +99,7 @@ jobs:
 
       - name: Deploy to Render (Staging)
         run: |
-          echo "Deploying to Render at: ${{ secrets.RENDER_DEPLOY_HOOK }}"
-          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
+          curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_STAG }}"
       - name: Finish GitHub Deployment (success backend)
         if: success()
         uses: bobheadxi/deployments@v1
@@ -139,9 +131,3 @@ jobs:
             🖥️ **Backend Staging Deploy**
 
             - 🖥️ **Backend (Render)**: [View Staging Server](${{ secrets.SERVER_STAGING_URL }}) (⚡ might take ~1 min to deploy)
-
-          # - name: 🔍 List applied migrations
-          #   working-directory: server
-          #   run: psql $DATABASE_URL -c "SELECT * FROM drizzle.__drizzle_migrations ORDER BY created_at DESC LIMIT 5;"
-          #   env:
-          #     DATABASE_URL: ${{ secrets.DATABASE_URL }}

@@ -11,7 +11,6 @@ beforeAll(async () => {
     env: {
       NODE_ENV: 'test',
       CNN_PREDICT_URL: 'http://localhost:8000/predict',
-      SALT_ROUNDS: 10,
     },
   }));
   vi.mock('axios', async () => {

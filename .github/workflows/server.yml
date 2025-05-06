@@ -100,15 +100,10 @@ jobs:
 
   deploy-to-staging:
     name: 🚀 Deploy to Staging
-    # needs: test
+    needs: test
     if: ${{ github.event_name == 'pull_request' && success() }}
     uses: ./.github/workflows/deploy-server-staging.yml
     with:
       ref: ${{ github.event.pull_request.head.sha }}
       environment: staging
-    secrets:
-      DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-      DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-      RENDER_DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_STAGING }}
-      SERVER_STAGING_URL: ${{ secrets.SERVER_STAGING_URL }}
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+    secrets: inherit

@@ -16,3 +16,4 @@ ignores:
   - '@middlewares/*'
   - '@utils/*'
   - 'src'
+  - 'tsconfig-paths'

@@ -1,0 +1,2 @@
+-- ALTER TABLE "api_keys" ALTER COLUMN "key_prefix" SET DATA TYPE varchar(12);--> statement-breakpoint
+-- ALTER TABLE "api_keys" ALTER COLUMN "expires_at" SET DEFAULT NOW() + INTERVAL '10 days';

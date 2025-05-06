@@ -11,7 +11,11 @@ export const createApiKeysRepo = (db: any = DB) => ({
     data: Pick<ApiKeyInsert, 'name' | 'hashedKey' | 'keyPrefix'> &
       Partial<Omit<ApiKeyInsert, 'name' | 'hashedKey' | 'keyPrefix'>>,
   ) => {
-    return db.insert(apiKeysTable).values(data).returning({
+    const finalData = {
+      ...data,
+      expiresAt: data.expiresAt ?? new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+    };
+    return db.insert(apiKeysTable).values(finalData).returning({
       id: apiKeysTable.id,
       name: apiKeysTable.name,
       hashedKey: apiKeysTable.hashedKey,

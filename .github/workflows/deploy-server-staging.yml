@@ -46,13 +46,13 @@ jobs:
         with:
           working-directory: server
 
-      - name: create env file
-        working-directory: server
-        run: |
-          cat <<EOF > .env
-          NODE_ENV=preview
-          DATABASE_URL=${{ secrets.DATABASE_URL_STAG_MIG }}
-          EOF
+      # - name: create env file
+      #   working-directory: server
+      #   run: |
+      #     cat <<EOF > .env
+      #     NODE_ENV=preview
+      #     DATABASE_URL=${{ secrets.DATABASE_URL_STAG_MIG }}
+      #     EOF
       - name: 🧬 Run DB Migrations
         working-directory: server
         run: |
@@ -65,7 +65,10 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: ${{ inputs.environment }}
-    # if: ${{ needs.db-migrate.result == 'success' || needs.db-migrate.result == 'skipped' }}
+    needs:
+      - db-migrate-detect
+      - db-migrate
+    if: ${{ needs.db-migrate.result == 'success' || needs.db-migrate-detect.outputs.db-migrations == 'false' }}
     steps:
       - uses: actions/checkout@v4
         with:

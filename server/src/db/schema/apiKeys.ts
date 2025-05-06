@@ -1,5 +1,4 @@
 import { boolean, pgTable, text, timestamp, uniqueIndex, uuid, varchar } from 'drizzle-orm/pg-core';
-
 export const apiKeysTable = pgTable(
   'api_keys',
   {
@@ -8,7 +7,7 @@ export const apiKeysTable = pgTable(
     keyPrefix: varchar('key_prefix', { length: 12 }).notNull().unique(), // first 12 characters of the API key
     name: text('name').notNull(), // e.g., "Admin Panel" or "CLI Token"
     createdAt: timestamp('created_at').defaultNow(),
-    expiresAt: timestamp('expires_at'), // optional expiration
+    expiresAt: timestamp('expires_at'), // 10 days from now
     active: boolean('active').default(true),
     description: text('description'), // optional description for the API key
     lastUsedAt: timestamp('last_used_at'), // optional last used timestamp

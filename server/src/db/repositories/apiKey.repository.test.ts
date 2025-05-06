@@ -26,6 +26,7 @@ describe('apiKeysRepo', () => {
       hashedKey: 'hashed-key',
       description: 'test key',
       active: true,
+      expiresAt: expect.any(Date),
     });
 
     expect(result.id).toBeDefined();

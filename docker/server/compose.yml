@@ -1,6 +1,9 @@
 services:
   server:
     container_name: fastify-server
+    depends_on:
+      db:
+        condition: service_healthy
     build:
       context: ../..
       dockerfile: server/Dockerfile

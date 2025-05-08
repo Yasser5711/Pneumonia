@@ -7,6 +7,16 @@ import { z } from 'zod';
 import { env } from '../env';
 
 export const predictRouter = protectedProcedureAPI
+  .meta({
+    openapi: {
+      method: 'POST',
+      path: '/predict',
+      protect: true,
+      summary: 'Make a pneumonia prediction from base64-encoded image',
+      description:
+        'Accepts a base64-encoded image, resizes and normalizes it, then sends it to the CNN model server for prediction.',
+    },
+  })
   .input(
     z.object({
       imageBase64: z

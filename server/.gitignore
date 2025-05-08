@@ -17,3 +17,4 @@ coverage
 types
 tsconfig.build.tsbuildinfo
 **/migrations/meta/
+openapi*.json

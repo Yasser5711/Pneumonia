@@ -6,11 +6,10 @@ const envSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production', 'preview']).optional(),
   FRONTEND_ORIGIN: z.string().optional(),
   CNN_PREDICT_URL: z.string().url().optional(),
-  DATABASE_URL: z
-    .string()
-    .url()
-    .optional()
-    .default('postgres://postgres:postgres@localhost:5432/postgres'),
+  DATABASE_URL: z.string().url().default('postgres://postgres:postgres@localhost:5432/postgres'),
+  PANEL_USER: z.string().default('admin'),
+  PANEL_PASS: z.string().default('admin'),
+  BASE_URL: z.string().url().default('http://localhost:3000'),
 });
 
 const parsed = envSchema.safeParse(process.env);

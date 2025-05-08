@@ -2,6 +2,15 @@ import { z } from 'zod';
 import { protectedProcedureAPI } from '../middlewares/index';
 
 export const helloWorldRouter = protectedProcedureAPI
+  .meta({
+    openapi: {
+      method: 'GET',
+      path: '/hello',
+      summary: 'Hello World',
+      description: 'Returns a hello world message.',
+      protect: true,
+    },
+  })
   .input(
     z.object({
       name: z.string().min(1).max(100).optional(),

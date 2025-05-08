@@ -1,3 +1,4 @@
+import { OpenApiMeta } from '@9or9/trpc-openapi';
 import { initTRPC } from '@trpc/server';
 import type { FastifyRequest } from 'fastify';
 import * as defaultServices from './db/services/index';
@@ -16,4 +17,4 @@ export const createContext = ({
 };
 type Context = Awaited<ReturnType<typeof createContext>>;
 
-export const t = initTRPC.context<Context>().create();
+export const t = initTRPC.meta<OpenApiMeta>().context<Context>().create();

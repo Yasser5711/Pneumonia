@@ -1,19 +1,22 @@
 import * as dotenv from 'dotenv';
 import { z } from 'zod';
-import { logger } from './logger';
 dotenv.config();
 
 const envSchema = z.object({
-  NODE_ENV: z.enum(['development', 'test', 'production']),
+  NODE_ENV: z.enum(['development', 'test', 'production', 'preview']).optional(),
   FRONTEND_ORIGIN: z.string().optional(),
-  API_KEY: z.string().min(1),
-  CNN_PREDICT_URL: z.string().url(),
+  CNN_PREDICT_URL: z.string().url().optional(),
+  DATABASE_URL: z.string().url().default('postgres://postgres:postgres@localhost:5432/postgres'),
+  PANEL_USER: z.string().default('admin'),
+  PANEL_PASS: z.string().default('admin'),
+  BASE_URL: z.string().url().default('http://localhost:3000'),
 });
 
 const parsed = envSchema.safeParse(process.env);
 
 if (!parsed.success) {
-  logger().error('❌ Invalid environment variables:', parsed.error.flatten().fieldErrors);
+  // eslint-disable-next-line no-console
+  console.error('❌ Invalid environment variables:', parsed.error.flatten().fieldErrors);
   process.exit(1);
 }
 // ts-prune-ignore-next

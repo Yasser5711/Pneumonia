@@ -1,12 +1,23 @@
 import axios from 'axios';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createTestCaller } from '../../test/caller';
+import { mockApiKeyService } from '../../test/services';
 import { env } from '../env';
 let originalEnv: typeof env;
-
+vi.unmock('../src/middlewares/auth.middleware.ts');
 beforeEach(() => {
-  // Deep clone env to reset later
   originalEnv = { ...env };
+  mockApiKeyService.validateKey.mockResolvedValue({
+    id: 'fake-id',
+    name: 'Fake Key',
+    keyPrefix: 'prefix',
+    hashedKey: 'hash',
+    active: true,
+    expiresAt: null,
+    description: 'test',
+    lastUsedAt: null,
+    lastUsedIp: null,
+  });
 });
 
 afterEach(() => {
@@ -15,10 +26,11 @@ afterEach(() => {
 });
 describe('🧪 API key auth', () => {
   it('fails with invalid key', async () => {
-    const caller = createTestCaller('wrong_key');
+    mockApiKeyService.validateKey.mockResolvedValue(null);
+    const caller = createTestCaller();
     await expect(
       caller.predictPneumonia({ imageBase64: 'data:image/png;base64,...' }),
-    ).rejects.toThrow('Invalid API key');
+    ).rejects.toThrow('Invalid or expired API key');
   });
 
   it('passes with valid key', async () => {

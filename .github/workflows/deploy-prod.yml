@@ -28,10 +28,51 @@ jobs:
 
       - name: 🧪 Run All Tests
         run: yarn check:test
+  db-migrate-detect:
+    name: 🗄️ Detect DB Migrations
+    runs-on: ubuntu-latest
+    needs: check-monorepo
+    environment:
+      name: production
+    outputs:
+      db-migrations: ${{ steps.filter.outputs.db-migrations }}
+    steps:
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            db-migrations:
+              - 'server/src/db/migrations/**'
+  db-migrate:
+    name: 🧬 Run DB Migrations
+    runs-on: ubuntu-latest
+    needs: db-migrate-detect
+    environment:
+      name: production
+    if: ${{ needs.db-migrate-detect.outputs.db-migrations == 'true' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: .
+      - uses: ./.github/actions/setup-yarn
+        with:
+          working-directory: server
+
+      - name: 🧬 Run DB Migrations
+        working-directory: server
+        run: |
+          yarn db:push
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL_PROD_MIG }}
+          NODE_ENV: preview
   deploy-server:
     name: 🚀 Deploy Backend to Render (Production)
     runs-on: ubuntu-latest
-    needs: check-monorepo
+    needs:
+      - check-monorepo
+      - db-migrate-detect
+      - db-migrate
+    if: ${{ needs.db-migrate.result == 'success' || needs.db-migrate-detect.outputs.db-migrations == 'false' }}
     environment:
       name: production
 
@@ -49,7 +90,7 @@ jobs:
         run: echo "DOCKER_BUILDKIT=1" >> $GITHUB_ENV
 
       - name: 🛠️ Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/pneumoniacnn-prod:${{ github.sha }} -f server/Dockerfile .
+        run: docker build --build-arg NODE_ENV=production -t ${{ secrets.DOCKER_USERNAME }}/pneumoniacnn-prod:${{ github.sha }} -f server/Dockerfile .
 
       - name: 🚀 Push Docker image
         run: |
@@ -102,12 +143,14 @@ jobs:
           netlify-config-path: "./netlify.toml"
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_STAGING_SITE_ID }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_PROD_SITE_ID }}
 
   create-release-pr:
     name: 🚀 Create Release PR (Changesets Auto Version)
     runs-on: ubuntu-latest
     needs: [deploy-client, deploy-server]
+    environment:
+      name: production
 
     steps:
       - name: 📥 Checkout code
@@ -146,3 +189,19 @@ jobs:
           draft: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  finalize:
+    name: ✅ Finalize Production Deployment
+    runs-on: ubuntu-latest
+    needs:
+      - check-monorepo
+      # - db-migrate
+      - deploy-server
+      - deploy-client
+      - create-release-pr
+    environment:
+      name: production
+      url: https://ai.yassermekhfi.me
+    if: ${{ success() }}
+    steps:
+      - name: ✅ All production steps succeeded
+        run: echo "Production deployment complete."

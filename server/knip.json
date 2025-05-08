@@ -8,8 +8,8 @@
     "prettier",
     "depcheck",
     "ts-prune",
-    "vitest",
-    "wireit"
+    "wireit",
+    "drizzle-kit"
   ],
   "ignoreDependencies": [
     "@types/ws",
@@ -17,13 +17,15 @@
     "@fastify/websocket",
     "@typescript-eslint/eslint-plugin",
     "pino-pretty",
-    "axios",
     "sharp",
     "zod",
-    "@vitest/ui",
     "depcheck",
     "ts-prune",
     "tsx",
-    "nodemon"
+    "nodemon",
+    "@electric-sql/pglite",
+    "@types/bcrypt",
+    "drizzle-orm",
+    "bcrypt"
   ]
 }

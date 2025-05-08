@@ -12,4 +12,4 @@ RUN yarn install --inline-builds
 WORKDIR /app/server
 EXPOSE 3000
 
-CMD ["yarn", "server:dev"]
+CMD [ "sh", "-c", "yarn db:push && yarn db:seed && yarn server:start" ]

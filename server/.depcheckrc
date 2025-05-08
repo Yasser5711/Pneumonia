@@ -1,15 +1,19 @@
-
-ignores: [
-    '@types/ws',
-    '@fastify/websocket',
-    '@types/*',
-    'pino-pretty',
-    'eslint*',
-    'knip',
-    'tsx',
-    '@vitest/coverage-v8',
-    '@vitest/coverage-istanbul',
-    '@typescript-eslint/eslint-plugin',
-    'wireit'
-]
-
+ignores:
+  - '@types/ws'
+  - '@fastify/websocket'
+  - '@types/*'
+  - 'pino-pretty'
+  - 'eslint*'
+  - 'knip'
+  - 'tsx'
+  - '@vitest/coverage-v8'
+  - '@vitest/coverage-istanbul'
+  - '@typescript-eslint/eslint-plugin'
+  - 'wireit'
+  - '@services/*'
+  - '@repositories/*'
+  - '@tests/*'
+  - '@middlewares/*'
+  - '@utils/*'
+  - 'src'
+  - 'tsconfig-paths'

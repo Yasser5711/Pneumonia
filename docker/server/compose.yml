@@ -1,6 +1,9 @@
 services:
   server:
     container_name: fastify-server
+    depends_on:
+      db:
+        condition: service_healthy
     build:
       context: ../..
       dockerfile: server/Dockerfile
@@ -12,6 +15,7 @@ services:
       - API_KEY=${API_KEY}
       - FRONTEND_ORIGIN=${FRONTEND_ORIGIN}
       - CNN_PREDICT_URL=${CNN_PREDICT_URL}
+      - DATABASE_URL=${DATABASE_URL}
     volumes:
       - ../../server:/app/server
       - ../../package.json:/app/package.json

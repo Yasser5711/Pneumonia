@@ -1,15 +1,18 @@
+import { fastifyTRPCOpenApiPlugin, generateOpenApiDocument } from '@9or9/trpc-openapi';
+import fastifyBasicAuth from '@fastify/basic-auth';
 import cors from '@fastify/cors';
 import rateLimit from '@fastify/rate-limit';
+import ScalarApiReference from '@scalar/fastify-api-reference';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import Fastify from 'fastify';
-
 import { renderTrpcPanel } from 'trpc-ui';
+import pkg from '../package.json' assert { type: 'json' };
 import { env } from './env';
 import { setLogger } from './logger';
-
 import { appRouter } from './router/_app';
 import { createContext } from './trpc';
-const isDev = env.NODE_ENV !== 'production';
+
+const isDev = env.NODE_ENV === 'development';
 
 const fastify = Fastify({
   logger: isDev
@@ -31,12 +34,12 @@ setLogger(fastify.log);
 async function main() {
   await fastify.register(cors, {
     origin: (origin, cb) => {
-      const isPreview = origin?.includes('.netlify.app');
+      const isPreview = origin?.includes('.netlify.app') && env.NODE_ENV === 'preview';
       if (isDev || isPreview) {
         cb(null, true);
         return;
       }
-      const allowedOrigin = env.FRONTEND_ORIGIN || 'http://localhost:3000';
+      const allowedOrigin = env.FRONTEND_ORIGIN;
 
       if (!origin || origin === allowedOrigin) {
         cb(null, true);
@@ -64,14 +67,93 @@ async function main() {
       createContext,
     },
   });
-  if (isDev) {
-    fastify.get('/panel', (_req, reply) => {
-      reply.type('text/html').send(
-        renderTrpcPanel(appRouter, {
-          url: `/trpc`,
-        }),
-      );
+  await fastify.register(fastifyTRPCOpenApiPlugin, {
+    router: appRouter,
+    prefix: '/api',
+    createContext,
+  });
+  await fastify.register(fastifyBasicAuth, {
+    validate: (username, password, req, reply, done) => {
+      const USER = env.PANEL_USER;
+      const PASS = env.PANEL_PASS;
+      if (username === USER && password === PASS) {
+        done();
+      } else {
+        done(new Error('Unauthorized'));
+      }
+    },
+    authenticate: true,
+  });
+  const baseUrl = env.NODE_ENV !== 'development' ? env.BASE_URL : 'http://localhost:3000';
+  fastify.get('/openapi.json', async (_req, reply) => {
+    const openApiDoc = generateOpenApiDocument(appRouter, {
+      title: 'My APIs',
+      version: pkg.version,
+      baseUrl: baseUrl + '/api',
+      securitySchemes: {
+        apiKeyHeader: {
+          description: 'API key required for access',
+          type: 'apiKey',
+          name: 'X-API-KEY',
+          in: 'header',
+        },
+      },
     });
+
+    reply.header('Content-Type', 'application/json').send(openApiDoc);
+  });
+
+  const allowPanel = isDev || env.NODE_ENV === 'preview';
+  if (allowPanel) {
+    if (!isDev) {
+      await fastify.register(ScalarApiReference, {
+        routePrefix: '/reference',
+        configuration: {
+          url: '/openapi.json',
+          title: `${pkg.name} tRPC API`,
+          layout: 'modern',
+          theme: 'purple',
+          darkMode: true,
+          authentication: { preferredSecurityScheme: 'apiKeyHeader' },
+        },
+        hooks: {
+          preHandler: fastify.basicAuth,
+        },
+      });
+      fastify.after(() => {
+        fastify.route({
+          method: 'GET',
+          url: '/panel',
+          preHandler: fastify.basicAuth,
+          handler: (_req, reply) => {
+            reply.type('text/html').send(
+              renderTrpcPanel(appRouter, {
+                url: `/trpc`,
+              }),
+            );
+          },
+        });
+      });
+    } else {
+      await fastify.register(ScalarApiReference, {
+        routePrefix: '/reference',
+        configuration: {
+          url: '/openapi.json',
+          title: `${pkg.name} tRPC API`,
+          layout: 'modern',
+          theme: 'purple',
+          darkMode: true,
+          authentication: { preferredSecurityScheme: 'apiKeyHeader' },
+        },
+      });
+      fastify.get('/panel', (_req, reply) => {
+        reply.type('text/html').send(
+          renderTrpcPanel(appRouter, {
+            url: `/trpc`,
+          }),
+        );
+      });
+    }
   }
 
   fastify.get('/', async () => ({ status: '🚀 Server is running' }));

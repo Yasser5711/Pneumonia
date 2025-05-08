@@ -148,8 +148,4 @@ jobs:
     with:
       ref: ${{ github.event.pull_request.head.sha }}
       environment: staging
-    secrets:
-      NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-      NETLIFY_STAGING_SITE_ID: ${{ secrets.NETLIFY_STAGING_SITE_ID }}
-      VITE_API_URL: ${{ secrets.VITE_API_URL }}
-      VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
+    secrets: inherit

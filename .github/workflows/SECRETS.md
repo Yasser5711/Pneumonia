@@ -2,40 +2,55 @@
 
 This document lists and explains the required GitHub Secrets for CI/CD workflows in this repository.
 
+---
+
 ## ✅ Secrets List
 
-| Secret Name               | Purpose                                                                                             | Scope  | Who Should Know     |
-| :------------------------ | :-------------------------------------------------------------------------------------------------- | :----- | :------------------ |
-| `GITHUB_TOKEN`            | Auto-provided by GitHub. Used for basic CI/CD operations.                                           | Auto   | GitHub Actions Bot  |
-| `GH_PAT`                  | Personal Access Token used for creating/updating Pull Requests (when `GITHUB_TOKEN` is not enough). | Manual | Only repo admins    |
-| `NETLIFY_AUTH_TOKEN`      | Authentication token for deploying frontend to Netlify.                                             | Manual | DevOps, Admins      |
-| `NETLIFY_PROD_SITE_ID`    | Production Site ID for Netlify deploys.                                                             | Manual | DevOps, Admins      |
-| `DOCKER_USERNAME`         | Docker Hub username for pushing backend images.                                                     | Manual | DevOps, Admins      |
-| `DOCKER_PASSWORD`         | Docker Hub password for pushing backend images.                                                     | Manual | DevOps, Admins      |
-| `RENDER_DEPLOY_HOOK_PROD` | Render deployment hook for backend production server.                                               | Manual | DevOps, Admins      |
-| `VITE_API_URL_PROD`       | API base URL for frontend production environment.                                                   | Manual | Frontend Developers |
-| `VITE_API_KEY_PROD`       | API key for accessing production APIs securely from frontend.                                       | Manual | Frontend Developers |
-| `SERVER_STAGING_URL`      | URL for backend staging server (used in PR comments).                                               | Manual | Developers          |
+| Secret Name               | Purpose                                                                                            | Scope  | Who Should Know        |
+| ------------------------- | -------------------------------------------------------------------------------------------------- | ------ | ---------------------- |
+| `GITHUB_TOKEN`            | Auto-provided by GitHub. Used for basic CI/CD operations, commits, PR comments, deployments.       | Auto   | GitHub Actions Bot     |
+| `GH_PAT`                  | Personal Access Token used for creating/updating Pull Requests (when `GITHUB_TOKEN` isn't enough). | Manual | Repo Admins            |
+| `NETLIFY_AUTH_TOKEN`      | Auth token for deploying frontend to Netlify.                                                      | Manual | DevOps / Admins        |
+| `NETLIFY_PROD_SITE_ID`    | Netlify site ID for **production** frontend deployments.                                           | Manual | DevOps / Admins        |
+| `NETLIFY_STAGING_SITE_ID` | Netlify site ID for **staging** frontend deployments.                                              | Manual | DevOps / Admins        |
+| `VITE_API_URL_PROD`       | API base URL used in frontend production builds.                                                   | Manual | Frontend Devs          |
+| `VITE_API_KEY_PROD`       | API key used by frontend in production to access secure APIs.                                      | Manual | Frontend Devs          |
+| `VITE_API_URL_STAG`       | API base URL used in frontend staging builds.                                                      | Manual | Frontend Devs          |
+| `VITE_API_KEY_STAG`       | API key used by frontend in staging to access APIs securely.                                       | Manual | Frontend Devs          |
+| `DOCKER_USERNAME`         | Docker Hub username for pushing backend images (prod/staging).                                     | Manual | DevOps                 |
+| `DOCKER_PASSWORD`         | Docker Hub password/token for pushing backend images.                                              | Manual | DevOps                 |
+| `RENDER_DEPLOY_HOOK_PROD` | Render webhook URL to trigger backend **production** deploys.                                      | Manual | DevOps                 |
+| `RENDER_DEPLOY_HOOK_STAG` | Render webhook URL to trigger backend **staging** deploys.                                         | Manual | DevOps                 |
+| `DATABASE_URL_PROD_MIG`   | Full DB connection string used for running **prod** migrations.                                    | Manual | Backend Devs / DevOps  |
+| `DATABASE_URL_STAG_MIG`   | Full DB connection string used for running **staging** migrations.                                 | Manual | Backend Devs / DevOps  |
+| `SERVER_STAGING_URL`      | URL of deployed backend staging server (used in PR comments).                                      | Manual | All Developers         |
+| `PANEL_USER`              | Basic auth username for accessing `/panel` or `/reference` in non-dev environments.                | Manual | Admins / Backend Leads |
+| `PANEL_PASS`              | Basic auth password for protected endpoints.                                                       | Manual | Admins / Backend Leads |
 
 ---
 
 ## 📋 Notes
 
-- **GH_PAT** should have minimal required scopes:
+- **`GH_PAT`** should have minimal required scopes:
   - `repo`
   - `workflow`
-- Tokens like **NETLIFY_AUTH_TOKEN**, **DOCKER_PASSWORD**, and **RENDER_DEPLOY_HOOK_PROD** must **never** be shared outside of trusted team members.
-- **GITHUB_TOKEN** is auto-managed by GitHub but needs `permissions: write` in workflows to push branches/tags.
-- Rotate Personal Access Tokens (like `GH_PAT`) every **90 days** as a security best practice.
-- **Always** use GitHub Secrets, **never** hardcode tokens inside workflows.
+  - **Never use your personal PAT in shared environments**.
+- **API keys (`VITE_API_KEY_*`)** are embedded at build time — keep them secure and rotate periodically.
+- Secrets like **Docker/Netlify tokens** must be limited to CI only and rotated quarterly.
+- **Render deploy hooks** are secret URLs and must be treated as tokens — never expose in logs or comments.
+- **Basic auth for internal routes** (`PANEL_USER`, `PANEL_PASS`) is used to protect sensitive debug/admin views.
 
 ---
 
 ## 🛡️ Best Practices
 
-- Audit secrets regularly.
-- Use least privilege principle: **only give secrets to workflows that need them**.
-- If secrets are leaked or compromised, rotate them immediately.
-- Use GitHub environments + required approvals for critical secrets (optional for advanced workflows).
+- **Never hardcode secrets** in workflows or source files.
+- Use `workflow_call` + environments to scope secrets per job (`staging`, `production`).
+- Rotate **all manually generated secrets** (PATs, tokens, DB creds) every 90 days.
+- Use GitHub **environments with required reviewers** for high-risk deploys.
+- Keep different secrets per environment (`PROD`, `STAG`) to prevent leakage/collision.
+- Restrict Netlify/Docker tokens to least-privilege org/team/service accounts where possible.
 
 ---
+
+_This list should be updated any time a new CI job or deployment target is added._

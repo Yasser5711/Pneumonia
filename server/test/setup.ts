@@ -5,18 +5,14 @@ import { setLogger } from '../src/logger';
 import { FastifyBaseLogger } from 'fastify';
 
 const mockLogger = mockDeep<FastifyBaseLogger>();
-beforeAll(() => {
+beforeAll(async () => {
   setLogger(mockLogger);
-
   vi.mock('../src/env', () => ({
     env: {
       NODE_ENV: 'test',
-      API_KEY: 'test_api_key',
       CNN_PREDICT_URL: 'http://localhost:8000/predict',
     },
   }));
-  // eslint-disable-next-line no-console
-  console.log('🧪 Test suite starting...');
   vi.mock('axios', async () => {
     return {
       default: {
@@ -57,7 +53,4 @@ afterEach(() => {
   vi.clearAllMocks();
   vi.restoreAllMocks();
 });
-afterAll(() => {
-  // eslint-disable-next-line no-console
-  console.log('✅ All tests done');
-});
+afterAll(() => {});

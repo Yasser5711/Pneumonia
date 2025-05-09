@@ -180,7 +180,7 @@ onUnmounted(() => {
         @change="handleFileSelect"
       />
 
-      <div class="group relative hidden md:block">
+      <div class="group relative">
         <button
           class="hover:bg-primary/20 group rounded-full p-2 transition-colors"
           :disabled="!!pendingImage"
@@ -215,7 +215,7 @@ onUnmounted(() => {
       </div>
 
       <!-- ✉️ Send Icon OR Spinner -->
-      <div class="group relative hidden md:block">
+      <div class="group relative">
         <button
           class="hover:bg-primary/20 group rounded-full p-2 transition-colors"
           :disabled="(!messageInput.trim() && !pendingImage) || isTyping"

@@ -25,6 +25,7 @@ export default [
       'no-unused-vars': 'warn',
       'no-console': 'error',
       'ts/ban-ts-comment': 'error', // ✅ use alias, not @typescript-eslint
+      'ts/consistent-type-imports': ['error', { prefer: 'type-imports' }],
     },
   },
 ];

@@ -1,4 +1,5 @@
-import { eq, InferInsertModel } from 'drizzle-orm';
+import type { InferInsertModel } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 // import type { PgliteDatabase } from 'drizzle-orm/pglite';
 // import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { db as DB } from '../index';

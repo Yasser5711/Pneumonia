@@ -13,7 +13,6 @@ import { createAppRouter } from '../router'
 
 interface RenderComposableOptions {
   queryClientConfig: QueryClientConfig
-  trpcApiKey: string
   trpcUrl: string
 }
 
@@ -21,7 +20,6 @@ const defaultOptions: RenderComposableOptions = {
   queryClientConfig: {
     defaultOptions: { queries: { retry: false } },
   },
-  trpcApiKey: 'test-key',
   trpcUrl: 'http://localhost:3000/trpc',
 }
 
@@ -42,7 +40,6 @@ export function render<Component>(
     router.currentRoute.value.params = renderOptions.params
   }
   const trpcPlugin = createTRPCPlugin({
-    apiKey: renderOptions.trpcApiKey || defaultOptions.trpcApiKey,
     url: renderOptions.trpcUrl || defaultOptions.trpcUrl,
   })
   return {

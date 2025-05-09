@@ -16,4 +16,7 @@ ignores: [
   'wireit',
   '@vitest/coverage-istanbul',
   'vitest-mock-extended',
+  '@testing-library/jest-dom',
+  '@vee-validate/zod',
+  '@vue/tsconfig',
 ]

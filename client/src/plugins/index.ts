@@ -14,10 +14,7 @@ import vfm from './vfm'
 import vuetify from './vuetify'
 // Types
 import type { App } from 'vue'
-const trpcPlugin = createTRPCPlugin({
-  apiKey: import.meta.env.VITE_API_KEY,
-  url: `${import.meta.env.VITE_API_URL}/trpc`,
-})
+
 export function registerPlugins(app: App) {
   // Install plugins
   installTanstack(app)
@@ -28,5 +25,5 @@ export function registerPlugins(app: App) {
     .use(createAppRouter())
     .use(motion)
     .use(vfm)
-    .use(trpcPlugin)
+    .use(createTRPCPlugin({ url: `${import.meta.env.VITE_API_URL}/trpc` }))
 }

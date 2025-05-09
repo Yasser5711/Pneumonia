@@ -1,4 +1,4 @@
-name: Deploy Server to Render (Staging)
+name: 🚀🧩 Deploy Server to Render (Staging)
 
 on:
   workflow_call:

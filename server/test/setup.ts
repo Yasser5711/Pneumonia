@@ -2,7 +2,7 @@ import { afterAll, afterEach, beforeAll, vi } from 'vitest';
 import { mockDeep, mockReset } from 'vitest-mock-extended';
 import { setLogger } from '../src/logger';
 
-import { FastifyBaseLogger } from 'fastify';
+import type { FastifyBaseLogger } from 'fastify';
 
 const mockLogger = mockDeep<FastifyBaseLogger>();
 beforeAll(async () => {

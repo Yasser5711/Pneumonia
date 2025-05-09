@@ -29,9 +29,6 @@ const formattedTime = computed(() => {
     minute: '2-digit',
   }).format(props.message.timestamp)
 })
-// onMounted(() => {
-//   emit("mounted"); // or emit('messageRendered')
-// });
 </script>
 
 <template>

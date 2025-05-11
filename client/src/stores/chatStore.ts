@@ -25,7 +25,8 @@ export const useChatStore = defineStore('chat', () => {
       const reply = createMessage({
         type: 'text',
         sender: 'assistant',
-        content: `Echo: ${'content' in input ? input.content : 'Here’s a visual response.'}`,
+        content:
+          '⚠️ Oops! Chat content isn’t available yet. Please try again later. 💬',
       })
 
       state.value.messages.push(reply)

@@ -17,3 +17,4 @@ ignores:
   - '@utils/*'
   - 'src'
   - 'tsconfig-paths'
+  - '@eslint/eslintrc'

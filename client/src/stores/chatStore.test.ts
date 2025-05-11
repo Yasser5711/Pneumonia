@@ -56,7 +56,9 @@ describe('useChatStore', () => {
     expect(output[0].sender).toBe('user')
     expect(output[0].content).toBe('Hello world')
     expect(output[1].sender).toBe('assistant')
-    expect(output[1].content).toBe('Echo: Hello world')
+    expect(output[1].content).toBe(
+      '⚠️ Oops! Chat content isn’t available yet. Please try again later. 💬',
+    )
   })
 
   it('addMessage should add visual response for non-text', () => {

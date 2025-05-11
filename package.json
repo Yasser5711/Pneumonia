@@ -8,6 +8,7 @@
     "server"
   ],
   "scripts": {
+    "build": "yarn workspace server build && yarn workspace client build",
     "extract:front": "yarn workspace client extract:front",
     "extract:back": "yarn workspace server extract:back",
     "dev:front": "yarn workspace client dev",

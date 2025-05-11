@@ -23,6 +23,11 @@ const config: KnipConfig = {
     '@vitest/coverage-v8',
     '@trpc/server',
     'vitest-mock-extended',
+    '@testing-library/jest-dom',
+    '@vee-validate/zod',
+    '@vue/tsconfig',
+    'vee-validate',
+    'zod',
   ],
   ignoreBinaries: [
     'vite',

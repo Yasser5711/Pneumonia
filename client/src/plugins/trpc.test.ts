@@ -11,12 +11,15 @@ vi.mock('@trpc/client', async (importOriginal) => {
     httpBatchLink: vi.fn().mockReturnValue(() => {}),
   }
 })
-
+vi.mock('@/stores/storageStore', () => ({
+  useStorageStore: () => ({
+    getKeyFromLocalStorage: vi.fn().mockReturnValue({ value: 'test-api-key' }),
+  }),
+}))
 describe('createTRPCPlugin', () => {
   it('injects a tRPC client with correct config into Vue app', () => {
     const app = { config: { globalProperties: {} } }
     const plugin = createTRPCPlugin({
-      apiKey: 'test-api-key',
       url: 'https://api.example.com/trpc',
     })
 

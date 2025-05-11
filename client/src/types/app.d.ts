@@ -1,5 +1,5 @@
 import { type RemovableRef } from 'vue'
-export type StorageKeys = 'theme' | 'clock'
+export type StorageKeys = 'theme' | 'clock' | 'apiKey'
 export type ClockState = {
   local: string
   showSeconds: boolean
@@ -13,6 +13,7 @@ export type ThemeState = {
 export type StorageMap = {
   theme: ThemeState
   clock: ClockState
+  apiKey: string
 }
 export type StorageValue<K extends keyof StorageMap> = RemovableRef<
   StorageMap[K]

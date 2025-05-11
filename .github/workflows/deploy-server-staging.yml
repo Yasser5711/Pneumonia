@@ -1,4 +1,4 @@
-name: Deploy Server to Render (Staging)
+name: 🚀🧩 Deploy Server to Render (Staging)
 
 on:
   workflow_call:
@@ -17,27 +17,27 @@ permissions:
   statuses: write
 
 jobs:
-  db-migrate-detect:
-    name: 🗄️ Detect DB Migrations
-    runs-on: ubuntu-latest
-    environment:
-      name: ${{ inputs.environment }}
-    outputs:
-      db-migrations: ${{ steps.filter.outputs.db-migrations }}
-    steps:
-      - uses: dorny/paths-filter@v3
-        id: filter
-        with:
-          filters: |
-            db-migrations:
-              - 'server/src/db/migrations/**'
+  # db-migrate-detect:
+  #   name: 🗄️ Detect DB Migrations
+  #   runs-on: ubuntu-latest
+  #   environment:
+  #     name: ${{ inputs.environment }}
+  #   outputs:
+  #     db-migrations: ${{ steps.filter.outputs.db-migrations }}
+  #   steps:
+  #     - uses: dorny/paths-filter@v3
+  #       id: filter
+  #       with:
+  #         filters: |
+  #           db-migrations:
+  #             - 'server/src/db/migrations/**'
   db-migrate:
     name: 🧬 Run DB Migrations
     runs-on: ubuntu-latest
-    needs: db-migrate-detect
+    # needs: db-migrate-detect
     environment:
       name: ${{ inputs.environment }}
-    if: ${{ needs.db-migrate-detect.outputs.db-migrations == 'true' }}
+    # if: ${{ needs.db-migrate-detect.outputs.db-migrations == 'true' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -66,9 +66,13 @@ jobs:
     environment:
       name: ${{ inputs.environment }}
     needs:
-      - db-migrate-detect
+      # - db-migrate-detect
       - db-migrate
-    if: ${{ needs.db-migrate.result == 'success' || needs.db-migrate-detect.outputs.db-migrations == 'false' }}
+    # if: >
+    #   ${{
+    #     needs.db-migrate.result == 'success' ||
+    #     !needs.db-migrate.result
+    #   }}
     steps:
       - uses: actions/checkout@v4
         with:

@@ -30,7 +30,6 @@ const {
 
 <template>
   <v-container class="pa-4">
-    <!-- Hello Query -->
     <v-card class="pa-4 mb-6" elevation="2">
       <v-card-title class="text-h6">
         👋 Hello from tRPC + Vuetify
@@ -69,7 +68,6 @@ const {
       </v-card-text>
     </v-card>
 
-    <!-- Pneumonia Prediction -->
     <v-card class="pa-4" elevation="2">
       <v-card-title class="text-h6"> 🩻 Predict Pneumonia </v-card-title>
 

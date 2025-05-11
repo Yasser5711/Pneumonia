@@ -28,28 +28,29 @@ jobs:
 
       - name: 🧪 Run All Tests
         run: yarn check:test
-  db-migrate-detect:
-    name: 🗄️ Detect DB Migrations
-    runs-on: ubuntu-latest
-    needs: check-monorepo
-    environment:
-      name: production
-    outputs:
-      db-migrations: ${{ steps.filter.outputs.db-migrations }}
-    steps:
-      - uses: dorny/paths-filter@v3
-        id: filter
-        with:
-          filters: |
-            db-migrations:
-              - 'server/src/db/migrations/**'
+  # db-migrate-detect:
+  #   name: 🗄️ Detect DB Migrations
+  #   runs-on: ubuntu-latest
+  #   needs: check-monorepo
+  #   environment:
+  #     name: production
+  #   outputs:
+  #     db-migrations: ${{ steps.filter.outputs.db-migrations }}
+  #   steps:
+  #     - uses: dorny/paths-filter@v3
+  #       id: filter
+  #       with:
+  #         filters: |
+  #           db-migrations:
+  #             - 'server/src/db/migrations/**'
   db-migrate:
     name: 🧬 Run DB Migrations
     runs-on: ubuntu-latest
-    needs: db-migrate-detect
+    # needs: db-migrate-detect
+    needs: check-monorepo
     environment:
       name: production
-    if: ${{ needs.db-migrate-detect.outputs.db-migrations == 'true' }}
+    # if: ${{ needs.db-migrate-detect.outputs.db-migrations == 'true' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -70,9 +71,12 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - check-monorepo
-      - db-migrate-detect
+      # - db-migrate-detect
       - db-migrate
-    if: ${{ needs.db-migrate.result == 'success' || needs.db-migrate-detect.outputs.db-migrations == 'false' }}
+    # if: >
+    #   ${{
+    #     !needs.db-migrate.result || needs.db-migrate.result == 'success'
+    #   }}
     environment:
       name: production
 
@@ -172,7 +176,9 @@ jobs:
           yarn changeset version
 
           git add .
-
+      # - name: 📝 Commit version changes
+      #   run: |
+      #     git commit -m "chore(release): version bump [skip ci]" || echo "No changes to commit"
       - name: 🚀 Create Pull Request for release
         uses: peter-evans/create-pull-request@v5
         with:

@@ -45,4 +45,68 @@ describe('useStorageStore', () => {
     expect(useStorage).toHaveBeenCalledTimes(1)
     expect(ref1).toBe(ref2)
   })
+  it('should set key in localStorage and call useStorage when not cached', () => {
+    const store = useStorageStore()
+
+    const apiKey: StorageKeys = 'apiKey'
+    const value: StorageMap['apiKey'] = 'my-secret-key'
+
+    const mockRef = mockStorageRef(value)
+    ;(useStorage as unknown as Mock).mockReturnValueOnce(mockRef)
+
+    store.setKeyInLocalStorage(apiKey, value)
+
+    expect(useStorage).toHaveBeenCalledWith(apiKey, value, localStorage)
+    expect(mockRef.value).toBe(value)
+  })
+  it('should set key in localStorage and update the cache', () => {
+    const store = useStorageStore()
+
+    const apiKey: StorageKeys = 'apiKey'
+    const value: StorageMap['apiKey'] = 'my-secret-key'
+
+    const mockRef = mockStorageRef('')
+    ;(useStorage as unknown as Mock).mockReturnValueOnce(mockRef)
+    store.getKeyFromLocalStorage(apiKey, '')
+    store.setKeyInLocalStorage(apiKey, value)
+
+    expect(mockRef.value).toBe(value)
+  })
+
+  it('should update value if key already exists in cache', () => {
+    const store = useStorageStore()
+
+    const key: StorageKeys = 'apiKey'
+    const mockRef = mockStorageRef('old-value')
+    ;(useStorage as unknown as Mock).mockReturnValue(mockRef)
+
+    store.getKeyFromLocalStorage(key, 'old-value')
+
+    store.setKeyInLocalStorage(key, 'new-value')
+
+    expect(mockRef.value).toBe('new-value')
+    expect(useStorage).toHaveBeenCalledTimes(1)
+  })
+
+  it('should remove key from cache and localStorage', () => {
+    const store = useStorageStore()
+    const key: StorageKeys = 'apiKey'
+
+    const mockRef = mockStorageRef('secret')
+    ;(useStorage as unknown as Mock).mockReturnValue(mockRef)
+
+    // Prime the cache
+    store.getKeyFromLocalStorage(key, 'secret')
+
+    const spy = vi.spyOn(window.localStorage, 'removeItem')
+
+    store.removeKeyFromLocalStorage(key)
+
+    const newMockRef = mockStorageRef('fallback')
+    ;(useStorage as unknown as Mock).mockReturnValueOnce(newMockRef)
+
+    const ref = store.getKeyFromLocalStorage(key, 'fallback')
+    expect(ref.value).toBe('fallback')
+    expect(spy).toHaveBeenCalledWith(key)
+  })
 })

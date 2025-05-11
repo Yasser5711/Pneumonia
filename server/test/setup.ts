@@ -2,10 +2,10 @@ import { afterAll, afterEach, beforeAll, vi } from 'vitest';
 import { mockDeep, mockReset } from 'vitest-mock-extended';
 import { setLogger } from '../src/logger';
 
-import { FastifyBaseLogger } from 'fastify';
+import type { FastifyBaseLogger } from 'fastify';
 
 const mockLogger = mockDeep<FastifyBaseLogger>();
-beforeAll(async () => {
+beforeAll(() => {
   setLogger(mockLogger);
   vi.mock('../src/env', () => ({
     env: {
@@ -13,7 +13,7 @@ beforeAll(async () => {
       CNN_PREDICT_URL: 'http://localhost:8000/predict',
     },
   }));
-  vi.mock('axios', async () => {
+  vi.mock('axios', () => {
     return {
       default: {
         post: vi.fn(() =>
@@ -33,7 +33,7 @@ beforeAll(async () => {
       },
     };
   });
-  vi.mock('sharp', async () => {
+  vi.mock('sharp', () => {
     return {
       default: () => ({
         resize: () => ({

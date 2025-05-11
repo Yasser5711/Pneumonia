@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ApiKeyModal: typeof import('./components/ApiKeyModal.vue')['default']
     ChatMessage: typeof import('./components/ChatMessage.vue')['default']
     ChatWindow: typeof import('./components/ChatWindow.vue')['default']
     ClockDisplay: typeof import('./components/ClockDisplay.vue')['default']

@@ -1,11 +1,14 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
+    "noEmit": false,
     "composite": true,
     "declaration": true,
+    "outDir": "./dist",
     "declarationDir": "types", // ⬅️ only .d.ts goes here
     "emitDeclarationOnly": true, // ⬅️ don’t emit .js files
-    "target": "ES2015", // ⬅️ fixes `#private` error from zod
+    "target": "ES2020", // ⬅️ fixes `#private` error from zod
     "module": "ESNext",
     "moduleResolution": "Node",
     "esModuleInterop": true, // ⬅️ fixes `sharp` default import
@@ -13,6 +16,6 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["src", "types/trpc.d.ts"],
+  "include": ["src/**/*", "package.json"],
   "exclude": ["**/*.test.ts"]
 }

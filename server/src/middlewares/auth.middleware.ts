@@ -8,13 +8,13 @@ export const requireAuth = t.middleware(async ({ ctx, next }) => {
 
   const record = await ctx.services.apiKeyService.validateKey(key);
   if (!record) {
-    logger().warn('🚫 Invalid API key attempt:', key);
-    throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid or expired API key' });
+    logger().warn({ key, ip: ctx.req.ip }, '🚫 Invalid API key attempt');
+    throw new TRPCError({ code: 'FORBIDDEN', message: 'Invalid or expired API key' });
   }
 
-  logger().info('✅ Valid API key:', key);
+  logger().info({ key, ip: ctx.req.ip }, '✅ Valid API key');
 
-  // await apiKeyService.markKeyUsed({ id: record.id, ip: ctx.req.ip });
+  await ctx.services.apiKeyService.markKeyUsed({ id: record.id, ip: ctx.req.ip });
 
   return next({
     ctx: { ...ctx, apiKeyRecord: record },

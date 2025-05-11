@@ -11,7 +11,7 @@ if (!name) {
   process.exit(1);
 }
 
-(async () => {
+void (async () => {
   try {
     const key = await apiKeyService.generateKey({ name, description });
     console.log('\n✅ API key created successfully:\n');

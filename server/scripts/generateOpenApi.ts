@@ -20,5 +20,6 @@ const openApiDocument = generateOpenApiDocument(appRouter, {
   },
 });
 
+// eslint-disable-next-line security/detect-non-literal-fs-filename
 writeFileSync(fileName, JSON.stringify(openApiDocument, null, 2));
 console.log(`✅ OpenAPI spec written to ${fileName}`);

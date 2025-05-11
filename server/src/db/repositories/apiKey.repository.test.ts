@@ -89,7 +89,7 @@ describe('apiKeysRepo', () => {
     const customRepo = createApiKeysRepo({
       query: {
         apiKeysTable: {
-          findMany: async () => null,
+          findMany: () => [],
         },
       },
     });

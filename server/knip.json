@@ -26,6 +26,8 @@
     "@electric-sql/pglite",
     "@types/bcrypt",
     "drizzle-orm",
-    "bcrypt"
+    "bcrypt",
+    "eslint-plugin-drizzle",
+    "@eslint/eslintrc"
   ]
 }

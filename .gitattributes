@@ -1,8 +1,85 @@
-# Enforce LF for all text files
+# ==========================================
+# 🔄 Normalize line endings (LF for all text)
+# ==========================================
 * text=auto eol=lf
 
-# Optional: Treat specific binary files properly
+# ==========================================
+# 🧠 Source code files (force text handling)
+# ==========================================
+*.js   text
+*.jsx  text
+*.ts   text
+*.tsx  text
+*.vue  text
+*.json text
+*.yml  text
+*.yaml text
+*.html text
+*.css  text
+*.scss text
+*.md   text
+*.sh   text
+*.env  text
+*.toml text
+*.conf text
+*.config.js text
+*.tsconfig text
+*.gitattributes text
+*.gitignore text
+
+# ==========================================
+# 📦 Lock & config files
+# ==========================================
+*.lock text
+*.yarnrc text
+
+# ==========================================
+# 📁 Treat binary files correctly
+# ==========================================
+# Fonts
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.otf binary
+
+# Images
 *.png binary
 *.jpg binary
-*.woff binary
-*.ttf binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary
+*.webp binary
+
+# Media
+*.mp4 binary
+*.mp3 binary
+*.mov binary
+*.avi binary
+
+# Archives
+*.zip binary
+*.gz  binary
+*.tar binary
+*.7z  binary
+
+# ==========================================
+# 🧪 Test output / snapshots (optional)
+# ==========================================
+*.snap text
+*.spec.ts text
+*.test.ts text
+*.coverage text
+
+# ==========================================
+# 🧩 TypeScript declaration files
+# ==========================================
+*.d.ts text
+
+# ==========================================
+# 🔐 Certificate or secrets (optional)
+# ==========================================
+*.pem text
+*.crt text
+*.key text

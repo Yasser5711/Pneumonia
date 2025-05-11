@@ -5,8 +5,12 @@ import { hashApiKey } from '../src/utils/hash';
 
 config();
 
-async function seedDevApiKey() {
-  const rawKey = 'dev-1234567890abcdef';
+async function seedDevApiKey(): Promise<void> {
+  const rawKey = process.env.API_KEY;
+  if (!rawKey) {
+    console.error('❌ API_KEY is not defined');
+    process.exit(1);
+  }
   const prefix = rawKey.slice(0, 12);
   const secretPart = rawKey.slice(12);
 

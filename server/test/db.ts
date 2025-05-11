@@ -18,6 +18,7 @@ export const applyMigration = async () => {
 
   const files = readdirSync(MIGRATIONS_DIR).filter((f) => f.endsWith('.sql'));
   for (const file of files) {
+    // eslint-disable-next-line security/detect-non-literal-fs-filename
     const content = readFileSync(join(MIGRATIONS_DIR, file), 'utf-8');
 
     const statements = content
@@ -34,6 +35,9 @@ export const applyMigration = async () => {
 };
 
 export async function resetDb() {
+  // eslint-disable-next-line drizzle/enforce-delete-with-where
   await db.delete(apiKeysTable);
+
+  // eslint-disable-next-line drizzle/enforce-delete-with-where
   await db.delete(usersTable);
 }

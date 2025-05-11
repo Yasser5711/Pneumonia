@@ -1,6 +1,7 @@
 import { fastifyTRPCOpenApiPlugin, generateOpenApiDocument } from '@9or9/trpc-openapi';
 import fastifyBasicAuth from '@fastify/basic-auth';
 import cors from '@fastify/cors';
+import helmet from '@fastify/helmet';
 import rateLimit from '@fastify/rate-limit';
 import ScalarApiReference from '@scalar/fastify-api-reference';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
@@ -11,7 +12,6 @@ import { env } from './env';
 import { setLogger } from './logger';
 import { appRouter } from './router/_app';
 import { createContext } from './trpc';
-
 const isDev = env.NODE_ENV === 'development';
 
 const fastify = Fastify({
@@ -28,10 +28,21 @@ const fastify = Fastify({
         },
       }
     : true, // raw JSON logs in prod
-  bodyLimit: 10 * 1024 * 1024, // 10 MB
+  bodyLimit: 3 * 1024 * 1024, // 3 MB
 });
 setLogger(fastify.log);
 async function main() {
+  await fastify.register(helmet, {
+    contentSecurityPolicy:
+      isDev || env.NODE_ENV === 'preview'
+        ? {
+            directives: {
+              ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+              'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+            },
+          }
+        : true,
+  });
   await fastify.register(cors, {
     origin: (origin, cb) => {
       const isPreview = origin?.includes('.netlify.app') && env.NODE_ENV === 'preview';
@@ -84,27 +95,27 @@ async function main() {
     },
     authenticate: true,
   });
-  const baseUrl = env.NODE_ENV !== 'development' ? env.BASE_URL : 'http://localhost:3000';
-  fastify.get('/openapi.json', async (_req, reply) => {
-    const openApiDoc = generateOpenApiDocument(appRouter, {
-      title: 'My APIs',
-      version: pkg.version,
-      baseUrl: baseUrl + '/api',
-      securitySchemes: {
-        apiKeyHeader: {
-          description: 'API key required for access',
-          type: 'apiKey',
-          name: 'X-API-KEY',
-          in: 'header',
-        },
-      },
-    });
-
-    reply.header('Content-Type', 'application/json').send(openApiDoc);
-  });
 
   const allowPanel = isDev || env.NODE_ENV === 'preview';
   if (allowPanel) {
+    const baseUrl = env.NODE_ENV !== 'development' ? env.BASE_URL : 'http://localhost:3000';
+    fastify.get('/openapi.json', (_req, reply) => {
+      const openApiDoc = generateOpenApiDocument(appRouter, {
+        title: 'My APIs',
+        version: pkg.version,
+        baseUrl: baseUrl + '/api',
+        securitySchemes: {
+          apiKeyHeader: {
+            description: 'API key required for access',
+            type: 'apiKey',
+            name: 'X-API-KEY',
+            in: 'header',
+          },
+        },
+      });
+
+      reply.header('Content-Type', 'application/json').send(openApiDoc);
+    });
     if (!isDev) {
       await fastify.register(ScalarApiReference, {
         routePrefix: '/reference',
@@ -156,7 +167,7 @@ async function main() {
     }
   }
 
-  fastify.get('/', async () => ({ status: '🚀 Server is running' }));
+  fastify.get('/', async () => await { status: '🚀 Server is running' });
 
   await fastify.listen({ port: 3000, host: '0.0.0.0' });
   // eslint-disable-next-line no-console
@@ -165,4 +176,4 @@ async function main() {
   console.log(`🧩 tRPC router keys: ${Object.keys(appRouter._def.procedures).join(', ')}`);
 }
 
-main();
+await main();

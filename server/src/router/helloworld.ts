@@ -21,7 +21,7 @@ export const helloWorldRouter = protectedProcedureAPI
       message: z.string(),
     }),
   )
-  .query(async ({ input }) => {
+  .query(({ input }) => {
     const { name } = input;
     return {
       message: `Hello, ${name || 'Guest'}!`,

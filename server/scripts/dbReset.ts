@@ -12,7 +12,7 @@ if (!DATABASE_URL || DATABASE_URL.length === 0) {
   process.exit(1);
 }
 
-async function resetDatabase() {
+async function resetDatabase(): Promise<void> {
   console.log('⚠️  Dropping public schema...');
 
   const sql = postgres(DATABASE_URL!, { max: 1 });
@@ -40,4 +40,4 @@ async function resetDatabase() {
   console.log('✅ Database reset, migrations applied, and push executed');
 }
 
-resetDatabase();
+void resetDatabase();

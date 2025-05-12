@@ -1,0 +1,20 @@
+name: Wait for Render Deploy
+description: Poll Render API until latest deployment reaches a final state.
+inputs:
+  service_id:
+    required: true
+    description: Render service ID (e.g. srv-xxxx)
+  api_token:
+    required: true
+    description: Render API token
+
+runs:
+  using: "composite"
+  steps:
+    - shell: bash
+      env:
+        SERVICE_ID: ${{ inputs.service_id }}
+        API_TOKEN: ${{ inputs.api_token }}
+      run: |
+        chmod +x ${{ github.action_path }}/entrypoint.sh
+        ${{ github.action_path }}/entrypoint.sh

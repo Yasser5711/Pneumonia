@@ -105,7 +105,11 @@ jobs:
         run: |
           echo "Deploying backend via Render hook..."
           curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK_PROD }}"
-
+      - name: ⏳ Wait for Render to be ready
+        uses: ./.github/actions/wait-render-deploy
+        with:
+          service_id: ${{ secrets.RENDER_SERVICE_ID_PROD }}
+          api_token: ${{ secrets.RENDER_API_KEY_PROD }}
   deploy-client:
     name: 🚀 Deploy Frontend to Netlify (Production)
     runs-on: ubuntu-latest
@@ -206,7 +210,7 @@ jobs:
       - create-release-pr
     environment:
       name: production
-      url: https://ai.yassermekhfi.me
+      url: https://pneumodetect.yassermekhfi.me
     if: ${{ success() }}
     steps:
       - name: ✅ All production steps succeeded

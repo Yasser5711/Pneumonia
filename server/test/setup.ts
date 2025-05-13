@@ -37,11 +37,13 @@ beforeAll(() => {
     return {
       default: () => ({
         resize: () => ({
-          raw: () => ({
-            toBuffer: () =>
-              Promise.resolve({
-                data: new Uint8Array(128 * 128 * 3), // valid RGB buffer
-              }),
+          grayscale: () => ({
+            raw: () => ({
+              toBuffer: () =>
+                Promise.resolve({
+                  data: new Uint8Array(128 * 128), // simule du grayscale
+                }),
+            }),
           }),
         }),
       }),

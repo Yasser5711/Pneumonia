@@ -47,6 +47,7 @@ export const predictRouter = protectedProcedureAPI
 
     const { data } = await sharp(imageBuffer)
       .resize(128, 128)
+      .grayscale()
       .raw()
       .toBuffer({ resolveWithObject: true });
 
@@ -56,8 +57,8 @@ export const predictRouter = protectedProcedureAPI
     for (let y = 0; y < 128; y++) {
       const row: number[][] = [];
       for (let x = 0; x < 128; x++) {
-        const idx = (y * 128 + x) * 3;
-        row.push([floatArray[idx], floatArray[idx + 1], floatArray[idx + 2]]);
+        const idx = y * 128 + x;
+        row.push([floatArray[idx]]);
       }
       imageArray.push(row);
     }

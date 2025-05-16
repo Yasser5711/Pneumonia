@@ -7,7 +7,7 @@
     "generate:openapi": "NODE_ENV=production tsx scripts/generateOpenApi.ts",
     "create:api-key": "tsx scripts/createApiKey.ts",
     "db:generate": "drizzle-kit generate",
-    "db:push": "yarn db:generate && drizzle-kit push",
+    "db:push": "drizzle-kit push",
     "db:migrate": "tsx scripts/dbMigrate.ts",
     "db:studio": "drizzle-kit studio",
     "db:reset": "tsx scripts/dbReset.ts",

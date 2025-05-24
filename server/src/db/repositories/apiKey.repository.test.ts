@@ -97,4 +97,31 @@ describe('apiKeysRepo', () => {
     const result = await customRepo.findByPrefix('prefix');
     expect(result).toEqual([]);
   });
+  it('should update expiration and return the updated record', async () => {
+    const [created] = await repo.create({
+      name: 'KeyToUpdate',
+      keyPrefix: 'prefix999999',
+      hashedKey: 'hash3',
+    });
+
+    const updateTime = new Date('2025-01-01T00:00:00Z');
+    const [updated] = await repo.updateExpiration({
+      id: created.id,
+      expiresAt: updateTime,
+    });
+
+    expect(updated.id).toBe(created.id);
+    expect(updated.expiresAt?.toISOString()).toBe(updateTime.toISOString());
+  });
+  it('should invalidate a key and return the updated record', async () => {
+    const [created] = await repo.create({
+      name: 'KeyToInvalidate',
+      keyPrefix: 'prefix111111',
+      hashedKey: 'hash4',
+    });
+
+    const [invalidated] = await repo.invalidateKey(created.id);
+    expect(invalidated.id).toBe(created.id);
+    expect(invalidated.active).toBe(false);
+  });
 });

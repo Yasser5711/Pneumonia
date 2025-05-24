@@ -26,7 +26,6 @@ export const createApiKeyService = (apiKeysRepo: Repositories['apiKeysRepo']) =>
       meta: record,
     };
   },
-
   validateKey: async (key: string) => {
     const prefix = key.slice(0, 12);
     const secretPart = key.slice(12);
@@ -37,9 +36,15 @@ export const createApiKeyService = (apiKeysRepo: Repositories['apiKeysRepo']) =>
       return null;
     }
     for (const candidate of candidates) {
-      const match = await compareApiKey(secretPart, candidate.hashedKey);
-      if (match && candidate.active && (!candidate.expiresAt || candidate.expiresAt > new Date())) {
+      const isMatch = await compareApiKey(secretPart, candidate.hashedKey);
+      const isActive = candidate.active;
+      const isNotExpired = !candidate.expiresAt || candidate.expiresAt > new Date();
+
+      if (isMatch && isActive && isNotExpired) {
         return candidate;
+      }
+      if (isMatch && isActive) {
+        await apiKeysRepo.invalidateKey(candidate.id);
       }
     }
 
@@ -53,6 +58,12 @@ export const createApiKeyService = (apiKeysRepo: Repositories['apiKeysRepo']) =>
         lastUsedAt: new Date(),
         lastUsedIp: ip ?? null,
       },
+    });
+  },
+  updateExpiration: async ({ id }: { id: string }) => {
+    await apiKeysRepo.updateExpiration({
+      id: id,
+      expiresAt: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), // 10 days
     });
   },
 });

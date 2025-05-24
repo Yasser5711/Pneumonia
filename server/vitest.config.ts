@@ -24,6 +24,7 @@ export default mergeConfig(
           'types/',
           'dist/',
           'eslint.config.js',
+          'drizzle.config.ts',
           'vite.config.ts',
           'src/env.ts',
           '**/index.ts',

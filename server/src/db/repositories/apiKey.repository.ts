@@ -63,4 +63,36 @@ export const createApiKeysRepo = (db: any = DB) => ({
       lastUsedIp: apiKeysTable.lastUsedIp,
     });
   },
+  updateExpiration: async ({ id, expiresAt }: { id: string; expiresAt: Date }) => {
+    return await db
+      .update(apiKeysTable)
+      .set({ expiresAt })
+      .where(eq(apiKeysTable.id, id))
+      .returning({
+        id: apiKeysTable.id,
+        name: apiKeysTable.name,
+        hashedKey: apiKeysTable.hashedKey,
+        expiresAt: apiKeysTable.expiresAt,
+        active: apiKeysTable.active,
+        description: apiKeysTable.description,
+        lastUsedAt: apiKeysTable.lastUsedAt,
+        lastUsedIp: apiKeysTable.lastUsedIp,
+      });
+  },
+  invalidateKey: async (id: string) => {
+    return await db
+      .update(apiKeysTable)
+      .set({ active: false })
+      .where(eq(apiKeysTable.id, id))
+      .returning({
+        id: apiKeysTable.id,
+        name: apiKeysTable.name,
+        hashedKey: apiKeysTable.hashedKey,
+        expiresAt: apiKeysTable.expiresAt,
+        active: apiKeysTable.active,
+        description: apiKeysTable.description,
+        lastUsedAt: apiKeysTable.lastUsedAt,
+        lastUsedIp: apiKeysTable.lastUsedIp,
+      });
+  },
 });

@@ -119,7 +119,7 @@ jobs:
           env: "staging"
           status: "success"
           deployment_id: ${{ steps.server_deployment_start.outputs.deployment_id }}
-          env_url: ${{ secrets.SERVER_STAGING_URL }}
+          # env_url: ${{ secrets.SERVER_STAGING_URL }}
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: ❌ Finish GitHub Deployment (failure backend)

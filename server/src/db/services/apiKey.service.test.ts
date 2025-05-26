@@ -139,4 +139,17 @@ describe('apiKeyService', () => {
       });
     });
   });
+  describe('updateExpiration', () => {
+    it('should call updateExpiration with id and new expiration date', async () => {
+      const now = new Date();
+      vi.setSystemTime(now);
+
+      await service.updateExpiration({ id: 'key-id' });
+
+      expect(mockApiKeyRepo.updateExpiration).toHaveBeenCalledWith({
+        id: 'key-id',
+        expiresAt: new Date(now.getTime() + 10 * 24 * 60 * 60 * 1000),
+      });
+    });
+  });
 });

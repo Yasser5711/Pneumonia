@@ -19,6 +19,11 @@ async function seedDevApiKey(): Promise<void> {
   const existing = await apiKeysRepo.findByPrefix(prefix);
   if (existing && existing.length > 0) {
     console.log(`✅ Dev API key already exists (prefix: ${prefix})`);
+    await apiKeysRepo.updateExpiration({
+      id: existing[0].id,
+      expiresAt: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000),
+    });
+    console.log(`✅ Dev API key expiration updated (prefix: ${prefix})`);
     return;
   }
 

@@ -31,7 +31,7 @@ const close = () => emit('update:modelValue', false)
   >
     <!-- Close Button (outside image) -->
     <button
-      class="absolute -right-4 -top-4 z-10 rounded-full bg-black/50 p-2 text-white opacity-0 backdrop-blur-sm transition-opacity hover:bg-black/70 group-hover:opacity-100 md:opacity-0 md:group-hover:opacity-100"
+      class="absolute -top-4 -right-4 z-10 rounded-full bg-black/50 p-2 text-white opacity-0 backdrop-blur-sm transition-opacity group-hover:opacity-100 hover:bg-black/70 md:opacity-0 md:group-hover:opacity-100"
       @click="close"
     >
       <XIcon class="h-6 w-6" />

@@ -1,10 +1,10 @@
 import vue from '@vitejs/plugin-vue'
 import { fileURLToPath, URL } from 'node:url'
-import { defineConfig, mergeConfig } from 'vitest/config'
+import { defineConfig, mergeConfig, type ViteUserConfig } from 'vitest/config'
 import baseConfig from '../vitest.config'
-export default mergeConfig(
-  baseConfig,
-  defineConfig({
+
+export default defineConfig(
+  mergeConfig(baseConfig as ViteUserConfig, {
     plugins: [vue()],
     test: {
       environment: 'happy-dom',
@@ -13,6 +13,7 @@ export default mergeConfig(
       coverage: {
         enabled: true,
         provider: 'istanbul',
+
         thresholds: {
           branches: 10,
           functions: 20,

@@ -1,4 +1,5 @@
 <template>
+  <CanvasBackground />
   <v-main>
     <router-view />
   </v-main>

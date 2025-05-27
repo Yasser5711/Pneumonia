@@ -57,6 +57,7 @@ declare global {
   const unref: typeof import('vue')['unref']
   const useAppStore: typeof import('./stores/app')['useAppStore']
   const useAttrs: typeof import('vue')['useAttrs']
+  const useCanvasAnimation: typeof import('./composables/useCanvasAnimation')['useCanvasAnimation']
   const useChatScroll: typeof import('./composables/useChatScroll')['useChatScroll']
   const useChatStore: typeof import('./stores/chatStore')['useChatStore']
   const useClock: typeof import('./composables/useClock')['useClock']
@@ -146,6 +147,7 @@ declare module 'vue' {
     readonly unref: UnwrapRef<typeof import('vue')['unref']>
     readonly useAppStore: UnwrapRef<typeof import('./stores/app')['useAppStore']>
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
+    readonly useCanvasAnimation: UnwrapRef<typeof import('./composables/useCanvasAnimation')['useCanvasAnimation']>
     readonly useChatScroll: UnwrapRef<typeof import('./composables/useChatScroll')['useChatScroll']>
     readonly useChatStore: UnwrapRef<typeof import('./stores/chatStore')['useChatStore']>
     readonly useClock: UnwrapRef<typeof import('./composables/useClock')['useClock']>

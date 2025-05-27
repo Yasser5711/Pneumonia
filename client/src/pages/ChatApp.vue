@@ -21,7 +21,7 @@ function onLeftButtonClick() {
 <template>
   <div class="bg-background transition-colors duration-300">
     <button
-      class="glass-panel hover:bg-primary/20 absolute right-4 top-4 z-50 rounded-full p-2 transition-colors hover:scale-105"
+      class="glass-panel hover:bg-primary/20 absolute top-4 right-4 z-50 rounded-full p-2 transition-colors hover:scale-105"
       @click="cycleTheme"
     >
       <span v-if="themeMode.mode === 'light'">🌙</span>
@@ -29,7 +29,7 @@ function onLeftButtonClick() {
       <span v-else>💻</span>
     </button>
     <button
-      class="glass-panel hover:bg-primary/20 absolute left-4 top-4 z-50 rounded-full p-2 transition-colors hover:scale-105"
+      class="glass-panel hover:bg-primary/20 absolute top-4 left-4 z-50 rounded-full p-2 transition-colors hover:scale-105"
       @click="onLeftButtonClick"
     >
       🔑

@@ -6,14 +6,14 @@ const { timeParts, fullDate, toggleFormat } = useClock()
 
 <template>
   <div
-    class="group cursor-pointer select-none text-center font-mono text-base md:text-lg"
+    class="group cursor-pointer text-center font-mono text-base select-none md:text-lg"
     :title="fullDate"
     @click="toggleFormat"
   >
     <span v-for="part in timeParts" :key="part.type">
       <span
         v-if="part.type === 'literal' && part.value === ':'"
-        class="inline-block animate-pulse px-0.5 group-hover:text-primary"
+        class="group-hover:text-primary inline-block animate-pulse px-0.5"
       >
         {{ part.value }}
       </span>

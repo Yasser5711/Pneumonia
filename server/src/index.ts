@@ -167,7 +167,7 @@ async function main() {
     }
   }
 
-  fastify.get('/', async () => await { status: '🚀 Server is running' });
+  fastify.get('/', async () => ({ status: '🚀 Server is running' }));
 
   await fastify.listen({ port: 3000, host: '0.0.0.0' });
   // eslint-disable-next-line no-console

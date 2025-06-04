@@ -23,7 +23,7 @@ if not REQUIREMENTS_FILE.exists():
     print(f"[!] Cannot find requirements.txt at: {REQUIREMENTS_FILE}")
     sys.exit(1)
 
-print("[+] Installing dev dependencies from back/requirements.txt...")
+print("[+] Installing dev dependencies from IA/requirements.txt...")
 subprocess.check_call([str(python_exe), "-m", "pip", "install", "--upgrade", "pip"])
 subprocess.check_call(
     [str(python_exe), "-m", "pip", "install", "-r", str(REQUIREMENTS_FILE)]

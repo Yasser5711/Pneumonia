@@ -24,6 +24,14 @@ export function createAppRouter(baseUrl: string = import.meta.env.BASE_URL) {
       },
     ]),
   })
+  // router.beforeEach(async (to: RouteLocationNormalized) => {
+  //   const layoutName = (to.meta.layout as string) || 'DefaultLayout'
+  //   const layout = await import(`../layouts/${layoutName}.vue`)
+  //   to.matched[0].components = {
+  //     default: to.matched[0].components!.default,
+  //     layout: layout.default,
+  //   }
+  // })
   router.afterEach((to: RouteLocationNormalized) => {
     const { title, description, icon } = to.meta as {
       title?: string

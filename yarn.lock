@@ -3742,6 +3742,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@unhead/vue@npm:^2.0.10":
+  version: 2.0.10
+  resolution: "@unhead/vue@npm:2.0.10"
+  dependencies:
+    hookable: "npm:^5.5.3"
+    unhead: "npm:2.0.10"
+  peerDependencies:
+    vue: ">=3.5.13"
+  checksum: 10c0/0c74b40dc009789de27fc23113191b6aa5a5575991fac3e2aa9f248e2f1d392c139f9846309bd01bc17aebd46059dcad1c8f80ce4dc96ca2bb86d1aa12de9cb4
+  languageName: node
+  linkType: hard
+
 "@vee-validate/zod@npm:^4.15.0":
   version: 4.15.0
   resolution: "@vee-validate/zod@npm:4.15.0"
@@ -5057,6 +5069,7 @@ __metadata:
     "@types/node": "npm:^22.15.21"
     "@typescript-eslint/eslint-plugin": "npm:^8.32.1"
     "@typescript-eslint/parser": "npm:^8.32.1"
+    "@unhead/vue": "npm:^2.0.10"
     "@vee-validate/zod": "npm:^4.15.0"
     "@vitejs/plugin-vue": "npm:^5.2.4"
     "@vitest/coverage-istanbul": "npm:3.1.4"
@@ -13342,6 +13355,15 @@ __metadata:
   version: 6.21.0
   resolution: "undici-types@npm:6.21.0"
   checksum: 10c0/c01ed51829b10aa72fc3ce64b747f8e74ae9b60eafa19a7b46ef624403508a54c526ffab06a14a26b3120d055e1104d7abe7c9017e83ced038ea5cf52f8d5e04
+  languageName: node
+  linkType: hard
+
+"unhead@npm:2.0.10":
+  version: 2.0.10
+  resolution: "unhead@npm:2.0.10"
+  dependencies:
+    hookable: "npm:^5.5.3"
+  checksum: 10c0/94baadfea4bb54a7237bef5d9676051db1c18e645bc6c621267afe951f123758b663b44c0bfd34fa587f38f44334f8dfc0e13eaf8570243d38acf0cb1751a112
   languageName: node
   linkType: hard
 

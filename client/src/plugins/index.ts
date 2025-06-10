@@ -10,6 +10,7 @@ import pinia from '../stores'
 import motion from './motion'
 import { installTanstack } from './tanstack'
 import { createTRPCPlugin } from './trpc'
+import head from './unHead'
 import vuetify from './vuetify'
 // Types
 import type { App } from 'vue'
@@ -24,4 +25,5 @@ export function registerPlugins(app: App) {
     .use(createAppRouter())
     .use(motion)
     .use(createTRPCPlugin({ url: `${import.meta.env.VITE_API_URL}/trpc` }))
+    .use(head)
 }

@@ -8,9 +8,9 @@ import VueRouter from 'unplugin-vue-router/vite'
 import Layouts from 'vite-plugin-vue-layouts'
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 // Utilities
+import { unheadVueComposablesImports } from '@unhead/vue'
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
-
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -21,6 +21,7 @@ export default defineConfig({
     Layouts(),
     AutoImport({
       imports: [
+        unheadVueComposablesImports,
         'vue',
         {
           'vue-router/auto': ['useRoute', 'useRouter'],

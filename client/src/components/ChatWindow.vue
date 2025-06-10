@@ -9,6 +9,14 @@ const { showScrollButton, scrollToBottom } = useChatScroll()
 onMounted(() => {
   scrollToBottom(false)
 })
+useHead({
+  title: () =>
+    chatStore.isTyping
+      ? 'Assistant is typing...'
+      : chatStore.messages.length === 0
+        ? undefined
+        : `Chat - ${chatStore.userMessages.length} messages`,
+})
 </script>
 
 <template>
@@ -43,7 +51,7 @@ onMounted(() => {
           <span class="dot-bounce mr-1" style="animation-delay: 0.15s"></span>
           <span class="dot-bounce" style="animation-delay: 0.3s"></span>
         </div>
-        <span>Assistant is typing…</span>
+        <span>Assistant is typing</span>
       </div>
     </div>
 

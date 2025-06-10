@@ -19,6 +19,8 @@ describe('useChatStore', () => {
     expect(store.messages).toEqual([])
     expect(store.isTyping).toBe(false)
     expect(store.isLoading).toBe(false)
+    expect(store.userMessages).toEqual([])
+    expect(store.assistantMessages).toEqual([])
   })
 
   it('setLoading should update isLoading ref', () => {
@@ -59,6 +61,8 @@ describe('useChatStore', () => {
     expect(output[1].content).toBe(
       '⚠️ Oops! Chat content isn’t available yet. Please try again later. 💬',
     )
+    expect(store.userMessages.length).toBe(1)
+    expect(store.assistantMessages.length).toBe(1)
   })
 
   it('addMessage should add visual response for non-text', () => {
@@ -75,6 +79,8 @@ describe('useChatStore', () => {
     expect(output.length).toBe(1)
     expect(output[0].url).toBe('https://example.com/image.jpg')
     expect(output[0].sender).toBe('user')
+    expect(store.userMessages.length).toBe(1)
+    expect(store.assistantMessages.length).toBe(0)
   })
 
   it('should mark message as "sent" after timeout', async () => {

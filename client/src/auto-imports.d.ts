@@ -17,6 +17,7 @@ declare global {
   const getCurrentScope: typeof import('vue')['getCurrentScope']
   const h: typeof import('vue')['h']
   const inject: typeof import('vue')['inject']
+  const injectHead: typeof import('@unhead/vue')['injectHead']
   const isProxy: typeof import('vue')['isProxy']
   const isReactive: typeof import('vue')['isReactive']
   const isReadonly: typeof import('vue')['isReadonly']
@@ -65,12 +66,18 @@ declare global {
   const useCssVars: typeof import('vue')['useCssVars']
   const useFileUpload: typeof import('./composables/useFileUpload')['useFileUpload']
   const useGlobalFileDragState: typeof import('./composables/useGlobalFileDragState')['useGlobalFileDragState']
+  const useHead: typeof import('@unhead/vue')['useHead']
+  const useHeadSafe: typeof import('@unhead/vue')['useHeadSafe']
   const useId: typeof import('vue')['useId']
   const useImagePredictor: typeof import('./composables/useImagePredictor')['useImagePredictor']
   const useLink: (typeof import('vue-router'))['useLink']
   const useModel: typeof import('vue')['useModel']
   const useRoute: typeof import('vue-router/auto')['useRoute']
   const useRouter: typeof import('vue-router/auto')['useRouter']
+  const useSeoMeta: typeof import('@unhead/vue')['useSeoMeta']
+  const useServerHead: typeof import('@unhead/vue')['useServerHead']
+  const useServerHeadSafe: typeof import('@unhead/vue')['useServerHeadSafe']
+  const useServerSeoMeta: typeof import('@unhead/vue')['useServerSeoMeta']
   const useSlots: typeof import('vue')['useSlots']
   const useStorageStore: typeof import('./stores/storageStore')['useStorageStore']
   const useTRPC: typeof import('./composables/useTRPC')['useTRPC']
@@ -114,6 +121,7 @@ declare module 'vue' {
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
     readonly h: UnwrapRef<typeof import('vue')['h']>
     readonly inject: UnwrapRef<typeof import('vue')['inject']>
+    readonly injectHead: UnwrapRef<typeof import('@unhead/vue')['injectHead']>
     readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>
     readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
     readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
@@ -160,11 +168,17 @@ declare module 'vue' {
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
     readonly useFileUpload: UnwrapRef<typeof import('./composables/useFileUpload')['useFileUpload']>
     readonly useGlobalFileDragState: UnwrapRef<typeof import('./composables/useGlobalFileDragState')['useGlobalFileDragState']>
+    readonly useHead: UnwrapRef<typeof import('@unhead/vue')['useHead']>
+    readonly useHeadSafe: UnwrapRef<typeof import('@unhead/vue')['useHeadSafe']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useImagePredictor: UnwrapRef<typeof import('./composables/useImagePredictor')['useImagePredictor']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly useRoute: UnwrapRef<typeof import('vue-router/auto')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router/auto')['useRouter']>
+    readonly useSeoMeta: UnwrapRef<typeof import('@unhead/vue')['useSeoMeta']>
+    readonly useServerHead: UnwrapRef<typeof import('@unhead/vue')['useServerHead']>
+    readonly useServerHeadSafe: UnwrapRef<typeof import('@unhead/vue')['useServerHeadSafe']>
+    readonly useServerSeoMeta: UnwrapRef<typeof import('@unhead/vue')['useServerSeoMeta']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useStorageStore: UnwrapRef<typeof import('./stores/storageStore')['useStorageStore']>
     readonly useTRPC: UnwrapRef<typeof import('./composables/useTRPC')['useTRPC']>

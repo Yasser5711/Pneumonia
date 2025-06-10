@@ -46,7 +46,7 @@ export function useFileUpload() {
 
       reader.onerror = () => {
         isReading.value = false
-        progress.value = 0 // Réinitialiser la progression en cas d'erreur
+        progress.value = 0
         const errorMessage = `Erreur FileReader pour : ${fileToProcess.name}. Erreur: ${reader.error?.message}`
         console.error(errorMessage, reader.error)
         error.value = errorMessage
@@ -64,10 +64,10 @@ export function useFileUpload() {
   }
 
   return {
-    uploadProgress: progress, // Renommé pour clarté lors de l'utilisation
-    isUploadingFile: isReading, // Renommé pour clarté
+    uploadProgress: progress,
+    isUploadingFile: isReading,
     uploadError: error,
-    processUploadedFile: processFile, // Renommé pour clarté
+    processUploadedFile: processFile,
     resetFileUpload: reset,
   }
 }

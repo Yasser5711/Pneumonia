@@ -40,6 +40,12 @@ export const useChatStore = defineStore('chat', () => {
 
   const messages = computed(() => state.value.messages)
   const isTyping = computed(() => state.value.isTyping)
+  const userMessages = computed(() =>
+    state.value.messages.filter((msg) => msg.sender === 'user'),
+  )
+  const assistantMessages = computed(() =>
+    state.value.messages.filter((msg) => msg.sender === 'assistant'),
+  )
 
   return {
     messages,
@@ -48,5 +54,7 @@ export const useChatStore = defineStore('chat', () => {
     setLoading,
     addMessage,
     setTyping,
+    userMessages,
+    assistantMessages,
   }
 })

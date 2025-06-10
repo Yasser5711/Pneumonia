@@ -19,4 +19,5 @@ ignores: [
   '@testing-library/jest-dom',
   '@vee-validate/zod',
   '@vue/tsconfig',
+  '@tailwindcss/postcss',
 ]

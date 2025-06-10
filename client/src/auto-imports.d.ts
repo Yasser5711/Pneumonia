@@ -57,11 +57,14 @@ declare global {
   const unref: typeof import('vue')['unref']
   const useAppStore: typeof import('./stores/app')['useAppStore']
   const useAttrs: typeof import('vue')['useAttrs']
+  const useCanvasAnimation: typeof import('./composables/useCanvasAnimation')['useCanvasAnimation']
   const useChatScroll: typeof import('./composables/useChatScroll')['useChatScroll']
   const useChatStore: typeof import('./stores/chatStore')['useChatStore']
   const useClock: typeof import('./composables/useClock')['useClock']
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
+  const useFileUpload: typeof import('./composables/useFileUpload')['useFileUpload']
+  const useGlobalFileDragState: typeof import('./composables/useGlobalFileDragState')['useGlobalFileDragState']
   const useId: typeof import('vue')['useId']
   const useImagePredictor: typeof import('./composables/useImagePredictor')['useImagePredictor']
   const useLink: (typeof import('vue-router'))['useLink']
@@ -84,6 +87,9 @@ declare global {
   // @ts-ignore
   export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
+  // @ts-ignore
+  export type { FileUploadResult } from './composables/useFileUpload'
+  import('./composables/useFileUpload')
   // @ts-ignore
   export type { PredictionResult } from './composables/useImagePredictor'
   import('./composables/useImagePredictor')
@@ -146,11 +152,14 @@ declare module 'vue' {
     readonly unref: UnwrapRef<typeof import('vue')['unref']>
     readonly useAppStore: UnwrapRef<typeof import('./stores/app')['useAppStore']>
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
+    readonly useCanvasAnimation: UnwrapRef<typeof import('./composables/useCanvasAnimation')['useCanvasAnimation']>
     readonly useChatScroll: UnwrapRef<typeof import('./composables/useChatScroll')['useChatScroll']>
     readonly useChatStore: UnwrapRef<typeof import('./stores/chatStore')['useChatStore']>
     readonly useClock: UnwrapRef<typeof import('./composables/useClock')['useClock']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
+    readonly useFileUpload: UnwrapRef<typeof import('./composables/useFileUpload')['useFileUpload']>
+    readonly useGlobalFileDragState: UnwrapRef<typeof import('./composables/useGlobalFileDragState')['useGlobalFileDragState']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useImagePredictor: UnwrapRef<typeof import('./composables/useImagePredictor')['useImagePredictor']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>

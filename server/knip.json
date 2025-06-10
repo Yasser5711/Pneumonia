@@ -9,11 +9,15 @@
     "depcheck",
     "ts-prune",
     "wireit",
-    "drizzle-kit"
+    "drizzle-kit",
+    "eslint",
+    "knip",
+    "vitest"
   ],
   "ignoreDependencies": [
     "@types/ws",
     "@vitest/coverage-v8",
+    "@vitest/ui",
     "@fastify/websocket",
     "@typescript-eslint/eslint-plugin",
     "pino-pretty",
@@ -28,6 +32,8 @@
     "drizzle-orm",
     "bcrypt",
     "eslint-plugin-drizzle",
-    "@eslint/eslintrc"
+    "@eslint/eslintrc",
+    "eslint-config-prettier",
+    "prettier"
   ]
 }

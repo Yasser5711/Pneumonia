@@ -10,8 +10,10 @@ const props = defineProps<{
 }>()
 
 const showImageModal = ref(false)
+const isUserSender = computed(() => props.message.sender === 'user')
 
 const statusIcon = computed(() => {
+  if (!isUserSender.value) return null
   switch (props.message.status) {
     case 'sent':
       return CheckIcon
@@ -35,42 +37,69 @@ const formattedTime = computed(() => {
   <div
     v-motion
     :class="[
-      'mb-4 flex w-full',
-      message.sender === 'user' ? 'justify-end' : 'justify-start',
+      'group mb-4 flex w-full',
+      isUserSender ? 'justify-end' : 'justify-start',
     ]"
-    :initial="{ opacity: 0, y: 20 }"
-    :enter="{ opacity: 1, y: 0 }"
+    :initial="{ opacity: 0, y: 15 }"
+    :enter="{
+      opacity: 1,
+      y: 0,
+      transition: { duration: 350, ease: 'easeOut' },
+    }"
   >
     <div
       :class="[
-        'glass-panel max-w-[70%] rounded-2xl px-4 py-2',
-        message.sender === 'user'
-          ? 'bg-primary/10 rounded-tr-sm'
-          : 'rounded-tl-sm bg-surface',
+        'max-w-[75%] rounded-2xl px-4 py-2 md:max-w-[65%]',
+        'backdrop-blur-lg',
+        isUserSender
+          ? message.type == 'text'
+            ? 'mr-1 rounded-tr-sm bg-blue-100/50 dark:bg-blue-800/40'
+            : 'mr-1 rounded-tr-sm'
+          : 'ml-1 rounded-tl-sm border-slate-300/50 bg-slate-200/50 dark:border-slate-600/50 dark:bg-slate-700/40',
       ]"
     >
-      <template v-if="message.type === 'text'">
-        <p class="text-sm md:text-base">
-          {{ message.content }}
-        </p>
-      </template>
+      <div class="px-3.5 py-2 sm:px-4 sm:py-2.5">
+        <!-- <div v-if="!isUserSender" class="mb-1.5 flex items-center">
+          <v-icon icon="mdi-robot" size="small"></v-icon>
+          <span class="ml-1 text-xs font-semibold">Assistant</span>
+        </div> -->
+        <template v-if="message.type === 'text'">
+          <p class="text-sm leading-relaxed break-words sm:text-base">
+            {{ message.content }}
+          </p>
+        </template>
 
-      <template v-else-if="message.type === 'image'">
-        <HoverImage
-          :src="message.url"
-          :alt="message.alt"
-          class="max-h-[300px] rounded-lg"
-          @click="showImageModal = true"
-        />
-      </template>
+        <template v-else-if="message.type === 'image'">
+          <div
+            class="my-1.5 aspect-square w-full max-w-[240px] cursor-pointer overflow-hidden rounded-lg shadow-sm sm:max-w-[260px] md:max-w-[280px]"
+            @click="showImageModal = true"
+          >
+            <HoverImage
+              :src="message.url"
+              :alt="message.alt || 'Chat image'"
+              class="h-full w-full"
+            />
+          </div>
+        </template>
 
-      <div class="mt-1 flex items-center justify-end gap-1">
-        <span class="text-text/60 text-xs">{{ formattedTime }}</span>
-        <component
-          :is="statusIcon"
-          v-if="message.sender === 'user' && statusIcon"
-          class="text-text/60 h-4 w-4"
-        />
+        <div
+          class="mt-1.5 flex items-center gap-1.5"
+          :class="[isUserSender ? 'justify-end' : 'justify-start']"
+        >
+          <span class="text-xs text-slate-500 dark:text-slate-400">
+            {{ formattedTime }}
+          </span>
+          <component
+            :is="statusIcon"
+            v-if="isUserSender && statusIcon"
+            :class="[
+              'h-4 w-4',
+              message.status === 'read'
+                ? 'text-blue-500 dark:text-blue-400'
+                : 'text-slate-500 opacity-80 dark:text-slate-400',
+            ]"
+          />
+        </div>
       </div>
     </div>
 

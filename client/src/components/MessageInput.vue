@@ -1,27 +1,79 @@
 <script setup lang="ts">
-import { ImagePlus, SendIcon } from 'lucide-vue-next'
 import { storeToRefs } from 'pinia'
-import { onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import {
+  useFileUpload,
+  type FileUploadResult,
+} from '../composables/useFileUpload'
+import { useGlobalFileDragState } from '../composables/useGlobalFileDragState' // Importez le nouveau composable
 import { useImagePredictor } from '../composables/useImagePredictor'
 import { useChatStore } from '../stores/chatStore'
 import ImagePreview from './ImagePreview.vue'
+
+const { predictFromFile, error: predictionError } = useImagePredictor()
+
 const chatStore = useChatStore()
-const { isTyping } = storeToRefs(chatStore)
+const { isTyping: assistantIsProcessing } = storeToRefs(chatStore)
+
+const {
+  uploadProgress,
+  isUploadingFile,
+  processUploadedFile,
+  resetFileUpload,
+} = useFileUpload()
+
+const { isDraggingFileOverWindow } = useGlobalFileDragState()
+
 const messageInput = ref('')
 const fileInput = ref<HTMLInputElement | null>(null)
-const pendingImage = ref<File | null>(null)
-const dragOver = ref(false)
-const uploadProgress = ref(0)
+const pendingImageFile = ref<File | null>(null)
+const processedImageData = ref<FileUploadResult | null>(null)
+// dragOver local n'est plus nécessaire pour le style principal du v-sheet,
+// mais peut être utile si vous avez des logiques spécifiques lorsque la souris passe EXACTEMENT sur le v-sheet.
+// Pour cet objectif, nous allons le supprimer pour simplifier et utiliser directement isDraggingFileOverWindow.
+// const dragOver = ref(false)
+const isSendingInternally = ref(false)
+
+// --- Gestion de la sélection et du traitement initial du fichier ---
+const processNewFile = async (file: File) => {
+  if (!isValidImage(file)) {
+    if (fileInput.value) fileInput.value.value = ''
+    pendingImageFile.value = null
+    console.warn("Tentative de traitement d'un fichier invalide:", file.type)
+    return
+  }
+
+  pendingImageFile.value = file
+  processedImageData.value = null
+  resetFileUpload()
+
+  try {
+    const result = await processUploadedFile(file)
+    processedImageData.value = result
+  } catch (err) {
+    console.error('Erreur lors du traitement initial du fichier:', err)
+  }
+}
+
+watch(pendingImageFile, (newFile, oldFile) => {
+  if (!newFile || (newFile && oldFile && newFile !== oldFile)) {
+    resetFileUpload()
+    processedImageData.value = null
+    if (fileInput.value) fileInput.value.value = ''
+  }
+})
 
 const handlePaste = (e: ClipboardEvent) => {
+  if (isActionDisabledForNewFile.value && !isDraggingFileOverWindow.value)
+    return // Modifié pour permettre le paste si global drag
   const items = e.clipboardData?.items
   if (!items) return
 
   for (const item of items) {
     if (item.type.startsWith('image/')) {
       const file = item.getAsFile()
-      if (file && isValidImage(file)) {
-        pendingImage.value = file
+      if (file) {
+        processNewFile(file)
         break
       }
     }
@@ -30,234 +82,301 @@ const handlePaste = (e: ClipboardEvent) => {
 
 const handleDrop = (e: DragEvent) => {
   e.preventDefault()
-  dragOver.value = false
+  // isDraggingFileOverWindow sera remis à false par le composable global après le drop
+  // if (isActionDisabledForNewFile.value) return; // Cette vérification est déjà faite plus haut via les bindings
 
   const file = e.dataTransfer?.files[0]
-  if (file && isValidImage(file)) {
-    pendingImage.value = file
+  if (file) {
+    processNewFile(file)
   }
 }
 
 const handleFileSelect = (e: Event) => {
-  const file = (e.target as HTMLInputElement).files?.[0]
-  if (file && isValidImage(file)) {
-    pendingImage.value = file
+  const target = e.target as HTMLInputElement
+  const file = target.files?.[0]
+  if (file) {
+    processNewFile(file)
   }
 }
 
-const isValidImage = (file: File) => {
+const isValidImage = (file: File): boolean => {
   const validTypes = ['image/jpeg', 'image/png', 'image/webp']
-  return validTypes.includes(file.type)
+  const maxSize = 5 * 1024 * 1024 // 5 MB
+  if (!validTypes.includes(file.type)) {
+    chatStore.addMessage({
+      type: 'text',
+      content: `Type de fichier invalide : ${file.type}. Types valides : ${validTypes.join(', ')}`,
+      sender: 'assistant',
+    })
+    return false
+  }
+  if (file.size > maxSize) {
+    chatStore.addMessage({
+      type: 'text',
+      content: `La taille du fichier dépasse la limite de ${maxSize / (1024 * 1024)}MB.`,
+      sender: 'assistant',
+    })
+    return false
+  }
+  return true
 }
 
 const removePendingImage = () => {
-  pendingImage.value = null
-  uploadProgress.value = 0
-  if (fileInput.value) {
-    fileInput.value.value = ''
-  }
+  pendingImageFile.value = null
 }
 
-const { predictFromFile, error } = useImagePredictor()
-const sendMessage = () => {
-  const file = pendingImage.value
+const sendMessage = async () => {
+  if (isSendDisabled.value) return
+
+  const currentProcessedImage = processedImageData.value
   const text = messageInput.value.trim()
 
-  if (file) {
-    chatStore.setLoading(true)
+  isSendingInternally.value = true
+  chatStore.setLoading(true)
 
-    const reader = new FileReader()
-
-    // 💡 Listen to actual file reading progress
-    reader.onprogress = (event: ProgressEvent<FileReader>) => {
-      if (event.lengthComputable) {
-        uploadProgress.value = Math.round((event.loaded / event.total) * 100)
-      }
-    }
-
-    reader.onload = async (e) => {
-      const base64 = e.target?.result as string
-
-      // push user image into chat
-      chatStore.addMessage({
-        type: 'image',
-        url: base64,
-        alt: file.name,
-        sender: 'user',
-      })
-      removePendingImage()
-      try {
-        chatStore.setTyping(true)
-        const prediction = await predictFromFile(file)
-        if (!prediction) {
-          throw new Error('No prediction received')
-        }
-        chatStore.addMessage({
-          type: 'text',
-          content: `🩺 I've analyzed the image, and it appears to show **${prediction.label}**, with a confidence of **${(prediction.probability_pneumonia * 100).toFixed(2)}%**.`,
-          sender: 'assistant',
-        })
-      } catch {
-        chatStore.addMessage({
-          type: 'text',
-          content: `❌ Failed to predict: ${error.value?.message ?? 'Unknown error'}`,
-          sender: 'assistant',
-        })
-      } finally {
-        chatStore.setTyping(false)
-        chatStore.setLoading(false)
-      }
-    }
-
-    reader.onerror = () => {
-      chatStore.addMessage({
-        type: 'text',
-        content: `❌ Error reading image.`,
-        sender: 'assistant',
-      })
-      chatStore.setLoading(false)
-      removePendingImage()
-    }
-
-    reader.readAsDataURL(file)
-  } else if (text) {
+  if (currentProcessedImage && pendingImageFile.value) {
     chatStore.addMessage({
-      type: 'text',
-      content: text,
+      type: 'image',
+      url: currentProcessedImage.base64Data,
+      alt: currentProcessedImage.file.name,
       sender: 'user',
     })
+
+    const imageFileForPrediction = currentProcessedImage.file
+    removePendingImage()
+    messageInput.value = ''
+
+    chatStore.setTyping(true)
+    try {
+      const prediction = await predictFromFile(imageFileForPrediction)
+      if (!prediction) throw new Error('Aucune prédiction reçue.')
+      chatStore.addMessage({
+        type: 'text',
+        content: `🩺 J'ai analysé l'image "${imageFileForPrediction.name}", et elle semble montrer **${prediction.label}**, avec une confiance de **${(prediction.probability_pneumonia * 100).toFixed(2)}%**.`,
+        sender: 'assistant',
+      })
+    } catch (predictionErr) {
+      chatStore.addMessage({
+        type: 'text',
+        content: `❌ Échec de l'analyse de l'image : ${predictionErr instanceof Error ? predictionErr.message : 'Erreur inconnue'}`,
+        sender: 'assistant',
+      })
+    } finally {
+      chatStore.setTyping(false)
+    }
+  } else if (text) {
+    chatStore.addMessage({ type: 'text', content: text, sender: 'user' })
     messageInput.value = ''
   }
+
+  chatStore.setLoading(false)
+  isSendingInternally.value = false
+}
+
+const triggerFileInput = () => {
+  if (isActionDisabledForNewFile.value) return
+  fileInput.value?.click()
 }
 
 onMounted(() => {
+  // Les écouteurs globaux de drag/drop sont gérés par useGlobalFileDragState
+  // L'écouteur de paste reste local
   document.addEventListener('paste', handlePaste)
 })
 
 onUnmounted(() => {
   document.removeEventListener('paste', handlePaste)
 })
+
+const isActionDisabledForNewFile = computed(() => {
+  return (
+    !!pendingImageFile.value ||
+    assistantIsProcessing.value ||
+    isUploadingFile.value
+  )
+})
+
+// Condition pour appliquer le style de "drop zone active"
+const showActiveDropZoneStyle = computed(() => {
+  return isDraggingFileOverWindow.value && !isActionDisabledForNewFile.value
+})
+
+const isSendDisabled = computed(() => {
+  if (assistantIsProcessing.value || isSendingInternally.value) return true
+
+  const hasText = messageInput.value.trim().length > 0
+  const imageSelectedAndProcessing =
+    pendingImageFile.value &&
+    (isUploadingFile.value || !processedImageData.value)
+  const imageSelectedAndReady =
+    pendingImageFile.value && processedImageData.value && !isUploadingFile.value
+
+  if (imageSelectedAndProcessing) return true
+  if (imageSelectedAndReady) return false
+  if (hasText) return false
+  return true
+})
+
+const showSendButtonLoader = computed(() => {
+  return isSendingInternally.value || assistantIsProcessing.value
+})
+
+const uploadButtonIcon = computed(() => {
+  if (pendingImageFile.value && processedImageData.value)
+    return 'mdi-image-check'
+  if (pendingImageFile.value && isUploadingFile.value)
+    return 'mdi-cloud-upload-outline'
+  return 'mdi-paperclip'
+})
+
+const textFieldPlaceholder = computed(() => {
+  if (pendingImageFile.value && isUploadingFile.value) {
+    return "Lecture de l'image en cours..."
+  }
+  if (pendingImageFile.value && processedImageData.value)
+    return `Image "${pendingImageFile.value.name}" prête. Ajoutez un message ou envoyez.`
+  if (isDraggingFileOverWindow.value && !isActionDisabledForNewFile.value)
+    return "Déposez l'image ici !" // Nouveau placeholder quand on drag globalement
+  if (assistantIsProcessing.value)
+    return "L'assistant est en train de répondre..."
+  return 'Écrivez un message ou déposez une image...'
+})
+
+const isTextFieldDisabled = computed(() => {
+  return (
+    (pendingImageFile.value && isUploadingFile.value) ||
+    assistantIsProcessing.value ||
+    (isDraggingFileOverWindow.value && !isActionDisabledForNewFile.value)
+  )
+})
 </script>
 
 <template>
-  <div
-    class="space-y-4"
-    @dragover.prevent="dragOver = true"
-    @dragleave.prevent="dragOver = false"
-    @drop="handleDrop"
-  >
+  <div class="chat-input-area pa-2 pa-sm-4">
     <ImagePreview
-      v-if="pendingImage"
+      v-if="pendingImageFile"
       v-motion
-      :file="pendingImage"
+      :file="pendingImageFile"
       :progress="uploadProgress"
       :on-remove="removePendingImage"
-      :initial="{ scale: 0.8, opacity: 0 }"
-      :enter="{ scale: 1, opacity: 1 }"
-      :exit="{ scale: 0.8, opacity: 0 }"
+      class="mx-auto mb-3"
+      :initial="{ scale: 0.9, opacity: 0, y: 8 }"
+      :enter="{
+        scale: 1,
+        opacity: 1,
+        y: 0,
+        transition: { duration: 300, ease: 'easeOut' },
+      }"
+      :exit="{
+        scale: 0.9,
+        opacity: 0,
+        y: 8,
+        transition: { duration: 200, ease: 'easeIn' },
+      }"
     />
 
-    <div
+    <v-sheet
+      :elevation="showActiveDropZoneStyle ? 12 : 2"
       :class="[
-        'glass-panel flex items-center gap-2 rounded-full p-2',
-        dragOver && 'ring-2 ring-primary',
+        'd-flex align-start ga-2 pa-1 pa-sm-2 transition-swing rounded-xl',
+        showActiveDropZoneStyle ? 'border-primary bg-primary-lighten-5' : '',
       ]"
+      :border="showActiveDropZoneStyle ? 'md opacity-100' : 'md'"
+      style="
+        transition:
+          box-shadow 0.2s ease-out,
+          border-color 0.2s ease-out,
+          background-color 0.2s ease-out;
+      "
+      @dragover.prevent
+      @drop="handleDrop"
     >
-      <input
+      <v-text-field
         v-model="messageInput"
-        type="text"
-        placeholder="Type a message..."
-        class="placeholder:text-text/50 flex-1 border-none bg-transparent px-4 text-text outline-none"
-        :disabled="!!pendingImage"
-        @keyup.enter="!isTyping ? sendMessage() : null"
+        :placeholder="textFieldPlaceholder"
+        variant="solo"
+        flat
+        hide-details
+        class="flex-grow-1"
+        :disabled="isTextFieldDisabled"
+        autofocus
+        @keyup.enter.exact.prevent="!isSendDisabled ? sendMessage() : null"
+        @focus="isDraggingFileOverWindow && (isDraggingFileOverWindow = false)"
       />
 
-      <input
-        ref="fileInput"
-        type="file"
-        accept="image/jpeg,image/png,image/webp"
-        class="hidden"
-        @change="handleFileSelect"
-      />
-
-      <div class="group relative">
-        <button
-          class="hover:bg-primary/20 group rounded-full p-2 transition-colors"
-          :disabled="!!pendingImage"
-          @click="() => fileInput?.click()"
+      <div class="d-flex flex-column align-center justify-center pt-1">
+        <v-btn
+          icon
+          variant="text"
+          title="Téléverser une image"
+          :disabled="isActionDisabledForNewFile"
+          @click="triggerFileInput"
         >
-          <template v-if="pendingImage">
-            <!-- 3 Dots Loader -->
-            <div class="flex h-5 w-5 items-center justify-center gap-1">
-              <span
-                class="h-1.5 w-1.5 animate-bounce rounded-full bg-primary [animation-delay:0ms]"
-              />
-              <span
-                class="h-1.5 w-1.5 animate-bounce rounded-full bg-primary [animation-delay:150ms]"
-              />
-              <span
-                class="h-1.5 w-1.5 animate-bounce rounded-full bg-primary [animation-delay:300ms]"
-              />
-            </div>
-          </template>
-          <template v-else>
-            <ImagePlus
-              class="h-5 w-5 text-text transition-all group-hover:scale-110 group-hover:opacity-70"
-            />
-          </template>
-        </button>
-        <!-- Tooltip -->
-        <div
-          class="pointer-events-none absolute bottom-full left-1/2 mb-1 -translate-x-1/2 rounded bg-surface px-2 py-1 text-xs text-text opacity-0 transition-opacity group-hover:opacity-100"
-        >
-          Upload Image
-        </div>
+          <v-progress-circular
+            v-if="pendingImageFile && isUploadingFile"
+            indeterminate
+            size="24"
+            width="2"
+            color="primary"
+          ></v-progress-circular>
+          <v-icon v-else :icon="uploadButtonIcon" size="large"></v-icon>
+        </v-btn>
+        <input
+          ref="fileInput"
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          class="d-none"
+          @change="handleFileSelect"
+        />
       </div>
 
-      <!-- ✉️ Send Icon OR Spinner -->
-      <div class="group relative">
-        <button
-          class="hover:bg-primary/20 group rounded-full p-2 transition-colors"
-          :disabled="(!messageInput.trim() && !pendingImage) || isTyping"
+      <div class="d-flex flex-column align-center justify-center pt-1">
+        <v-btn
+          icon="mdi-send"
+          variant="text"
+          title="Envoyer le message"
+          :loading="showSendButtonLoader"
+          :disabled="isSendDisabled"
+          rounded="lg"
+          size="default"
+          class="px-1"
           @click="sendMessage"
         >
-          <template v-if="isTyping">
-            <!-- 3 Dots Loader -->
-            <div class="flex h-5 w-5 items-center justify-center gap-1">
+          <template #loader>
+            <div
+              class="d-flex ga-1 align-center justify-center"
+              style="height: 20px; width: 20px"
+            >
               <span
-                class="h-1.5 w-1.5 animate-bounce rounded-full bg-primary [animation-delay:0ms]"
-              />
+                class="dot-xs animate-bounce-custom bg-white"
+                style="animation-delay: 0ms"
+              ></span>
               <span
-                class="h-1.5 w-1.5 animate-bounce rounded-full bg-primary [animation-delay:150ms]"
-              />
+                class="dot-xs animate-bounce-custom bg-white"
+                style="animation-delay: 150ms"
+              ></span>
               <span
-                class="h-1.5 w-1.5 animate-bounce rounded-full bg-primary [animation-delay:300ms]"
-              />
+                class="dot-xs animate-bounce-custom bg-white"
+                style="animation-delay: 300ms"
+              ></span>
             </div>
           </template>
-          <template v-else>
-            <SendIcon
-              class="h-5 w-5 text-text transition-all"
-              :class="[
-                (!messageInput.trim() && !pendingImage) || isTyping
-                  ? 'cursor-not-allowed opacity-40'
-                  : 'group-hover:scale-110 group-hover:opacity-70',
-              ]"
-            />
-          </template>
-        </button>
-        <!-- Tooltip -->
-        <div
-          class="pointer-events-none absolute bottom-full left-1/2 mb-1 -translate-x-1/2 rounded bg-surface px-2 py-1 text-xs text-text opacity-0 transition-opacity group-hover:opacity-100"
-        >
-          Send Message
-        </div>
+        </v-btn>
       </div>
-    </div>
+    </v-sheet>
   </div>
 </template>
-<style>
-@keyframes bounce {
+
+<style scoped>
+.bg-primary-lighten-5 {
+  background-color: rgb(var(--v-theme-primary), 0.05);
+}
+
+.border-primary {
+  border-color: rgb(var(--v-theme-primary), 1) !important;
+}
+
+@keyframes bounce-custom-keyframe {
   0%,
   100% {
     transform: translateY(0);
@@ -268,7 +387,13 @@ onUnmounted(() => {
   }
 }
 
-.animate-bounce {
-  animation: bounce 0.8s infinite ease-in-out;
+.animate-bounce-custom {
+  animation: bounce-custom-keyframe 0.8s infinite ease-in-out;
+}
+
+.dot-xs {
+  height: 0.25rem;
+  width: 0.25rem;
+  border-radius: 50%;
 }
 </style>

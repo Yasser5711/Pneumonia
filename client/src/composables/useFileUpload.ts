@@ -1,0 +1,73 @@
+import { ref } from 'vue'
+
+export interface FileUploadResult {
+  base64Data: string
+  file: File
+}
+
+export function useFileUpload() {
+  const progress = ref(0)
+  const isReading = ref(false)
+  const error = ref<string | null>(null)
+
+  const processFile = (fileToProcess: File): Promise<FileUploadResult> => {
+    return new Promise((resolve, reject) => {
+      if (!fileToProcess) {
+        const errorMessage = 'Aucun fichier fourni pour le traitement.'
+        error.value = errorMessage
+        reject(new Error(errorMessage))
+        return
+      }
+
+      isReading.value = true
+      progress.value = 0
+      error.value = null
+
+      const reader = new FileReader()
+
+      reader.onprogress = (event: ProgressEvent<FileReader>) => {
+        if (event.lengthComputable) {
+          progress.value = Math.round((event.loaded / event.total) * 100)
+          // const currentProgress = Math.round((event.loaded / event.total) * 100)
+          // progress.value = currentProgress
+          // console.log(
+          //   `FileReader Progress: ${currentProgress}% (Loaded: ${event.loaded}, Total: ${event.total})`,
+          // )
+        }
+      }
+
+      reader.onload = () => {
+        isReading.value = false
+        resolve({
+          base64Data: reader.result as string,
+          file: fileToProcess,
+        })
+      }
+
+      reader.onerror = () => {
+        isReading.value = false
+        progress.value = 0 // Réinitialiser la progression en cas d'erreur
+        const errorMessage = `Erreur FileReader pour : ${fileToProcess.name}. Erreur: ${reader.error?.message}`
+        console.error(errorMessage, reader.error)
+        error.value = errorMessage
+        reject(new Error(errorMessage))
+      }
+
+      reader.readAsDataURL(fileToProcess)
+    })
+  }
+
+  const reset = () => {
+    progress.value = 0
+    isReading.value = false
+    error.value = null
+  }
+
+  return {
+    uploadProgress: progress, // Renommé pour clarté lors de l'utilisation
+    isUploadingFile: isReading, // Renommé pour clarté
+    uploadError: error,
+    processUploadedFile: processFile, // Renommé pour clarté
+    resetFileUpload: reset,
+  }
+}

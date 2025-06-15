@@ -1,5 +1,11 @@
 # server
 
+## 3.0.0
+
+### Major Changes
+
+- 2096e63: adding quota to api keys and improve design
+
 ## 2.0.0
 
 ### Major Changes

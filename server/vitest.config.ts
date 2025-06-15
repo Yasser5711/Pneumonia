@@ -27,6 +27,7 @@ export default mergeConfig(
           'drizzle.config.ts',
           'vite.config.ts',
           'src/env.ts',
+          'src/errors/**',
           '**/index.ts',
           'test/test.ts',
           'src/db/migrations/**',

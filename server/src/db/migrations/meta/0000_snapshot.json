@@ -1,5 +1,5 @@
 {
-  "id": "cb71db5a-3cf6-4ed2-80a8-04fa3be0598d",
+  "id": "59b2053d-0417-46c9-b47f-cabd686f9a11",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -23,7 +23,7 @@
         },
         "key_prefix": {
           "name": "key_prefix",
-          "type": "varchar(16)",
+          "type": "varchar(12)",
           "primaryKey": false,
           "notNull": true
         },
@@ -33,25 +33,32 @@
           "primaryKey": false,
           "notNull": true
         },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "expires_at": {
-          "name": "expires_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        },
         "active": {
           "name": "active",
           "type": "boolean",
           "primaryKey": false,
           "notNull": false,
           "default": true
+        },
+        "free_requests_quota": {
+          "name": "free_requests_quota",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 10
+        },
+        "free_requests_used": {
+          "name": "free_requests_used",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "free_quota_reset_at": {
+          "name": "free_quota_reset_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
         },
         "description": {
           "name": "description",
@@ -70,6 +77,26 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "expires_at": {
+          "name": "expires_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "last_updated_at": {
+          "name": "last_updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
         }
       },
       "indexes": {

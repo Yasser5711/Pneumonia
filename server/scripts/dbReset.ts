@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { config } from 'dotenv';
-import { execa } from 'execa';
+// import { execa } from 'execa';
 import postgres from 'postgres';
 
 config();
@@ -31,16 +31,16 @@ async function resetDatabase(): Promise<void> {
   // console.log('🚀 Running db:generate...');
   // await execa('yarn', ['db:generate'], { stdio: 'inherit' });
 
-  console.log('🚀 Running db:migrate...');
-  await execa('yarn', ['db:migrate'], { stdio: 'inherit' });
+  // console.log('🚀 Running db:migrate...');
+  // await execa('yarn', ['db:migrate'], { stdio: 'inherit' });
 
-  console.log('🚀 Running db:push...');
-  await execa('yarn', ['db:push'], { stdio: 'inherit' });
+  // console.log('🚀 Running db:push...');
+  // await execa('yarn', ['db:push'], { stdio: 'inherit' });
 
-  console.log('🚀 Running db:seed...');
-  await execa('yarn', ['db:seed'], { stdio: 'inherit' });
+  // console.log('🚀 Running db:seed...');
+  // await execa('yarn', ['db:seed'], { stdio: 'inherit' });
 
-  console.log('✅ Database reset, migrations applied, and push executed');
+  // console.log('✅ Database reset, migrations applied, and push executed');
 }
 
 void resetDatabase();

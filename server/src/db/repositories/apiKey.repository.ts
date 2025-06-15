@@ -1,9 +1,10 @@
-import { eq, type InferInsertModel } from 'drizzle-orm';
+import { eq, type InferInsertModel, sql } from 'drizzle-orm';
 // import type { PgliteDatabase } from 'drizzle-orm/pglite';
 // import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { db as DB } from '../index';
 // import type * as schema from '../schema';
 import { apiKeysTable } from '../schema';
+
 // type DrizzlePgDatabase = PostgresJsDatabase<typeof schema> | PgliteDatabase<typeof schema>;
 type ApiKeyInsert = InferInsertModel<typeof apiKeysTable>;
 export const createApiKeysRepo = (db: any = DB) => ({
@@ -21,7 +22,10 @@ export const createApiKeysRepo = (db: any = DB) => ({
       hashedKey: apiKeysTable.hashedKey,
       keyPrefix: apiKeysTable.keyPrefix,
       expiresAt: apiKeysTable.expiresAt,
+      updatedAt: apiKeysTable.updatedAt,
       active: apiKeysTable.active,
+      freeRequestsUsed: apiKeysTable.freeRequestsUsed,
+      freeRequestsQuota: apiKeysTable.freeRequestsQuota,
       description: apiKeysTable.description,
       lastUsedAt: apiKeysTable.lastUsedAt,
       lastUsedIp: apiKeysTable.lastUsedIp,
@@ -44,7 +48,10 @@ export const createApiKeysRepo = (db: any = DB) => ({
       hashedKey: res.hashedKey,
       keyPrefix: res.keyPrefix,
       expiresAt: res.expiresAt,
+      updatedAt: res.updatedAt,
       active: res.active,
+      freeRequestsUsed: res.freeRequestsUsed,
+      freeRequestsQuota: res.freeRequestsQuota,
       description: res.description,
       lastUsedAt: res.lastUsedAt,
       lastUsedIp: res.lastUsedIp,
@@ -57,11 +64,57 @@ export const createApiKeysRepo = (db: any = DB) => ({
       name: apiKeysTable.name,
       hashedKey: apiKeysTable.hashedKey,
       expiresAt: apiKeysTable.expiresAt,
+      updatedAt: apiKeysTable.updatedAt,
       active: apiKeysTable.active,
+      freeRequestsUsed: apiKeysTable.freeRequestsUsed,
+      freeRequestsQuota: apiKeysTable.freeRequestsQuota,
       description: apiKeysTable.description,
       lastUsedAt: apiKeysTable.lastUsedAt,
       lastUsedIp: apiKeysTable.lastUsedIp,
     });
+  },
+  updateLimits: async (id: string) => {
+    return await db
+      .update(apiKeysTable)
+      .set({
+        freeRequestsUsed: sql`${apiKeysTable.freeRequestsUsed} + 1`,
+      })
+      .where(eq(apiKeysTable.id, id))
+      .returning({
+        id: apiKeysTable.id,
+        name: apiKeysTable.name,
+        hashedKey: apiKeysTable.hashedKey,
+        expiresAt: apiKeysTable.expiresAt,
+        updatedAt: apiKeysTable.updatedAt,
+        active: apiKeysTable.active,
+        freeRequestsUsed: apiKeysTable.freeRequestsUsed,
+        freeRequestsQuota: apiKeysTable.freeRequestsQuota,
+        description: apiKeysTable.description,
+        lastUsedAt: apiKeysTable.lastUsedAt,
+        lastUsedIp: apiKeysTable.lastUsedIp,
+      });
+  },
+  resetQuota: async ({ id }: { id: string }) => {
+    return await db
+      .update(apiKeysTable)
+      .set({
+        freeRequestsUsed: 0,
+        freeQuotaResetAt: new Date(),
+      })
+      .where(eq(apiKeysTable.id, id))
+      .returning({
+        id: apiKeysTable.id,
+        name: apiKeysTable.name,
+        hashedKey: apiKeysTable.hashedKey,
+        expiresAt: apiKeysTable.expiresAt,
+        updatedAt: apiKeysTable.updatedAt,
+        active: apiKeysTable.active,
+        freeRequestsUsed: apiKeysTable.freeRequestsUsed,
+        freeRequestsQuota: apiKeysTable.freeRequestsQuota,
+        description: apiKeysTable.description,
+        lastUsedAt: apiKeysTable.lastUsedAt,
+        lastUsedIp: apiKeysTable.lastUsedIp,
+      });
   },
   updateExpiration: async ({ id, expiresAt }: { id: string; expiresAt: Date }) => {
     return await db
@@ -73,7 +126,10 @@ export const createApiKeysRepo = (db: any = DB) => ({
         name: apiKeysTable.name,
         hashedKey: apiKeysTable.hashedKey,
         expiresAt: apiKeysTable.expiresAt,
+        updatedAt: apiKeysTable.updatedAt,
         active: apiKeysTable.active,
+        freeRequestsUsed: apiKeysTable.freeRequestsUsed,
+        freeRequestsQuota: apiKeysTable.freeRequestsQuota,
         description: apiKeysTable.description,
         lastUsedAt: apiKeysTable.lastUsedAt,
         lastUsedIp: apiKeysTable.lastUsedIp,
@@ -89,7 +145,10 @@ export const createApiKeysRepo = (db: any = DB) => ({
         name: apiKeysTable.name,
         hashedKey: apiKeysTable.hashedKey,
         expiresAt: apiKeysTable.expiresAt,
+        updatedAt: apiKeysTable.updatedAt,
         active: apiKeysTable.active,
+        freeRequestsQuota: apiKeysTable.freeRequestsQuota,
+        freeRequestsUsed: apiKeysTable.freeRequestsUsed,
         description: apiKeysTable.description,
         lastUsedAt: apiKeysTable.lastUsedAt,
         lastUsedIp: apiKeysTable.lastUsedIp,

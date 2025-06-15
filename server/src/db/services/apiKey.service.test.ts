@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { mockApiKeyRepo } from '../../../test/repositories';
+import * as apiKeyErrors from '../../errors/apiKey.errors';
 import { createApiKeyService } from './apiKey.service';
-
 const service = createApiKeyService(mockApiKeyRepo);
 
 vi.mock('../../utils/hash', () => {
@@ -25,6 +25,8 @@ describe('apiKeyService', () => {
           hashedKey: 'hashed-secret',
           keyPrefix: 'mockprefix',
           active: true,
+          freeRequestsUsed: 0,
+          freeRequestsQuota: 10,
           expiresAt: null,
           description: 'For CLI',
           lastUsedAt: null,
@@ -54,77 +56,77 @@ describe('apiKeyService', () => {
   });
 
   describe('validateKey', () => {
-    it('should return the matching candidate if valid', async () => {
-      mockApiKeyRepo.findByPrefix.mockResolvedValue([
-        {
-          id: 'valid-id',
-          hashedKey: 'hashed-secretPart',
-          name: 'test',
-          keyPrefix: 'prefix123',
-          active: true,
-          expiresAt: null,
-          description: 'desc',
-          lastUsedAt: null,
-          lastUsedIp: null,
-        },
-      ]);
+    const prefix = 'prefix123456';
+    const secret = 'secretPart';
+    const rawKey = `${prefix}${secret}`;
 
-      const rawKey = 'prefix123456secretPart';
+    const minimalCandidate = {
+      id: 'candidate-id',
+      name: 'test',
+      keyPrefix: prefix,
+      hashedKey: 'hashed-secretPart',
+      active: true,
+      freeRequestsUsed: 0,
+      freeRequestsQuota: 10,
+      expiresAt: null,
+      description: 'desc',
+      lastUsedAt: null,
+      lastUsedIp: null,
+      updatedAt: new Date(),
+    };
+
+    beforeEach(() => {
+      mockApiKeyRepo.findByPrefix.mockReset();
+      mockApiKeyRepo.invalidateKey.mockReset();
+    });
+
+    it('throws ApiKeyNotFoundError if no candidates found', async () => {
+      mockApiKeyRepo.findByPrefix.mockResolvedValue([]);
+      await expect(service.validateKey(rawKey)).rejects.toBeInstanceOf(
+        apiKeyErrors.ApiKeyNotFoundError,
+      );
+      expect(mockApiKeyRepo.findByPrefix).toHaveBeenCalledWith(prefix);
+    });
+
+    it('returns the candidate when secret matches and all checks pass', async () => {
+      mockApiKeyRepo.findByPrefix.mockResolvedValue([minimalCandidate]);
 
       const result = await service.validateKey(rawKey);
-      expect(result).not.toBeNull();
-      expect(result?.id).toBe('valid-id');
-      expect(mockApiKeyRepo.findByPrefix).toHaveBeenCalledExactlyOnceWith('prefix123456');
+      expect(result).toEqual(minimalCandidate);
     });
 
-    it('should return null if no match', async () => {
-      mockApiKeyRepo.findByPrefix.mockResolvedValue([
-        {
-          id: 'valid-id',
-          hashedKey: 'different-hash',
-          name: 'test',
-          keyPrefix: 'prefix123',
-          active: true,
-          expiresAt: null,
-          description: 'desc',
-          lastUsedAt: null,
-          lastUsedIp: null,
-        },
-      ]);
+    it('throws ApiKeyInactiveError if the candidate is inactive', async () => {
+      const candidate = { ...minimalCandidate, active: false };
+      mockApiKeyRepo.findByPrefix.mockResolvedValue([candidate]);
 
-      const result = await service.validateKey('prefix123secretPart');
-      expect(result).toBeNull();
+      await expect(service.validateKey(rawKey)).rejects.toBeInstanceOf(
+        apiKeyErrors.ApiKeyInactiveError,
+      );
     });
 
-    it('should return null if expired or inactive', async () => {
-      mockApiKeyRepo.findByPrefix.mockResolvedValue([
-        {
-          id: 'valid-id',
-          hashedKey: 'hashed-secretPart',
-          name: 'test',
-          keyPrefix: 'prefix123',
-          active: false,
-          expiresAt: new Date(Date.now() + 1000 * 60 * 60),
-          description: 'desc',
-          lastUsedAt: new Date(),
-          lastUsedIp: null,
-        },
-      ]);
+    it('throws ApiKeyExpiredError if the candidate has expired', async () => {
+      const expiresAt = new Date(Date.now() - 1000);
+      const candidate = { ...minimalCandidate, expiresAt };
+      mockApiKeyRepo.findByPrefix.mockResolvedValue([candidate]);
 
-      const result = await service.validateKey('prefix123secretPart');
-      expect(result).toBeNull();
+      await expect(service.validateKey(rawKey)).rejects.toBeInstanceOf(
+        apiKeyErrors.ApiKeyExpiredError,
+      );
+      expect(mockApiKeyRepo.invalidateKey).toHaveBeenCalledWith(candidate.id);
     });
-    it('should return null if findByPrefix returns invalid type', async () => {
-      // @ts-expect-error - simulate bad return
-      mockApiKeyRepo.findByPrefix.mockResolvedValue('invalid');
 
-      const result = await service.validateKey('prefix123secretPart');
-      expect(result).toBeNull();
+    it('throws QuotaExceededError if freeRequestsUsed ≥ freeRequestsQuota', async () => {
+      const candidate = { ...minimalCandidate, freeRequestsUsed: 10, freeRequestsQuota: 10 };
+      mockApiKeyRepo.findByPrefix.mockResolvedValue([candidate]);
+
+      await expect(service.validateKey(rawKey)).rejects.toBeInstanceOf(
+        apiKeyErrors.QuotaExceededError,
+      );
     });
   });
 
   describe('markKeyUsed', () => {
-    it('should call updateUsage with timestamp and ip', async () => {
+    it('should call updateUsage with timestamp and ip and update quota', async () => {
       const now = new Date();
       vi.setSystemTime(now);
 
@@ -137,6 +139,7 @@ describe('apiKeyService', () => {
           lastUsedIp: '1.2.3.4',
         },
       });
+      expect(mockApiKeyRepo.updateLimits).toHaveBeenCalledWith('key-id');
     });
   });
   describe('updateExpiration', () => {

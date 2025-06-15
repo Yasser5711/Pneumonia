@@ -1,3 +1,4 @@
+import { TRPCError } from '@trpc/server';
 import axios from 'axios';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createTestCaller } from '../../test/caller';
@@ -13,6 +14,9 @@ beforeEach(() => {
     keyPrefix: 'prefix',
     hashedKey: 'hash',
     active: true,
+    freeRequestsUsed: 0,
+    freeRequestsQuota: 1,
+    updatedAt: new Date(),
     expiresAt: null,
     description: 'test',
     lastUsedAt: null,
@@ -26,7 +30,7 @@ afterEach(() => {
 });
 describe('🧪 API key auth', () => {
   it('fails with invalid key', async () => {
-    mockApiKeyService.validateKey.mockResolvedValue(null);
+    mockApiKeyService.validateKey.mockRejectedValueOnce(new Error('Invalid or expired API key'));
     const caller = createTestCaller();
     await expect(
       caller.predictPneumonia({ imageBase64: 'data:image/png;base64,...' }),
@@ -52,7 +56,12 @@ describe('🧪 API key auth', () => {
     const caller = createTestCaller();
     await expect(
       caller.predictPneumonia({ imageBase64: 'data:image/png;base64,A==' }),
-    ).rejects.toThrow('CNN_PREDICT_URL is not set');
+    ).rejects.toThrow(
+      new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to get prediction from the model server. Please try again later.',
+      }),
+    );
 
     vi.restoreAllMocks();
   });
@@ -62,7 +71,15 @@ describe('🧪 API key auth', () => {
     const caller = createTestCaller();
     await expect(
       caller.predictPneumonia({ imageBase64: 'data:image/png;base64,A==' }),
-    ).rejects.toThrow('Error in CNN prediction');
+    ).rejects.toThrow(
+      new TRPCError({
+        code: 'BAD_GATEWAY',
+        message: 'Failed to get prediction from the model server. Please try again later.',
+      }),
+    );
+    expect(postSpy).toHaveBeenCalledWith(env.CNN_PREDICT_URL, {
+      data: [{ image_array: expect.any(Array) }],
+    });
     vi.resetModules();
   });
 });

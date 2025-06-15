@@ -1,8 +1,9 @@
+import { TRPCError } from '@trpc/server';
 import axios from 'axios';
-import { protectedProcedureAPI } from '../middlewares/index';
-
 import sharp from 'sharp';
 import { z } from 'zod';
+import { logger } from '../logger';
+import { protectedProcedureAPI } from '../middlewares/index';
 
 import { env } from '../env';
 
@@ -40,7 +41,11 @@ export const predictRouter = protectedProcedureAPI
   )
   .mutation(async ({ input }) => {
     const PREDICT_URL = env.CNN_PREDICT_URL;
-    if (!PREDICT_URL) throw new Error('CNN_PREDICT_URL is not set');
+    if (!PREDICT_URL)
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: 'Failed to get prediction from the model server. Please try again later.',
+      });
     const { imageBase64 } = input;
 
     const imageBuffer = Buffer.from(imageBase64.replace(/^data:image\/\w+;base64,/, ''), 'base64');
@@ -65,8 +70,12 @@ export const predictRouter = protectedProcedureAPI
 
     const response = await axios
       .post(PREDICT_URL, { data: [{ image_array: imageArray }] })
-      .catch(() => {
-        throw new Error('Error in CNN prediction');
+      .catch((err) => {
+        logger().error({ err, url: PREDICT_URL }, '🔴 Erreur lors de la prédiction CNN');
+        throw new TRPCError({
+          code: 'BAD_GATEWAY',
+          message: 'Failed to get prediction from the model server. Please try again later.',
+        });
       });
     return response.data.data;
   });

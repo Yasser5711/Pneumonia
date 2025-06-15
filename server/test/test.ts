@@ -1,4 +1,4 @@
-import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
+import { createTRPCClient, httpBatchLink } from '@trpc/client';
 import * as dotenv from 'dotenv';
 import fs from 'fs/promises';
 import path from 'path';
@@ -12,7 +12,7 @@ const __dirname = path.dirname(__filename);
 // 👇️ change this to the image path you want to test
 const IMAGE_PATH = path.resolve(__dirname, 'test_xray_1.png');
 
-const trpc = createTRPCProxyClient<AppRouter>({
+const trpc = createTRPCClient<AppRouter>({
   links: [
     httpBatchLink({
       url: 'http://localhost:3000/trpc',

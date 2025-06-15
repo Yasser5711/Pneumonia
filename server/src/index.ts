@@ -13,7 +13,6 @@ import { setLogger } from './logger';
 import { appRouter } from './router/_app';
 import { createContext } from './trpc';
 const isDev = env.NODE_ENV === 'development';
-
 const fastify = Fastify({
   logger: isDev
     ? {
@@ -39,6 +38,7 @@ async function main() {
             directives: {
               ...helmet.contentSecurityPolicy.getDefaultDirectives(),
               'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+              // 'connect-src': ["'self'", 'http://localhost:*'],
             },
           }
         : true,
@@ -61,8 +61,9 @@ async function main() {
     },
   });
   await fastify.register(rateLimit, {
-    max: 10, // 🔥 Allow 10 requests
+    max: 10, // 🔥 Allow 3 requests
     timeWindow: '1 minute', // 🕒 per minute
+    keyGenerator: (req) => (req.headers['x-api-key'] as string) ?? req.ip,
     errorResponseBuilder: () => {
       return {
         statusCode: 429,

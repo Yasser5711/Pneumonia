@@ -97,6 +97,20 @@ describe('apiKeysRepo', () => {
     const result = await customRepo.findByPrefix('prefix');
     expect(result).toEqual([]);
   });
+  it('should update request limits and return the updated record', async () => {
+    const [created] = await repo.create({
+      name: 'KeyToUpdate',
+      keyPrefix: 'prefix999999',
+      hashedKey: 'hash3',
+    });
+    expect(created.freeRequestsUsed).toBe(0);
+    expect(created.freeRequestsQuota).toBe(10);
+    const [updated] = await repo.updateLimits(created.id);
+
+    expect(updated.id).toBe(created.id);
+    expect(updated.freeRequestsUsed).toBe(1);
+    expect(updated.freeRequestsQuota).toBe(10);
+  });
   it('should update expiration and return the updated record', async () => {
     const [created] = await repo.create({
       name: 'KeyToUpdate',
@@ -112,6 +126,7 @@ describe('apiKeysRepo', () => {
 
     expect(updated.id).toBe(created.id);
     expect(updated.expiresAt?.toISOString()).toBe(updateTime.toISOString());
+    expect(updated.updatedAt).not.toEqual(created.updatedAt);
   });
   it('should invalidate a key and return the updated record', async () => {
     const [created] = await repo.create({

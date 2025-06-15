@@ -1,8 +1,7 @@
+import type { FastifyBaseLogger } from 'fastify';
 import { afterAll, afterEach, beforeAll, vi } from 'vitest';
 import { mockDeep, mockReset } from 'vitest-mock-extended';
 import { setLogger } from '../src/logger';
-
-import type { FastifyBaseLogger } from 'fastify';
 
 const mockLogger = mockDeep<FastifyBaseLogger>();
 beforeAll(() => {
@@ -50,8 +49,10 @@ beforeAll(() => {
     };
   });
 });
+
 afterEach(() => {
   mockReset(mockLogger);
+  // resetRateLimit();
   vi.clearAllMocks();
   vi.restoreAllMocks();
 });

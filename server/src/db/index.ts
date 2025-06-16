@@ -12,5 +12,5 @@ const client = postgres(env.DATABASE_URL, { prepare: env.NODE_ENV === 'developme
 export let db = drizzle(client, {
   schema,
   casing: 'snake_case',
-  logger: env.NODE_ENV === 'development' || env.NODE_ENV === 'test' ? true : undefined,
+  logger: env.NODE_ENV === 'development' || env.NODE_ENV === 'test',
 });

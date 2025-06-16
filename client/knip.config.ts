@@ -1,6 +1,6 @@
 import type { KnipConfig } from 'knip'
 const config: KnipConfig = {
-  project: ['./tsconfig.json', './tsconfig.app.json', './tsconfig.node.json'],
+  project: ['./tsconfig.app.json', './tsconfig.node.json'],
   entry: ['src/main.ts'],
 
   ignoreDependencies: [

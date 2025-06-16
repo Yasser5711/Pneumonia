@@ -80,17 +80,6 @@ const handlePaste = (e: ClipboardEvent) => {
   }
 }
 
-const handleDrop = (e: DragEvent) => {
-  e.preventDefault()
-  // isDraggingFileOverWindow sera remis à false par le composable global après le drop
-  // if (isActionDisabledForNewFile.value) return; // Cette vérification est déjà faite plus haut via les bindings
-
-  const file = e.dataTransfer?.files[0]
-  if (file) {
-    processNewFile(file)
-  }
-}
-
 const handleFileSelect = (e: Event) => {
   const target = e.target as HTMLInputElement
   const file = target.files?.[0]
@@ -196,11 +185,6 @@ const isActionDisabledForNewFile = computed(() => {
   )
 })
 
-// Condition pour appliquer le style de "drop zone active"
-const showActiveDropZoneStyle = computed(() => {
-  return isDraggingFileOverWindow.value && !isActionDisabledForNewFile.value
-})
-
 const isSendDisabled = computed(() => {
   if (assistantIsProcessing.value || isSendingInternally.value) return true
 
@@ -252,6 +236,7 @@ const isTextFieldDisabled = computed(() => {
 </script>
 
 <template>
+  <FileInput @file-selected="processNewFile" />
   <div class="chat-input-area pa-2 pa-sm-4">
     <ImagePreview
       v-if="pendingImageFile"
@@ -276,20 +261,17 @@ const isTextFieldDisabled = computed(() => {
     />
 
     <v-sheet
-      :elevation="showActiveDropZoneStyle ? 12 : 2"
+      :elevation="2"
       :class="[
         'd-flex align-start ga-2 pa-1 pa-sm-2 transition-swing rounded-xl',
-        showActiveDropZoneStyle ? 'border-primary bg-primary-lighten-5' : '',
       ]"
-      :border="showActiveDropZoneStyle ? 'md opacity-100' : 'md'"
+      :border="'md'"
       style="
         transition:
           box-shadow 0.2s ease-out,
           border-color 0.2s ease-out,
           background-color 0.2s ease-out;
       "
-      @dragover.prevent
-      @drop="handleDrop"
     >
       <v-text-field
         v-model="messageInput"
@@ -301,7 +283,6 @@ const isTextFieldDisabled = computed(() => {
         :disabled="isTextFieldDisabled"
         autofocus
         @keyup.enter.exact.prevent="!isSendDisabled ? sendMessage() : null"
-        @focus="isDraggingFileOverWindow && (isDraggingFileOverWindow = false)"
       />
 
       <div class="d-flex flex-column align-center justify-center pt-1">
@@ -368,14 +349,6 @@ const isTextFieldDisabled = computed(() => {
 </template>
 
 <style scoped>
-.bg-primary-lighten-5 {
-  background-color: rgb(var(--v-theme-primary), 0.05);
-}
-
-.border-primary {
-  border-color: rgb(var(--v-theme-primary), 1) !important;
-}
-
 @keyframes bounce-custom-keyframe {
   0%,
   100% {

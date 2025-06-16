@@ -9,4 +9,8 @@ const ssl =
     : false;
 const client = postgres(env.DATABASE_URL, { prepare: env.NODE_ENV === 'development', ssl });
 
-export let db = drizzle(client, { schema });
+export let db = drizzle(client, {
+  schema,
+  casing: 'snake_case',
+  logger: env.NODE_ENV === 'development' || env.NODE_ENV === 'test' ? true : undefined,
+});

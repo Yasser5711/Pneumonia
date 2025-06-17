@@ -6,7 +6,7 @@ import Fonts from 'unplugin-fonts/vite'
 import Components from 'unplugin-vue-components/vite'
 import VueRouter from 'unplugin-vue-router/vite'
 import Layouts from 'vite-plugin-vue-layouts'
-import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
+import { transformAssetUrls, default as Vuetify } from 'vite-plugin-vuetify'
 // Utilities
 import { unheadVueComposablesImports } from '@unhead/vue'
 import { fileURLToPath, URL } from 'node:url'
@@ -43,7 +43,7 @@ export default defineConfig({
     }),
     // https://github.com/vuetifyjs/vuetify-loader/tree/master/packages/vite-plugin#readme
     Vuetify({
-      autoImport: true,
+      autoImport: { labs: true },
       styles: {
         configFile: 'src/styles/settings.scss',
       },

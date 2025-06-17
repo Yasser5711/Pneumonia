@@ -1,5 +1,4 @@
 import motion from '@/plugins/motion'
-import vfm from '@/plugins/vfm'
 import vuetify from '@/plugins/vuetify'
 import { type QueryClientConfig, VueQueryPlugin } from '@tanstack/vue-query'
 import {
@@ -53,7 +52,6 @@ export function render<Component>(
             { queryClientConfig: defaultOptions.queryClientConfig },
           ],
           vuetify,
-          vfm,
           motion,
           trpcPlugin,
           setActivePinia(createPinia()),

@@ -1,11 +1,12 @@
 import vue from '@vitejs/plugin-vue'
 import { fileURLToPath, URL } from 'node:url'
+import vuetify from 'vite-plugin-vuetify'
 import { defineConfig, mergeConfig, type ViteUserConfig } from 'vitest/config'
 import baseConfig from '../vitest.config'
 
 export default defineConfig(
   mergeConfig(baseConfig as ViteUserConfig, {
-    plugins: [vue()],
+    plugins: [vue(), vuetify({ autoImport: true })],
     test: {
       environment: 'happy-dom',
       setupFiles: ['./vitest/setupTest.ts'],
@@ -31,6 +32,11 @@ export default defineConfig(
           'tests/',
           '**/*.d.ts',
         ],
+      },
+      server: {
+        deps: {
+          inline: [/vuetify/],
+        },
       },
     },
     resolve: {

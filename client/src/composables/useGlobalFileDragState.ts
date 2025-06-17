@@ -1,12 +1,12 @@
 import { useEventListener } from '@vueuse/core'
 import { ref } from 'vue'
-
-// État et compteur au niveau du module pour assurer un comportement singleton
+import { useFileUploadModal } from '../components/useFileUploadModal'
 const isDraggingFileOverWindow = ref(false)
 let dragEnterCounter = 0
-let listenersAttached = false // Pour s'assurer que les écouteurs ne sont attachés qu'une fois
+let listenersAttached = false
 
 export function useGlobalFileDragState() {
+  const { openModal } = useFileUploadModal()
   if (!listenersAttached) {
     useEventListener(
       window,
@@ -20,14 +20,14 @@ export function useGlobalFileDragState() {
         }
       },
       true,
-    ) // Utiliser la phase de capture pour intercepter tôt
+    )
 
     useEventListener(
       window,
       'dragover',
       (event: DragEvent) => {
         if (event.dataTransfer?.types.includes('Files')) {
-          event.preventDefault() // Nécessaire pour permettre le 'drop'
+          event.preventDefault()
         }
       },
       true,
@@ -52,9 +52,6 @@ export function useGlobalFileDragState() {
       'drop',
       (event: DragEvent) => {
         if (event.dataTransfer?.types.includes('Files')) {
-          // La prévention du comportement par défaut du 'drop' est généralement gérée
-          // par la zone de dépôt spécifique qui reçoit le fichier.
-          // Ici, nous réinitialisons surtout l'état visuel global.
           dragEnterCounter = 0
           isDraggingFileOverWindow.value = false
         }
@@ -63,6 +60,11 @@ export function useGlobalFileDragState() {
     )
 
     listenersAttached = true
+    watch(isDraggingFileOverWindow, (newValue) => {
+      if (newValue) {
+        openModal()
+      }
+    })
   }
 
   return {

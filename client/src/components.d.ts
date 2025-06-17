@@ -15,6 +15,7 @@ declare module 'vue' {
     ChatMessage: typeof import('./components/ChatMessage.vue')['default']
     ChatWindow: typeof import('./components/ChatWindow.vue')['default']
     ClockDisplay: typeof import('./components/ClockDisplay.vue')['default']
+    FileInput: typeof import('./components/FileInput.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     HoverImage: typeof import('./components/HoverImage.vue')['default']
     ImageModal: typeof import('./components/ImageModal.vue')['default']

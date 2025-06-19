@@ -10,6 +10,11 @@ const envSchema = z.object({
   PANEL_USER: z.string().default('admin'),
   PANEL_PASS: z.string().default('admin'),
   BASE_URL: z.string().url().default('http://localhost:3000'),
+  GITHUB_CLIENT_ID: z.string().optional(),
+  GITHUB_CLIENT_SECRET: z.string().optional(),
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
+  SESSION_SECRET: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);

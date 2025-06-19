@@ -2,3 +2,5 @@ ruff
 pillow
 modelbit
 tensorflow
+opencv-python-headless
+numpy

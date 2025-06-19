@@ -19,6 +19,7 @@ export const createApiKeysRepo = (db: any = DB) => ({
     return await db.insert(apiKeysTable).values(finalData).returning({
       id: apiKeysTable.id,
       name: apiKeysTable.name,
+      userId: apiKeysTable.userId,
       hashedKey: apiKeysTable.hashedKey,
       keyPrefix: apiKeysTable.keyPrefix,
       expiresAt: apiKeysTable.expiresAt,
@@ -35,6 +36,9 @@ export const createApiKeysRepo = (db: any = DB) => ({
   findByPrefix: async (prefix: string) => {
     const rows = await db.query.apiKeysTable.findMany({
       where: eq(apiKeysTable.keyPrefix, prefix),
+      with: {
+        user: true,
+      },
     });
 
     if (!rows || !Array.isArray(rows)) {
@@ -45,6 +49,7 @@ export const createApiKeysRepo = (db: any = DB) => ({
     return filteredRows.map((res) => ({
       id: res.id,
       name: res.name,
+      userId: res.userId,
       hashedKey: res.hashedKey,
       keyPrefix: res.keyPrefix,
       expiresAt: res.expiresAt,
@@ -62,6 +67,7 @@ export const createApiKeysRepo = (db: any = DB) => ({
     return await db.update(apiKeysTable).set(updates).where(eq(apiKeysTable.id, id)).returning({
       id: apiKeysTable.id,
       name: apiKeysTable.name,
+      userId: apiKeysTable.userId,
       hashedKey: apiKeysTable.hashedKey,
       expiresAt: apiKeysTable.expiresAt,
       updatedAt: apiKeysTable.updatedAt,
@@ -83,6 +89,7 @@ export const createApiKeysRepo = (db: any = DB) => ({
       .returning({
         id: apiKeysTable.id,
         name: apiKeysTable.name,
+        userId: apiKeysTable.userId,
         hashedKey: apiKeysTable.hashedKey,
         expiresAt: apiKeysTable.expiresAt,
         updatedAt: apiKeysTable.updatedAt,
@@ -105,6 +112,7 @@ export const createApiKeysRepo = (db: any = DB) => ({
       .returning({
         id: apiKeysTable.id,
         name: apiKeysTable.name,
+        userId: apiKeysTable.userId,
         hashedKey: apiKeysTable.hashedKey,
         expiresAt: apiKeysTable.expiresAt,
         updatedAt: apiKeysTable.updatedAt,
@@ -124,6 +132,7 @@ export const createApiKeysRepo = (db: any = DB) => ({
       .returning({
         id: apiKeysTable.id,
         name: apiKeysTable.name,
+        userId: apiKeysTable.userId,
         hashedKey: apiKeysTable.hashedKey,
         expiresAt: apiKeysTable.expiresAt,
         updatedAt: apiKeysTable.updatedAt,
@@ -143,6 +152,7 @@ export const createApiKeysRepo = (db: any = DB) => ({
       .returning({
         id: apiKeysTable.id,
         name: apiKeysTable.name,
+        userId: apiKeysTable.userId,
         hashedKey: apiKeysTable.hashedKey,
         expiresAt: apiKeysTable.expiresAt,
         updatedAt: apiKeysTable.updatedAt,

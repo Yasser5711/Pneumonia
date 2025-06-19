@@ -1,9 +1,23 @@
-import { pgTable } from 'drizzle-orm/pg-core';
+import { pgEnum, pgTable, uniqueIndex } from 'drizzle-orm/pg-core';
+import { sql } from 'drizzle-orm';
+export const providerEnum = pgEnum('provider', ['github', 'google', 'guest']);
 
-export const usersTable = pgTable('users', (t) => ({
-  id: t.integer().primaryKey().generatedAlwaysAsIdentity(),
-  name: t.varchar({ length: 255 }).notNull(),
-  age: t.integer().notNull(),
-  email: t.varchar({ length: 255 }).notNull().unique(),
-  phone: t.varchar({ length: 20 }),
-}));
+export const usersTable = pgTable(
+  'users',
+  (t) => ({
+    id: t.uuid('id').primaryKey().defaultRandom(),
+    email: t.text('email').unique(),
+    provider: providerEnum('provider').notNull(),
+    providerId: t.text('provider_id').notNull(),
+    createdAt: t.timestamp('created_at').defaultNow(),
+    lastLogin: t.timestamp('last_login'),
+    guestLastRequest: t.timestamp('guest_last_request'),
+  }),
+  (table) => [
+    uniqueIndex('emailUniqueIndex').on(sql`lower(${table.email})`),
+    uniqueIndex('providerProviderIdUniqueIndex').on(
+      sql`lower(${table.provider})`,
+      sql`lower(${table.providerId})`,
+    ),
+  ],
+);

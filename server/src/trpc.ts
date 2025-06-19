@@ -3,7 +3,6 @@ import { initTRPC } from '@trpc/server';
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import type { Services } from './db/services/index';
 import * as defaultServices from './db/services/index';
-
 export const createContext = ({
   req,
   res,

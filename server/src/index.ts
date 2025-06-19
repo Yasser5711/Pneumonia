@@ -1,7 +1,9 @@
 import { fastifyTRPCOpenApiPlugin, generateOpenApiDocument } from '@9or9/trpc-openapi';
 import fastifyBasicAuth from '@fastify/basic-auth';
+import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
+import oauthPlugin from '@fastify/oauth2';
 import rateLimit from '@fastify/rate-limit';
 import ScalarApiReference from '@scalar/fastify-api-reference';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
@@ -42,6 +44,27 @@ async function main() {
             },
           }
         : true,
+  });
+  await fastify.register(cookie, { secret: env.SESSION_SECRET ?? 'secret' });
+  await fastify.register(oauthPlugin, {
+    name: 'githubOauth',
+    scope: ['user:email'],
+    credentials: {
+      client: { id: env.GITHUB_CLIENT_ID ?? '', secret: env.GITHUB_CLIENT_SECRET ?? '' },
+      auth: oauthPlugin.GITHUB_CONFIGURATION,
+    },
+    startRedirectPath: '/auth/github',
+    callbackUri: `${env.BASE_URL}/auth/github/callback`,
+  });
+  await fastify.register(oauthPlugin, {
+    name: 'googleOauth',
+    scope: ['openid', 'email', 'profile'],
+    credentials: {
+      client: { id: env.GOOGLE_CLIENT_ID ?? '', secret: env.GOOGLE_CLIENT_SECRET ?? '' },
+      auth: oauthPlugin.GOOGLE_CONFIGURATION,
+    },
+    startRedirectPath: '/auth/google',
+    callbackUri: `${env.BASE_URL}/auth/google/callback`,
   });
   await fastify.register(cors, {
     origin: (origin, cb) => {

@@ -42,8 +42,10 @@
   "dependencies": {
     "@9or9/trpc-openapi": "^2.0.1",
     "@fastify/basic-auth": "^6.2.0",
+    "@fastify/cookie": "^11.0.2",
     "@fastify/cors": "^11.0.1",
     "@fastify/helmet": "^13.0.1",
+    "@fastify/oauth2": "^8.1.2",
     "@fastify/rate-limit": "^10.3.0",
     "@scalar/fastify-api-reference": "^1.29.3",
     "@trpc/client": "^11.1.3",

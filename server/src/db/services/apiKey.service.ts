@@ -4,16 +4,27 @@ import { logger } from '../../logger';
 import { compareApiKey, hashApiKey } from '../../utils/hash';
 import type { Repositories } from '../repositories/index';
 export const createApiKeyService = (apiKeysRepo: Repositories['apiKeysRepo']) => ({
-  generateKey: async ({ name, description }: { name: string; description?: string }) => {
+  generateKey: async ({
+    userId,
+    name,
+    description,
+    quota = 10,
+  }: {
+    userId: string;
+    name?: string;
+    description?: string;
+    quota?: number;
+  }) => {
     const rawKey = randomBytes(32).toString('hex');
     const prefix = rawKey.slice(0, 12);
     const secretPart = rawKey.slice(12);
     const hashed = await hashApiKey(secretPart);
     const [record] = await apiKeysRepo.create({
-      name,
+      name: name ?? `user-${userId}-key`,
       description,
       keyPrefix: prefix,
       hashedKey: hashed,
+      freeRequestsQuota: quota,
     });
 
     if (!record) {

@@ -13,7 +13,7 @@ import pkg from '../package.json' assert { type: 'json' };
 import { env } from './env';
 import { setLogger } from './logger';
 import { appRouter } from './router/_app';
-import { createContext } from './trpc';
+import { createContext, type CreateContextOptions } from './trpc';
 const isDev = env.NODE_ENV === 'development';
 const fastify = Fastify({
   logger: isDev
@@ -53,8 +53,8 @@ async function main() {
       client: { id: env.GITHUB_CLIENT_ID ?? '', secret: env.GITHUB_CLIENT_SECRET ?? '' },
       auth: oauthPlugin.GITHUB_CONFIGURATION,
     },
-    startRedirectPath: '/auth/github',
-    callbackUri: `${env.BASE_URL}/auth/github/callback`,
+    startRedirectPath: '/auth/github/login',
+    callbackUri: `${env.BASE_URL}/github-callback`,
   });
   await fastify.register(oauthPlugin, {
     name: 'googleOauth',
@@ -82,6 +82,13 @@ async function main() {
         cb(new Error(`Origin ${origin} not allowed by CORS`), false);
       }
     },
+    // 2) **Crucial** → ajoute Access-Control-Allow-Credentials: true
+    credentials: true,
+
+    // 3) Autorise pré-vols (OPTIONS) & en-têtes customs si besoin
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-API-KEY'],
+    exposedHeaders: ['Set-Cookie'],
   });
   await fastify.register(rateLimit, {
     max: 10, // 🔥 Allow 3 requests
@@ -99,13 +106,53 @@ async function main() {
     prefix: '/trpc',
     trpcOptions: {
       router: appRouter,
-      createContext,
+      createContext: ({
+        req,
+        res,
+      }: {
+        req: CreateContextOptions['req'];
+        res: CreateContextOptions['res'];
+      }) => {
+        return createContext({
+          req,
+          res,
+          fastify,
+        });
+      },
+    },
+    onError(opts: any) {
+      const { error, path } = opts;
+      // Log the full error to the server console in development
+      console.error(`❌ tRPC Error on '${path}':`, error);
+    },
+    formatError(opts: any) {
+      const { shape, error } = opts;
+      return {
+        ...shape,
+        data: {
+          ...shape.data,
+          // Also include the error stack in the response during development
+          stack: isDev ? error.stack : undefined,
+        },
+      };
     },
   });
   await fastify.register(fastifyTRPCOpenApiPlugin, {
     router: appRouter,
     prefix: '/api',
-    createContext,
+    createContext: ({
+      req,
+      res,
+    }: {
+      req: CreateContextOptions['req'];
+      res: CreateContextOptions['res'];
+    }) => {
+      return createContext({
+        req,
+        res,
+        fastify,
+      });
+    },
   });
   await fastify.register(fastifyBasicAuth, {
     validate: (username, password, req, reply, done) => {

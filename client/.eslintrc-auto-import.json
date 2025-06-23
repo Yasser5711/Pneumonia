@@ -76,6 +76,8 @@
     "useCssModule": true,
     "useCssVars": true,
     "useFileUpload": true,
+    "useGitHubCallback": true,
+    "useGitHubLogin": true,
     "useGlobalFileDragState": true,
     "useHead": true,
     "useHeadSafe": true,

@@ -9,7 +9,7 @@ const envSchema = z.object({
   DATABASE_URL: z.string().url().default('postgres://postgres:postgres@localhost:5432/postgres'),
   PANEL_USER: z.string().default('admin'),
   PANEL_PASS: z.string().default('admin'),
-  BASE_URL: z.string().url().default('http://localhost:3000'),
+  BASE_URL: z.string().url().default('http://localhost:4000'),
   GITHUB_CLIENT_ID: z.string().optional(),
   GITHUB_CLIENT_SECRET: z.string().optional(),
   GOOGLE_CLIENT_ID: z.string().optional(),

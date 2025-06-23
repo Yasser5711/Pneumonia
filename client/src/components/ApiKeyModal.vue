@@ -4,6 +4,7 @@ import { toTypedSchema } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
 import { z } from 'zod'
 import { useApiKeyModal } from './useApiKeyModal'
+import LoginBotton from './LoginButton.vue'
 
 const show = ref(false)
 const { isOpen, closeModal } = useApiKeyModal()
@@ -55,6 +56,7 @@ function onClear() {
           </v-text-field>
         </v-card-text>
         <v-card-actions>
+          <LoginButton />
           <v-spacer />
           <v-btn
             text="Clear"

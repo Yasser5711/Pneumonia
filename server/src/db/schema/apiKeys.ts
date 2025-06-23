@@ -1,5 +1,6 @@
 import { pgTable, uniqueIndex } from 'drizzle-orm/pg-core';
 import { usersTable } from './users';
+import { relations } from 'drizzle-orm';
 export const apiKeysTable = pgTable(
   'api_keys',
   (t) => ({
@@ -25,3 +26,9 @@ export const apiKeysTable = pgTable(
   }),
   (table) => [uniqueIndex('key_prefix_idx').on(table.keyPrefix)],
 );
+export const apiKeysRelations = relations(apiKeysTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [apiKeysTable.userId],
+    references: [usersTable.id],
+  }),
+}));

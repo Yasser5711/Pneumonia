@@ -8,7 +8,8 @@ import {
 } from '../errors/apiKey.errors';
 import { logger } from '../logger';
 import { t } from '../trpc';
-export const requireAuth = t.middleware(async ({ ctx, next }) => {
+import { sessionMiddleware } from './session.middleware';
+export const requireAuth = sessionMiddleware.unstable_pipe(async ({ ctx, next }) => {
   const key = ctx.apiKey?.trim();
   if (!key) throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Missing API key' });
 

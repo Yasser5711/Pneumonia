@@ -34,11 +34,18 @@ describe('apiKeyService', () => {
         },
       ]);
 
-      const result = await service.generateKey({ name: 'CLI Tool', description: 'For CLI' });
+      const result = await service.generateKey({
+        userId: 'u1',
+        quota: 10,
+        name: 'CLI Tool',
+        description: 'For CLI',
+      });
 
       expect(result.key).toHaveLength(64); // 32 bytes hex = 64 characters
       expect(result.meta.name).toBe('CLI Tool');
       expect(mockApiKeyRepo.create).toHaveBeenCalledExactlyOnceWith({
+        userId: 'u1',
+        freeRequestsQuota: 10,
         name: 'CLI Tool',
         description: 'For CLI',
         keyPrefix: expect.stringMatching(/^[a-f0-9]{12}$/),
@@ -49,9 +56,9 @@ describe('apiKeyService', () => {
     it('should throw error if creation fails', async () => {
       mockApiKeyRepo.create.mockResolvedValue([]);
 
-      await expect(service.generateKey({ name: 'Fail', description: '' })).rejects.toThrow(
-        'API key generation failed',
-      );
+      await expect(
+        service.generateKey({ userId: 'u1', name: 'Fail', description: '' }),
+      ).rejects.toThrow('API key generation failed');
     });
   });
 
@@ -68,6 +75,7 @@ describe('apiKeyService', () => {
       active: true,
       freeRequestsUsed: 0,
       freeRequestsQuota: 10,
+      userId: 'user-id',
       expiresAt: null,
       description: 'desc',
       lastUsedAt: null,

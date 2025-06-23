@@ -1,11 +1,12 @@
 import { pgEnum, pgTable, uniqueIndex } from 'drizzle-orm/pg-core';
-import { sql } from 'drizzle-orm';
+import { sql, relations } from 'drizzle-orm';
+import { apiKeysTable } from './apiKeys';
 export const providerEnum = pgEnum('provider', ['github', 'google', 'guest']);
 
 export const usersTable = pgTable(
   'users',
   (t) => ({
-    id: t.uuid('id').primaryKey().defaultRandom(),
+    id: t.uuid('id').defaultRandom().primaryKey(),
     email: t.text('email').unique(),
     provider: providerEnum('provider').notNull(),
     providerId: t.text('provider_id').notNull(),
@@ -16,8 +17,12 @@ export const usersTable = pgTable(
   (table) => [
     uniqueIndex('emailUniqueIndex').on(sql`lower(${table.email})`),
     uniqueIndex('providerProviderIdUniqueIndex').on(
-      sql`lower(${table.provider})`,
+      table.provider,
       sql`lower(${table.providerId})`,
     ),
   ],
 );
+
+export const usersRelations = relations(usersTable, ({ many }) => ({
+  apiKeys: many(apiKeysTable),
+}));

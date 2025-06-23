@@ -20,6 +20,8 @@ declare module 'vue' {
     HoverImage: typeof import('./components/HoverImage.vue')['default']
     ImageModal: typeof import('./components/ImageModal.vue')['default']
     ImagePreview: typeof import('./components/ImagePreview.vue')['default']
+    LoginBotton: typeof import('./components/LoginBotton.vue')['default']
+    LoginButton: typeof import('./components/LoginButton.vue')['default']
     MessageInput: typeof import('./components/MessageInput.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

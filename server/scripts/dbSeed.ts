@@ -1,11 +1,29 @@
 /* eslint-disable no-console */
 import { config } from 'dotenv';
-import { apiKeysRepo } from '../src/db/repositories/';
+import { apiKeysRepo, usersRepo } from '../src/db/repositories/';
 import { hashApiKey } from '../src/utils/hash';
 
 config();
 
 async function seedDevApiKey(): Promise<void> {
+  const DEV_USER_EMAIL = 'dev-cli@system.local';
+  let devUser = await usersRepo.findByProvider({
+    provider: 'guest',
+    providerId: DEV_USER_EMAIL,
+  });
+  if (!devUser) {
+    console.log(`🔧 System user not found. Creating user: ${DEV_USER_EMAIL}`);
+    const newUserResult = await usersRepo.create({
+      email: DEV_USER_EMAIL,
+      provider: 'guest',
+      providerId: DEV_USER_EMAIL,
+    });
+    devUser = newUserResult[0];
+    console.log(`✅ System user created successfully (ID: ${devUser.id})`);
+  } else {
+    console.log(`✅ System user already exists (ID: ${devUser.id})`);
+  }
+
   const rawKey = process.env.API_KEY;
   if (!rawKey) {
     console.error('❌ API_KEY is not defined');
@@ -33,6 +51,7 @@ async function seedDevApiKey(): Promise<void> {
     keyPrefix: prefix,
     hashedKey: hashed,
     active: true,
+    userId: devUser.id,
   });
 
   console.log(`✅ Dev API key seeded:\n➡️  ${rawKey}`);

@@ -19,6 +19,7 @@ declare module 'vue-router/auto-routes' {
    */
   export interface RouteNamedMap {
     'ChatPage': RouteRecordInfo<'ChatPage', '/chat', Record<never, never>, Record<never, never>>,
+    'GitHubCallback': RouteRecordInfo<'GitHubCallback', '/github-callback', Record<never, never>, Record<never, never>>,
     '/IndexPage': RouteRecordInfo<'/IndexPage', '/IndexPage', Record<never, never>, Record<never, never>>,
   }
 }

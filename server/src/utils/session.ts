@@ -1,8 +1,16 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import ms from 'ms';
 
-export const setSession = (res: FastifyReply, userId: string, ttl = '30m') => {
-  const maxAge = ms(ttl);
+export const setSession = ({
+  res,
+  userId,
+  ttl = '30m',
+}: {
+  res: FastifyReply;
+  userId: string;
+  ttl?: string;
+}) => {
+  const maxAge = ms(ttl as ms.StringValue);
   res.setCookie('sid', userId, {
     path: '/',
     httpOnly: true,

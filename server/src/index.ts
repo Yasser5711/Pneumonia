@@ -15,7 +15,9 @@ import { setLogger } from './logger';
 import { appRouter } from './router/_app';
 import { createContext, type CreateContextOptions } from './trpc';
 const isDev = env.NODE_ENV === 'development';
+
 const fastify = Fastify({
+  trustProxy: true,
   logger: isDev
     ? {
         level: 'info',

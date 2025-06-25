@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server';
 import { t } from '../trpc';
 import { getSession } from '../utils/session';
-import * as error from '../errors/session.errors';
+// import * as error from '../errors/session.errors';
 export const sessionMiddleware = t.middleware(async ({ ctx, next }) => {
   const session = getSession(ctx.req);
   if (!session) {

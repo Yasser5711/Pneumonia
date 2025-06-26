@@ -1,7 +1,12 @@
 <!-- src/components/LoginButton.vue -->
 <script setup lang="ts">
-import { useGitHubLogin } from '../composables/useGitHubLogin'
-const { mutate: login, isPending } = useGitHubLogin()
+import { useGithubStart } from '../queries/useAuth'
+const { isPending, mutate: login, data } = useGithubStart()
+watch(data, (data) => {
+  if (data?.redirectUrl) {
+    window.location.href = data.redirectUrl
+  }
+})
 </script>
 
 <template>

@@ -1,4 +1,3 @@
-// src/composables/useGitHubLogin.ts
 import { useMutation } from '@tanstack/vue-query'
 import { apiFetch } from '../lib/apiFetch'
 

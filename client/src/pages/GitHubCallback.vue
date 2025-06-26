@@ -2,7 +2,7 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useGitHubCallback } from '@/composables/useGitHubCallback'
+import { useGithubCallback } from '../queries/useAuth'
 definePage({
   path: '/github-callback',
   name: 'GitHubCallback',
@@ -16,7 +16,7 @@ definePage({
 })
 const route = useRoute()
 const router = useRouter()
-const { mutate: exchangeCode, isPending } = useGitHubCallback()
+const { mutate: exchangeCode, isPending } = useGithubCallback()
 
 onMounted(() => {
   const code = String(route.query.code ?? '')
@@ -32,6 +32,11 @@ onMounted(() => {
     },
   )
 })
+// const qc = useQueryClient()
+// onSuccess: () => {
+//   qc.invalidateQueries({ queryKey: ['me'] })
+//   router.replace({ name: 'IndexPage' })
+// }
 </script>
 
 <template>

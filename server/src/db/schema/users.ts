@@ -1,7 +1,7 @@
 import { relations, sql } from 'drizzle-orm';
 import { pgEnum, pgTable, uniqueIndex } from 'drizzle-orm/pg-core';
 import { apiKeysTable } from './apiKeys';
-export const providerEnum = pgEnum('provider', ['github', 'google']);
+export const providerEnum = pgEnum('provider', ['github', 'google', 'guest']);
 
 export const usersTable = pgTable(
   'users',

@@ -1,19 +1,21 @@
 import { useTRPC } from '@/composables/useTRPC'
-import { useQuery } from '@tanstack/vue-query'
-
+import { useQuery, useMutation } from '@tanstack/vue-query'
+import { watch } from 'vue'
 export const useGithubStart = () => {
   const trpc = useTRPC()
-  return useQuery({
-    queryKey: ['githubStart'],
-    queryFn: () => trpc.auth.github.githubStart.query({}),
-    enabled: false, // avoid auto-fetch
+  return useMutation({
+    mutationKey: ['githubStart'],
+    mutationFn: () => trpc.auth.github.githubStart.mutate({}),
+    retry: false,
   })
 }
-export const useGithubCallback = (code: string, state: string) => {
+export const useGithubCallback = () => {
   const trpc = useTRPC()
-  return useQuery({
-    queryKey: ['githubCallback', code, state],
-    queryFn: () => trpc.auth.github.githubCallback.mutate({ code, state }),
-    enabled: false, // avoid auto-fetch
+  return useMutation({
+    mutationKey: ['githubCallback'],
+    mutationFn: ({ code, state }: { code: string; state: string }) =>
+      trpc.auth.github.githubCallback.mutate({ code, state }),
+    // onSuccess: ({ ap }) => (window.location.href = redirectUrl),
+    retry: false,
   })
 }

@@ -164,4 +164,33 @@ export const createApiKeysRepo = (db: any = DB) => ({
         lastUsedIp: apiKeysTable.lastUsedIp,
       });
   },
+  findByUserId: async (userId: string) => {
+    const rows = await db.query.apiKeysTable.findMany({
+      where: eq(apiKeysTable.userId, userId),
+      with: {
+        user: true,
+      },
+    });
+
+    if (!rows || !Array.isArray(rows)) {
+      return [];
+    }
+
+    const filteredRows = rows.filter((key) => key.active);
+    return filteredRows.map((res) => ({
+      id: res.id,
+      name: res.name,
+      userId: res.userId,
+      hashedKey: res.hashedKey,
+      keyPrefix: res.keyPrefix,
+      expiresAt: res.expiresAt,
+      updatedAt: res.updatedAt,
+      active: res.active,
+      freeRequestsUsed: res.freeRequestsUsed,
+      freeRequestsQuota: res.freeRequestsQuota,
+      description: res.description,
+      lastUsedAt: res.lastUsedAt,
+      lastUsedIp: res.lastUsedIp,
+    }));
+  },
 });

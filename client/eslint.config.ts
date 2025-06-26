@@ -1,4 +1,5 @@
 import eslint from '@eslint/js'
+import pluginQuery from '@tanstack/eslint-plugin-query'
 import eslintPluginTs from '@typescript-eslint/eslint-plugin'
 import tsParser from '@typescript-eslint/parser'
 import eslintConfigPrettier from 'eslint-config-prettier'
@@ -6,7 +7,6 @@ import eslintPluginPrettier from 'eslint-plugin-prettier'
 import eslintPluginVue from 'eslint-plugin-vue'
 import globals from 'globals'
 import typescriptEslint from 'typescript-eslint'
-
 export default typescriptEslint.config(
   { ignores: ['*.d.ts', '**/coverage', '**/dist'] },
   {
@@ -79,6 +79,15 @@ export default typescriptEslint.config(
         },
       ],
       'prettier/prettier': 'error',
+    },
+  },
+  {
+    files: ['**/*.{ts,vue}'],
+    plugins: {
+      '@tanstack/query': pluginQuery,
+    },
+    rules: {
+      ...pluginQuery.configs.recommended.rules,
     },
   },
 )

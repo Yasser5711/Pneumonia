@@ -1,15 +1,16 @@
 import { z } from 'zod';
-import { router, publicProcedure } from '../../middlewares';
-import { setSession, clearSession } from '../../utils/session';
+import { publicProcedure, router } from '../../middlewares';
+import { setSession } from '../../utils/session';
 
 async function fetchGitHubProfile(token: string) {
   const res = await fetch('https://api.github.com/user', {
     headers: { Authorization: `Bearer ${token}` },
   });
+  console.log(await res.json());
   return (await res.json()) as { id: string; email: string };
 }
 
-export const githubAuthRouter = router({
+export const githubRouter = router({
   githubStart: publicProcedure
     .meta({
       openapi: {
@@ -29,7 +30,7 @@ export const githubAuthRouter = router({
   githubCallback: publicProcedure
     .meta({
       openapi: {
-        method: 'GET',
+        method: 'POST',
         path: '/auth/github/callback',
         tags: ['auth'],
         summary: 'GitHub OAuth Callback',
@@ -38,16 +39,24 @@ export const githubAuthRouter = router({
     .input(z.object({ code: z.string(), state: z.string() }))
     .output(z.object({ apiKey: z.string() }))
     .mutation(async ({ ctx }) => {
-      const token = await ctx.fastify.githubOauth.getAccessTokenFromAuthorizationCodeFlow(ctx.req);
-      console.log('GitHub OAuth token:', token);
-      const profile = await fetchGitHubProfile(token.token.access_token);
-      const user = await ctx.services.userService.createOrUpdateOAuthUser(
-        'github',
-        String(profile.id),
-        profile.email,
-      );
-      const { key } = await ctx.services.apiKeyService.generateKey({ userId: user.id, quota: 10 });
-      setSession({ res: ctx.res, userId: user.id, ttl: '7d' });
-      return { apiKey: key };
+      try {
+        const token = await ctx.fastify.githubOauth.getAccessTokenFromAuthorizationCodeFlow(
+          ctx.req,
+        );
+        const profile = await fetchGitHubProfile(token.token.access_token);
+        const user = await ctx.services.userService.createOrUpdateOAuthUser({
+          provider: 'github',
+          providerId: String(profile.id),
+          email: profile.email,
+        });
+        const { key } = await ctx.services.apiKeyService.generateKey({
+          userId: user.id,
+          quota: 10,
+        });
+        setSession({ res: ctx.res, userId: user.id, ttl: '7d' });
+        return { apiKey: key };
+      } catch {
+        throw new Error('Failed to get access token from GitHub');
+      }
     }),
 });

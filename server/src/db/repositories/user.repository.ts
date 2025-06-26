@@ -1,6 +1,6 @@
 import { and, eq, type InferInsertModel } from 'drizzle-orm';
 import { db as DB } from '../index';
-import { usersTable } from '../schema';
+import { apiKeysTable, usersTable } from '../schema';
 
 type UserInsert = InferInsertModel<typeof usersTable>;
 
@@ -30,7 +30,7 @@ export const createUsersRepo = (db: any = DB) => ({
       providerId: usersTable.providerId,
       createdAt: usersTable.createdAt,
       lastLogin: usersTable.lastLogin,
-      guestLastRequest: usersTable.guestLastRequest,
+      updatedAt: usersTable.updatedAt,
     });
   },
   update: async ({ id, updates }: { id: string; updates: Partial<UserInsert> }) => {
@@ -41,7 +41,37 @@ export const createUsersRepo = (db: any = DB) => ({
       providerId: usersTable.providerId,
       createdAt: usersTable.createdAt,
       lastLogin: usersTable.lastLogin,
-      guestLastRequest: usersTable.guestLastRequest,
+      updatedAt: usersTable.updatedAt,
     });
+  },
+  upgradeQuota: async ({ id, quota = 10 }: { id: string; quota?: number }) => {
+    const [updated] = await db
+      .update(apiKeysTable)
+      .set({
+        freeRequestsQuota: db.raw(`${apiKeysTable.freeRequestsQuota.name} + ?`, [quota]),
+      })
+      .where(eq(apiKeysTable.id, id))
+      .returning();
+    return updated;
+  },
+  getMyKeys: async (userId: string) => {
+    return await db.query.apiKeysTable.findMany({
+      where: eq(apiKeysTable.userId, userId),
+      with: {
+        user: true,
+      },
+    });
+  },
+  getMyQuota: async (userId: string) => {
+    const keys = await db
+      .select({
+        Quota: apiKeysTable.freeRequestsQuota,
+      })
+      .from(apiKeysTable)
+      .where(eq(apiKeysTable.userId, userId))
+      .andWhere({
+        active: true,
+      });
+    return keys;
   },
 });

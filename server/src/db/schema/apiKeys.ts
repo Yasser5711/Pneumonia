@@ -1,6 +1,6 @@
+import { relations } from 'drizzle-orm';
 import { pgTable, uniqueIndex } from 'drizzle-orm/pg-core';
 import { usersTable } from './users';
-import { relations } from 'drizzle-orm';
 export const apiKeysTable = pgTable(
   'api_keys',
   (t) => ({
@@ -20,7 +20,7 @@ export const apiKeysTable = pgTable(
     createdAt: t.timestamp('created_at').defaultNow(),
     expiresAt: t.timestamp('expires_at'), // 10 days from now
     updatedAt: t
-      .timestamp('last_updated_at')
+      .timestamp('updated_at')
       .defaultNow()
       .$onUpdate(() => new Date()),
   }),

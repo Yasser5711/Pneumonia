@@ -12,12 +12,8 @@ export function createTRPCPlugin({ url }: { url: string }) {
         links: [
           httpBatchLink({
             url,
-            fetch(url, options) {
-              return fetch(url, {
-                ...options,
-                credentials: 'include',
-              })
-            },
+            fetch: (input, init) =>
+              fetch(input, { ...init, credentials: 'include' }),
             headers: () => {
               const key = store.getKeyFromLocalStorage('apiKey').value
               return key ? { 'x-api-key': key } : {}

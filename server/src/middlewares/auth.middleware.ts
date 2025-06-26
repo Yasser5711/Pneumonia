@@ -7,15 +7,9 @@ import {
   QuotaExceededError,
 } from '../errors/apiKey.errors';
 import { logger } from '../logger';
+import { realIp } from '../utils/functions';
 import { sessionMiddleware } from './session.middleware';
 
-// function realIp(req: FastifyRequest) {
-//   return (
-//     (req.headers['cf-connecting-ip'] as string | undefined) ??
-//     (req.headers['true-client-ip'] as string | undefined) ??
-//     req.ip // déjà corrigé par trustProxy
-//   );
-// }
 export const requireAuth = sessionMiddleware.unstable_pipe(async ({ ctx, next }) => {
   const key = ctx.apiKey?.trim();
   if (!key) throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Missing API key' });
@@ -44,8 +38,8 @@ export const requireAuth = sessionMiddleware.unstable_pipe(async ({ ctx, next })
   }
 
   logger().info({ key, ip: ctx.req.ip }, '✅ Valid API key');
-  // const ip = realIp(ctx.req);
-  await ctx.services.apiKeyService.markKeyUsed({ id: record.id, ip: ctx.req.ip });
+  const ip = realIp(ctx.req);
+  await ctx.services.apiKeyService.markKeyUsed({ id: record.id, ip });
   return next({
     ctx: { ...ctx, apiKeyRecord: record },
   });

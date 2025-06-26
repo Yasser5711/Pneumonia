@@ -125,6 +125,7 @@ async function main() {
     onError(opts: any) {
       const { error, path } = opts;
       // Log the full error to the server console in development
+      // eslint-disable-next-line no-console
       console.error(`❌ tRPC Error on '${path}':`, error);
     },
     formatError(opts: any) {

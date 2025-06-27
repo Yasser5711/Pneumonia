@@ -5,6 +5,7 @@ definePage({
   path: '/chat',
   name: 'ChatPage',
   meta: {
+    requiresAuth: true,
     title: 'Chat',
     icon: '/icons/chat.png',
     description: 'Chat with AI',

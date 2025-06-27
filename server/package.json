@@ -29,7 +29,7 @@
     "test": "vitest run",
     "test:watch": "vitest watch",
     "test:ui": "vitest --ui",
-    "check:test": "vitest run --silent --coverage && echo 🧪✅ Tests passed! || (echo '❌ Fix the above issues before committing 💡' && exit 1)",
+    "check:test": "vitest run  && echo 🧪✅ Tests passed! || (echo '❌ Fix the above issues before committing 💡' && exit 1)",
     "check:all": "yarn check:lint && yarn check:types && yarn check:knip && yarn check:dep  && echo 🧰✨ All checks passed! || (echo '❌ Fix the above issues before committing 💡' && exit 1)"
   },
   "wireit": {
@@ -67,6 +67,7 @@
   "devDependencies": {
     "@electric-sql/pglite": "^0.3.2",
     "@fastify/websocket": "^11.1.0",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/bcrypt": "^5.0.2",
     "@types/eslint-plugin-security": "^3",
     "@types/ms": "^2",
@@ -81,6 +82,7 @@
     "eslint": "^9.24.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-drizzle": "^0.2.3",
+    "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-n": "^17.18.0",
     "eslint-plugin-prettier": "^5.4.1",
     "eslint-plugin-security": "^3.0.1",

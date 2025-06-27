@@ -21,6 +21,7 @@ beforeEach(() => {
     description: 'test',
     lastUsedAt: null,
     lastUsedIp: null,
+    userId: 'user-id',
   });
 });
 

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+
 import { compareApiKey, hashApiKey } from './hash';
 
 describe('hash utils', () => {

@@ -4,7 +4,6 @@ import { toTypedSchema } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
 import { z } from 'zod'
 import { useApiKeyModal } from './useApiKeyModal'
-import LoginBotton from './LoginButton.vue'
 
 const show = ref(false)
 const { isOpen, closeModal } = useApiKeyModal()

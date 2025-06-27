@@ -1,4 +1,3 @@
-<!-- src/components/LoginButton.vue -->
 <script setup lang="ts">
 import { useGithubStart } from '../queries/useAuth'
 const { isPending, mutate: login, data } = useGithubStart()

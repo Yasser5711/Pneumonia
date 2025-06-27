@@ -1,5 +1,6 @@
 import { relations } from 'drizzle-orm';
 import { pgTable, uniqueIndex } from 'drizzle-orm/pg-core';
+
 import { usersTable } from './users';
 export const apiKeysTable = pgTable(
   'api_keys',

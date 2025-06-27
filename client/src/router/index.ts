@@ -41,7 +41,7 @@ export function createAppRouter(baseUrl: string = import.meta.env.BASE_URL) {
     // Cookie seulement ?  Appelez /auth/me pour vérifier la session si besoin
     if (apiKey) return true
 
-    return { name: '/IndexPage', query: { redirect: to.fullPath } }
+    return { name: 'IndexPage', query: { redirect: to.fullPath } }
   })
   router.afterEach((to: RouteLocationNormalized) => {
     const { title, description, icon } = to.meta as {

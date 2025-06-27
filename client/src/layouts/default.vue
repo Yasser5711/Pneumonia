@@ -21,7 +21,7 @@ import { useApiKeyModal } from '@/components/useApiKeyModal'
 import { useStorageStore } from '@/stores/storageStore'
 const modal = useApiKeyModal()
 const store = useStorageStore()
-if (!store.getKeyFromLocalStorage('apiKey').value) {
-  modal.openModal()
-}
+// if (!store.getKeyFromLocalStorage('apiKey').value) {
+//   modal.openModal()
+// }
 </script>

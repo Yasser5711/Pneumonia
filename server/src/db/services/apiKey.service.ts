@@ -20,10 +20,12 @@ export const createApiKeyService = (apiKeysRepo: Repositories['apiKeysRepo']) =>
     const secretPart = rawKey.slice(12);
     const hashed = await hashApiKey(secretPart);
     const existingKeys = await apiKeysRepo.findByUserId(userId);
-    quota = existingKeys.length > 0 ? existingKeys[0].freeRequestsQuota : quota;
+    quota = existingKeys.length > 0 ? existingKeys[0].freeRequestsUsed : quota;
+
     const [record] = await apiKeysRepo.create({
       name: name ?? `user-${userId}-key`,
       description,
+      userId,
       keyPrefix: prefix,
       hashedKey: hashed,
       freeRequestsQuota: quota,
@@ -75,7 +77,7 @@ export const createApiKeyService = (apiKeysRepo: Repositories['apiKeysRepo']) =>
     throw new apiKeyErrors.ApiKeyInvalidError();
   },
 
-  markKeyUsed: async ({ id, ip }: { id: string; ip?: string }) => {
+  markKeyUsed: async ({ id, ip }: { id: string; ip?: string }): Promise<void> => {
     await apiKeysRepo.updateUsage({
       id: id,
       updates: {
@@ -85,7 +87,7 @@ export const createApiKeyService = (apiKeysRepo: Repositories['apiKeysRepo']) =>
     });
     await apiKeysRepo.updateLimits(id);
   },
-  updateExpiration: async ({ id }: { id: string }) => {
+  updateExpiration: async ({ id }: { id: string }): Promise<void> => {
     await apiKeysRepo.updateExpiration({
       id: id,
       expiresAt: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), // 10 days

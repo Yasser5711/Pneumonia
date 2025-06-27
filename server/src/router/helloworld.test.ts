@@ -1,5 +1,5 @@
-// import { resetRateLimit } from 'src/middlewares/rateLimit.middleware';
 import { beforeEach, describe, expect, it } from 'vitest';
+
 import { createTestCaller } from '../../test/caller';
 import { mockApiKeyService } from '../../test/services';
 import { QuotaExceededError } from '../errors/apiKey.errors';
@@ -19,6 +19,7 @@ describe('hello world', () => {
       description: 'test',
       lastUsedAt: null,
       lastUsedIp: null,
+      userId: 'user-id',
     });
     mockApiKeyService.markKeyUsed.mockResolvedValue(undefined);
   });

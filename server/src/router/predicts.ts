@@ -2,10 +2,10 @@ import { TRPCError } from '@trpc/server';
 import axios from 'axios';
 import sharp from 'sharp';
 import { z } from 'zod';
-import { logger } from '../logger';
-import { protectedProcedureAPI } from '../middlewares/index';
 
 import { env } from '../env';
+import { logger } from '../logger';
+import { protectedProcedureAPI } from '../middlewares/index';
 
 export const predictRouter = protectedProcedureAPI
   .meta({

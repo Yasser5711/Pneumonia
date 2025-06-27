@@ -1,6 +1,5 @@
 import { useTRPC } from '@/composables/useTRPC'
-import { useQuery, useMutation } from '@tanstack/vue-query'
-import { watch } from 'vue'
+import { useMutation } from '@tanstack/vue-query'
 export const useGithubStart = () => {
   const trpc = useTRPC()
   return useMutation({

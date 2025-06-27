@@ -17,8 +17,6 @@ export const createUserService = (repo: Repositories['usersRepo']) => ({
     if (!user) {
       const [created] = await repo.create({ provider, providerId, email });
       user = created;
-    } else {
-      throw new Error('User already exists');
     }
     return user;
   },

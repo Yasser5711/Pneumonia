@@ -1,8 +1,11 @@
+import { randomUUID } from 'node:crypto';
+
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+
 import { applyMigration, db, resetDb } from '../../../test/db';
 import { apiKeysTable } from '../schema';
-import { createApiKeysRepo } from './apiKey.repository';
 
+import { createApiKeysRepo } from './apiKey.repository';
 const repo = createApiKeysRepo(db);
 
 describe('apiKeysRepo', () => {
@@ -14,14 +17,17 @@ describe('apiKeysRepo', () => {
   });
 
   it('should create a new API key record and return it', async () => {
+    const userId = randomUUID();
     const [result] = await repo.create({
       name: 'CLI Token',
       keyPrefix: 'prefix123456',
       hashedKey: 'hashed-key',
       description: 'test key',
+      userId,
     });
     expect(result).toMatchObject({
       name: 'CLI Token',
+      userId,
       keyPrefix: 'prefix123456',
       hashedKey: 'hashed-key',
       description: 'test key',

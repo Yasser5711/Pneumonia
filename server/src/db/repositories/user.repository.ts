@@ -65,13 +65,14 @@ export const createUsersRepo = (db: any = DB) => ({
   getMyQuota: async (userId: string) => {
     const keys = await db
       .select({
-        Quota: apiKeysTable.freeRequestsQuota,
+        left: apiKeysTable.freeRequestsQuota,
+        used: apiKeysTable.freeRequestsUsed,
       })
       .from(apiKeysTable)
       .where(eq(apiKeysTable.userId, userId))
       .andWhere({
         active: true,
       });
-    return keys;
+    return keys[keys.length - 1] || { left: 0, used: 0 };
   },
 });

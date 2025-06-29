@@ -32,5 +32,8 @@ export const createUserService = (repo: Repositories['usersRepo']) => ({
       quota: await repo.getMyQuota(userId),
     };
   },
+  updateLastSeen: async ({ userId, lastSeen }: { userId: string; lastSeen: Date }) => {
+    return await repo.update({ id: userId, updates: { lastLogin: lastSeen } });
+  },
 });
 // TODO: add https://orm.drizzle.team/docs/typebox types for the service methods

@@ -65,10 +65,12 @@ declare global {
   const useCssModule: typeof import('vue')['useCssModule']
   const useCssVars: typeof import('vue')['useCssVars']
   const useFileUpload: typeof import('./composables/useFileUpload')['useFileUpload']
+  const useGenerateKeyHandler: typeof import('./composables/useAuthHandler')['useGenerateKeyHandler']
   const useGitHubCallback: typeof import('./composables/useGitHubCallback')['useGitHubCallback']
   const useGitHubLogin: typeof import('./composables/useGitHubLogin')['useGitHubLogin']
   const useGithubCallbackHandler: typeof import('./composables/useAuthHandler')['useGithubCallbackHandler']
   const useGlobalFileDragState: typeof import('./composables/useGlobalFileDragState')['useGlobalFileDragState']
+  const useGoogleCallbackHandler: typeof import('./composables/useAuthHandler')['useGoogleCallbackHandler']
   const useHead: typeof import('@unhead/vue')['useHead']
   const useHeadSafe: typeof import('@unhead/vue')['useHeadSafe']
   const useId: typeof import('vue')['useId']
@@ -81,6 +83,7 @@ declare global {
   const useServerHead: typeof import('@unhead/vue')['useServerHead']
   const useServerHeadSafe: typeof import('@unhead/vue')['useServerHeadSafe']
   const useServerSeoMeta: typeof import('@unhead/vue')['useServerSeoMeta']
+  const useSession: typeof import('./composables/useSession')['useSession']
   const useSlots: typeof import('vue')['useSlots']
   const useStorageStore: typeof import('./stores/storageStore')['useStorageStore']
   const useTRPC: typeof import('./composables/useTRPC')['useTRPC']
@@ -170,10 +173,12 @@ declare module 'vue' {
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
     readonly useFileUpload: UnwrapRef<typeof import('./composables/useFileUpload')['useFileUpload']>
+    readonly useGenerateKeyHandler: UnwrapRef<typeof import('./composables/useAuthHandler')['useGenerateKeyHandler']>
     readonly useGitHubCallback: UnwrapRef<typeof import('./composables/useGitHubCallback')['useGitHubCallback']>
     readonly useGitHubLogin: UnwrapRef<typeof import('./composables/useGitHubLogin')['useGitHubLogin']>
     readonly useGithubCallbackHandler: UnwrapRef<typeof import('./composables/useAuthHandler')['useGithubCallbackHandler']>
     readonly useGlobalFileDragState: UnwrapRef<typeof import('./composables/useGlobalFileDragState')['useGlobalFileDragState']>
+    readonly useGoogleCallbackHandler: UnwrapRef<typeof import('./composables/useAuthHandler')['useGoogleCallbackHandler']>
     readonly useHead: UnwrapRef<typeof import('@unhead/vue')['useHead']>
     readonly useHeadSafe: UnwrapRef<typeof import('@unhead/vue')['useHeadSafe']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
@@ -185,6 +190,7 @@ declare module 'vue' {
     readonly useServerHead: UnwrapRef<typeof import('@unhead/vue')['useServerHead']>
     readonly useServerHeadSafe: UnwrapRef<typeof import('@unhead/vue')['useServerHeadSafe']>
     readonly useServerSeoMeta: UnwrapRef<typeof import('@unhead/vue')['useServerSeoMeta']>
+    readonly useSession: UnwrapRef<typeof import('./composables/useSession')['useSession']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useStorageStore: UnwrapRef<typeof import('./stores/storageStore')['useStorageStore']>
     readonly useTRPC: UnwrapRef<typeof import('./composables/useTRPC')['useTRPC']>

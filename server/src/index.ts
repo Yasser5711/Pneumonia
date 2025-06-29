@@ -68,7 +68,7 @@ async function main() {
       auth: oauthPlugin.GOOGLE_CONFIGURATION,
     },
     startRedirectPath: '/auth/google',
-    callbackUri: `${env.BASE_URL}/auth/google/callback`,
+    callbackUri: `${env.BASE_URL}/google-callback`,
   });
   await fastify.register(cors, {
     origin: (origin, cb) => {

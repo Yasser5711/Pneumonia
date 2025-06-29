@@ -6,9 +6,10 @@
 
 // Composables
 import { setupLayouts } from 'virtual:generated-layouts'
-import type { RouteLocationNormalized } from 'vue-router'
 import { createRouter, createWebHistory } from 'vue-router/auto'
 import { routes } from 'vue-router/auto-routes'
+
+import type { RouteLocationNormalized } from 'vue-router'
 export function createAppRouter(baseUrl: string = import.meta.env.BASE_URL) {
   const router = createRouter({
     history: createWebHistory(baseUrl),
@@ -32,16 +33,19 @@ export function createAppRouter(baseUrl: string = import.meta.env.BASE_URL) {
   //     layout: layout.default,
   //   }
   // })
-  router.beforeEach((to, _from) => {
+  router.beforeEach(async (to, _from) => {
     if (!to.meta.requiresAuth) return true
 
     const store = useStorageStore()
     const apiKey = store.getKeyFromLocalStorage('apiKey', '').value
 
-    // Cookie seulement ?  Appelez /auth/me pour vérifier la session si besoin
     if (apiKey) return true
-
     return { name: 'IndexPage', query: { redirect: to.fullPath } }
+
+    // const { refreshMe, user } = useSession()
+    // if (!user.value) await refreshMe()
+
+    // return user.value ? true : { name: 'IndexPage' }
   })
   router.afterEach((to: RouteLocationNormalized) => {
     const { title, description, icon } = to.meta as {

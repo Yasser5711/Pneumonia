@@ -49,7 +49,7 @@ export const githubRouter = router({
   githubStart: publicProcedure
     .meta({
       openapi: {
-        method: 'POST',
+        method: 'GET',
         path: '/auth/github/login',
         tags: ['auth'],
         summary: 'Login/Register via GitHub',
@@ -65,7 +65,7 @@ export const githubRouter = router({
   githubCallback: publicProcedure
     .meta({
       openapi: {
-        method: 'POST',
+        method: 'GET',
         path: '/auth/github/callback',
         tags: ['auth'],
         summary: 'GitHub OAuth Callback',

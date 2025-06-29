@@ -3,11 +3,17 @@ import { z } from 'zod';
 import { publicProcedure, router } from '../../middlewares';
 import { setSession } from '../../utils/session';
 
+async function googleRequest<T>(url: string, init: RequestInit = {}): Promise<T> {
+  const r = await fetch(url, init);
+  if (!r.ok) throw new Error(`Google request failed: ${url}`);
+  return (await r.json()) as T;
+}
+
 async function fetchGoogleProfile(token: string) {
-  const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+  const res = await googleRequest('https://www.googleapis.com/oauth2/v3/userinfo', {
     headers: { Authorization: `Bearer ${token}` },
   });
-  return (await res.json()) as { sub: string; email: string };
+  return res as { sub: string; email: string };
 }
 
 export const googleRouter = router({
@@ -22,7 +28,7 @@ export const googleRouter = router({
     })
     .input(z.object({}))
     .output(z.object({ redirectUrl: z.string() }))
-    .query(async ({ ctx }) => {
+    .mutation(async ({ ctx }) => {
       const redirectUrl = await ctx.fastify.googleOauth.generateAuthorizationUri(ctx.req, ctx.res);
       return { redirectUrl };
     }),
@@ -37,7 +43,8 @@ export const googleRouter = router({
     })
     .input(z.object({ code: z.string(), state: z.string() }))
     .output(z.object({ apiKey: z.string() }))
-    .mutation(async ({ ctx }) => {
+    .mutation(async ({ ctx, input }) => {
+      ctx.req.query = input;
       const token = await ctx.fastify.googleOauth.getAccessTokenFromAuthorizationCodeFlow(ctx.req);
       const profile = await fetchGoogleProfile(token.token.access_token);
       const user = await ctx.services.userService.createOrUpdateOAuthUser({

@@ -79,3 +79,18 @@ describe('getMe', () => {
     });
   });
 });
+describe('updateLastSeen', () => {
+  it('updates lastLogin for the user', async () => {
+    const userId = 'u1';
+    const lastSeen = new Date('2023-10-01T12:00:00Z');
+
+    mockUserRepo.update.mockResolvedValue({ id: userId, lastLogin: lastSeen });
+
+    const result = await userService.updateLastSeen({ userId, lastSeen });
+    expect(result).toEqual({ id: userId, lastLogin: lastSeen });
+    expect(mockUserRepo.update).toHaveBeenCalledWith({
+      id: userId,
+      updates: { lastLogin: lastSeen },
+    });
+  });
+});

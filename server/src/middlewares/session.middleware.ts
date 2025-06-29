@@ -12,5 +12,6 @@ export const sessionMiddleware = t.middleware(async ({ ctx, next }) => {
   if (!user) {
     throw new TRPCError({ code: 'UNAUTHORIZED', message: 'User not found' });
   }
+  await ctx.services.userService.updateLastSeen({ userId: user.id, lastSeen: new Date() });
   return next({ ctx: { ...ctx, user } });
 });

@@ -1,7 +1,13 @@
 <script setup lang="ts">
-import { useGithubStart } from '../queries/useAuth'
-const { isPending, mutate: login, data } = useGithubStart()
-watch(data, (data) => {
+import { useGoogleStart,useGithubStart } from '../queries/useAuth'
+const { isPending: isGooglePending, mutate: googleLogin, data: googleData } = useGoogleStart()
+const { isPending: isGithubPending, mutate: githubLogin, data: githubData } = useGithubStart()
+watch(googleData, (data) => {
+  if (data?.redirectUrl) {
+    window.location.href = data.redirectUrl
+  }
+})
+watch(githubData, (data) => {
   if (data?.redirectUrl) {
     window.location.href = data.redirectUrl
   }
@@ -9,7 +15,11 @@ watch(data, (data) => {
 </script>
 
 <template>
-  <v-btn :disabled="isPending" @click="login">
-    {{ isPending ? 'Redirection…' : 'Se connecter avec GitHub' }}
+  <v-btn :disabled="isGooglePending" @click="googleLogin">
+    {{ isGooglePending ? 'Redirection…' : 'Google' }}
+  </v-btn>
+  <v-btn :disabled="isGithubPending" @click="githubLogin">
+    {{ isGithubPending ? 'Redirection…' : 'Github' }}
   </v-btn>
 </template>
+

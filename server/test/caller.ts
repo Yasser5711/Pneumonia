@@ -6,10 +6,20 @@ import { mockServices } from './services';
 
 import type { FastifyReply, FastifyRequest, FastifyInstance } from 'fastify';
 const MOCK_API_KEY = 'test_api_key';
-const req = mockDeep<FastifyRequest>();
-const res = mockDeep<FastifyReply>();
-const fastify = mockDeep<FastifyInstance>();
-export function createTestCaller(apiKey = MOCK_API_KEY) {
+// const req = mockDeep<FastifyRequest>();
+// const res = mockDeep<FastifyReply>();
+// const fastify = mockDeep<FastifyInstance>();
+export function createTestCaller({
+  apiKey = MOCK_API_KEY,
+  req = mockDeep<FastifyRequest>(),
+  res = mockDeep<FastifyReply>(),
+  fastify = mockDeep<FastifyInstance>(),
+}: {
+  apiKey?: string;
+  req?: FastifyRequest;
+  res?: FastifyReply;
+  fastify?: FastifyInstance;
+}) {
   return appRouter.createCaller({
     apiKey,
     req,

@@ -1,7 +1,9 @@
-import vue from '@vitejs/plugin-vue'
 import { fileURLToPath, URL } from 'node:url'
+
+import vue from '@vitejs/plugin-vue'
 import vuetify from 'vite-plugin-vuetify'
 import { defineConfig, mergeConfig, type ViteUserConfig } from 'vitest/config'
+
 import baseConfig from '../vitest.config'
 
 export default defineConfig(

@@ -3,8 +3,8 @@ import { initTRPC } from '@trpc/server';
 import * as defaultServices from './db/services/index';
 
 import type { Services } from './db/services/index';
-import type { OpenApiMeta } from '@9or9/trpc-openapi';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import type { OpenApiMeta } from 'trpc-to-openapi';
 
 export interface CreateContextOptions {
   req: FastifyRequest;

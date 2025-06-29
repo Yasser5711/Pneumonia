@@ -23,7 +23,7 @@ export const useGithubCallbackHandler = () => {
       {
         onSuccess: ({ apiKey }) => {
           store.setKeyInLocalStorage('apiKey', apiKey)
-          router.replace({ name: 'IndexPage', query: { success: 'oauth' } })
+          router.replace({ name: 'ChatPage' })
         },
         onError: () => {
           router.replace({ name: 'ChatPage', query: { error: 'oauth' } })

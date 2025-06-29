@@ -67,6 +67,7 @@ declare global {
   const useFileUpload: typeof import('./composables/useFileUpload')['useFileUpload']
   const useGitHubCallback: typeof import('./composables/useGitHubCallback')['useGitHubCallback']
   const useGitHubLogin: typeof import('./composables/useGitHubLogin')['useGitHubLogin']
+  const useGithubCallbackHandler: typeof import('./composables/useAuthHandler')['useGithubCallbackHandler']
   const useGlobalFileDragState: typeof import('./composables/useGlobalFileDragState')['useGlobalFileDragState']
   const useHead: typeof import('@unhead/vue')['useHead']
   const useHeadSafe: typeof import('@unhead/vue')['useHeadSafe']
@@ -171,6 +172,7 @@ declare module 'vue' {
     readonly useFileUpload: UnwrapRef<typeof import('./composables/useFileUpload')['useFileUpload']>
     readonly useGitHubCallback: UnwrapRef<typeof import('./composables/useGitHubCallback')['useGitHubCallback']>
     readonly useGitHubLogin: UnwrapRef<typeof import('./composables/useGitHubLogin')['useGitHubLogin']>
+    readonly useGithubCallbackHandler: UnwrapRef<typeof import('./composables/useAuthHandler')['useGithubCallbackHandler']>
     readonly useGlobalFileDragState: UnwrapRef<typeof import('./composables/useGlobalFileDragState')['useGlobalFileDragState']>
     readonly useHead: UnwrapRef<typeof import('@unhead/vue')['useHead']>
     readonly useHeadSafe: UnwrapRef<typeof import('@unhead/vue')['useHeadSafe']>

@@ -1,5 +1,6 @@
-import type { FastifyReply, FastifyRequest } from 'fastify';
 import ms from 'ms';
+
+import type { FastifyReply, FastifyRequest } from 'fastify';
 
 export const setSession = ({
   res,

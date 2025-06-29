@@ -1,5 +1,4 @@
 import { TRPCError } from '@trpc/server';
-import axios from 'axios';
 import sharp from 'sharp';
 import { z } from 'zod';
 
@@ -68,14 +67,29 @@ export const predictRouter = protectedProcedureAPI
       imageArray.push(row);
     }
 
-    const response = await axios
-      .post(PREDICT_URL, { data: [{ image_array: imageArray }] })
-      .catch((err) => {
-        logger().error({ err, url: PREDICT_URL }, '🔴 Erreur lors de la prédiction CNN');
-        throw new TRPCError({
-          code: 'BAD_GATEWAY',
-          message: 'Failed to get prediction from the model server. Please try again later.',
-        });
+    let response: Response;
+    try {
+      response = await fetch(PREDICT_URL, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ data: [{ image_array: imageArray }] }),
       });
-    return response.data.data;
+    } catch (err) {
+      logger().error({ err, url: PREDICT_URL }, '🔴 Fetch failed');
+      throw new TRPCError({
+        code: 'BAD_GATEWAY',
+        message: 'Failed to get prediction from the model server. Please try again later.',
+      });
+    }
+
+    if (!response.ok) {
+      logger().error({ status: response.status, url: PREDICT_URL }, '🔴 Bad status from model');
+      throw new TRPCError({
+        code: 'BAD_GATEWAY',
+        message: 'Failed to get prediction from the model server. Please try again later.',
+      });
+    }
+
+    const json = await response.json();
+    return json.data;
   });

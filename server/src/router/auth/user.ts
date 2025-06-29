@@ -1,4 +1,5 @@
 import { z } from 'zod';
+
 import { protectedUserProcedure, router } from '../../middlewares';
 import { clearSession } from '../../utils/session';
 export const userRouter = router({
@@ -12,7 +13,13 @@ export const userRouter = router({
       },
     })
     .input(z.object({}))
-    .output(z.object({ user: z.any() }))
+    .output(
+      z.object({
+        user: z.any(),
+        keys: z.array(z.any()),
+        quota: z.object({ left: z.number(), used: z.number() }),
+      }),
+    )
     .query(({ ctx }) => {
       return ctx.services.userService.getMe(ctx.user.id);
     }),

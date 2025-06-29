@@ -1,4 +1,5 @@
 import { TRPCError } from '@trpc/server';
+
 import {
   ApiKeyExpiredError,
   ApiKeyInactiveError,
@@ -8,6 +9,7 @@ import {
 } from '../errors/apiKey.errors';
 import { logger } from '../logger';
 import { realIp } from '../utils/functions';
+
 import { sessionMiddleware } from './session.middleware';
 
 export const requireAuth = sessionMiddleware.unstable_pipe(async ({ ctx, next }) => {

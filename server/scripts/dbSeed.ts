@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import { config } from 'dotenv';
+
 import { apiKeysRepo, usersRepo } from '../src/db/repositories/';
 import { hashApiKey } from '../src/utils/hash';
 

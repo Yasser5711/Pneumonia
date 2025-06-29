@@ -1,4 +1,5 @@
 import { z } from 'zod';
+
 import { publicProcedure, router } from '../../middlewares';
 import { setSession } from '../../utils/session';
 
@@ -6,7 +7,6 @@ async function fetchGoogleProfile(token: string) {
   const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
     headers: { Authorization: `Bearer ${token}` },
   });
-  console.log(await res.json());
   return (await res.json()) as { sub: string; email: string };
 }
 

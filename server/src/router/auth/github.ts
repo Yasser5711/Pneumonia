@@ -1,49 +1,49 @@
 import { z } from 'zod';
+
+import { env } from '../../env';
 import { publicProcedure, router } from '../../middlewares';
 import { setSession } from '../../utils/session';
-import { env } from '../../env';
-async function fetchGitHubProfile(token: string) {
-  const res = await fetch('https://api.github.com/user', {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  // console.log(await res.json());
-  return (await res.json()) as { id: string; email: string };
+
+async function githubRequest<T>(url: string, init: RequestInit = {}): Promise<T> {
+  const r = await fetch(url, init);
+  if (!r.ok) throw new Error(`GitHub request failed: ${url}`);
+  return (await r.json()) as T;
 }
+
 async function exchangeCodeForToken(code: string) {
-  const res = await fetch('https://github.com/login/oauth/access_token', {
-    method: 'POST',
-    headers: { Accept: 'application/json' },
-    body: new URLSearchParams({
-      client_id: env.GITHUB_CLIENT_ID,
-      client_secret: env.GITHUB_CLIENT_SECRET,
-      code,
-    }),
-  });
-  if (!res.ok) throw new Error('GitHub token exchange failed');
-  const { access_token } = await res.json();
-  return access_token as string;
+  const data = await githubRequest<{ access_token: string }>(
+    'https://github.com/login/oauth/access_token',
+    {
+      method: 'POST',
+      headers: { Accept: 'application/json' },
+      body: new URLSearchParams({
+        client_id: env.GITHUB_CLIENT_ID,
+        client_secret: env.GITHUB_CLIENT_SECRET,
+        code,
+      }),
+    },
+  );
+  return data.access_token;
 }
-// async function fetchGitHubEmails(token: string) {
-//   const res = await fetch('https://api.github.com/user/emails', {
-//     headers: {
-//       Authorization: `Bearer ${token}`,
-//       Accept: 'application/vnd.github+json',   // API v3
-//     },
-//   })
-//   if (!res.ok) throw new Error('GitHub email fetch failed')
-//   return await res.json() as Array<{
-//     email: string
-//     primary: boolean
-//     verified: boolean
-//     visibility: 'public' | null
-//   }>
-// }
 
-// const emails = await fetchGitHubEmails(accessToken)
-// const primary = emails.find(e => e.primary && e.verified)
+async function fetchProfile(token: string) {
+  return await githubRequest<{ id: number; email: string | null; login: string }>(
+    'https://api.github.com/user',
+    { headers: { Authorization: `Bearer ${token}` } },
+  );
+}
 
-// console.log(primary?.email) // <- adresse principale, même si elle est privée
-// const fallback = `${profile.id}+${profile.login}@users.noreply.github.com`;
+async function fetchEmails(token: string) {
+  return await githubRequest<Array<{ email: string; primary: boolean; verified: boolean }>>(
+    'https://api.github.com/user/emails',
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.github+json',
+      },
+    },
+  );
+}
 
 export const githubRouter = router({
   githubStart: publicProcedure
@@ -76,22 +76,25 @@ export const githubRouter = router({
     .mutation(async ({ ctx, input }) => {
       // if (input.state !== ctx.session.oauthState) throw new Error('Invalid OAuth state');
 
-      // 2) échange code → token
       const token = await exchangeCodeForToken(input.code);
-      const profile = await fetchGitHubProfile(token);
-      console.log('GitHub profile:', profile);
-      // 3) upsert user + clé API
+      const profile = await fetchProfile(token);
+      let email = profile.email;
+
+      if (!email) {
+        const emails = await fetchEmails(token);
+        const primary = emails.find((e) => e.primary && e.verified);
+        email = primary?.email ?? `${profile.id}+${profile.login}@users.noreply.github.com`;
+      }
       const user = await ctx.services.userService.createOrUpdateOAuthUser({
         provider: 'github',
         providerId: String(profile.id),
-        email: profile.email,
+        email,
       });
       const { key } = await ctx.services.apiKeyService.generateKey({
         userId: user.id,
         quota: 10,
       });
 
-      // 4) session côté serveur
       setSession({ res: ctx.res, userId: user.id, ttl: '7d' });
 
       return { apiKey: key };

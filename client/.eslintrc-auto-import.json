@@ -78,6 +78,7 @@
     "useFileUpload": true,
     "useGitHubCallback": true,
     "useGitHubLogin": true,
+    "useGithubCallbackHandler": true,
     "useGlobalFileDragState": true,
     "useHead": true,
     "useHeadSafe": true,

@@ -34,6 +34,8 @@
     "eslint-plugin-drizzle",
     "@eslint/eslintrc",
     "eslint-config-prettier",
-    "prettier"
+    "prettier",
+    "ms",
+    "@types/ms"
   ]
 }

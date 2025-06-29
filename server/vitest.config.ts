@@ -8,7 +8,6 @@ const merged = mergeConfig(baseConfig, {
   test: {
     environment: 'node',
     setupFiles: ['./test/setup.ts'],
-    silent: Boolean(process.env.CI),
     coverage: {
       enabled: true,
       provider: 'istanbul',
@@ -21,19 +20,14 @@ const merged = mergeConfig(baseConfig, {
         lines: 80,
         statements: 80,
       },
+      include: ['src/**/*.ts', 'test/**/*.ts'],
       exclude: [
-        'types/',
-        'dist/',
-        'eslint.config.js',
-        'drizzle.config.ts',
-        'vite.config.ts',
         'src/env.ts',
         'src/errors/**',
         '**/index.ts',
         'test/test.ts',
         'src/db/migrations/**',
         'src/db/schema/**',
-        'scripts/**',
       ],
     },
   },

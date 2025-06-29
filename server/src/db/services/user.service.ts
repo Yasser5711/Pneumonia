@@ -21,7 +21,7 @@ export const createUserService = (repo: Repositories['usersRepo']) => ({
     return user;
   },
 
-  upgradeQuota: async ({ id, quota = 10 }: { id: string; quota: number }) => {
+  upgradeQuota: async ({ id, quota = 10 }: { id: string; quota?: number }) => {
     return await repo.upgradeQuota({ id, quota });
   },
 

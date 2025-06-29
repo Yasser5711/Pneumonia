@@ -120,6 +120,7 @@ export const createApiKeysRepo = (db: any = DB) => ({
         active: apiKeysTable.active,
         freeRequestsUsed: apiKeysTable.freeRequestsUsed,
         freeRequestsQuota: apiKeysTable.freeRequestsQuota,
+        freeQuotaResetAt: apiKeysTable.freeQuotaResetAt,
         description: apiKeysTable.description,
         lastUsedAt: apiKeysTable.lastUsedAt,
         lastUsedIp: apiKeysTable.lastUsedIp,

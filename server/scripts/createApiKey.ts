@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
+import { db } from '../src/db';
 import { apiKeyService } from '../src/db/services/';
 
-import { db } from '../src/db';
 db;
 const [, , name, ...descParts] = process.argv;
 const description = descParts.join(' ');
@@ -12,6 +12,8 @@ if (!name) {
 }
 
 void (async () => {
+  console.log('Use db:seed to create a dev API key.\n');
+  return;
   try {
     const key = await apiKeyService.generateKey({ name, description });
     console.log('\n✅ API key created successfully:\n');

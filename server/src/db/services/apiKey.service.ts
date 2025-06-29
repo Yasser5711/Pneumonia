@@ -1,7 +1,9 @@
 import { randomBytes } from 'crypto';
+
 import * as apiKeyErrors from '../../errors/apiKey.errors';
 import { logger } from '../../logger';
 import { compareApiKey, hashApiKey } from '../../utils/hash';
+
 import type { Repositories } from '../repositories/index';
 export const createApiKeyService = (apiKeysRepo: Repositories['apiKeysRepo']) => ({
   generateKey: async ({
@@ -20,7 +22,10 @@ export const createApiKeyService = (apiKeysRepo: Repositories['apiKeysRepo']) =>
     const secretPart = rawKey.slice(12);
     const hashed = await hashApiKey(secretPart);
     const existingKeys = await apiKeysRepo.findByUserId(userId);
-    quota = existingKeys.length > 0 ? existingKeys[0].freeRequestsUsed : quota;
+    quota =
+      existingKeys.length > 0
+        ? existingKeys[0].freeRequestsQuota - existingKeys[0].freeRequestsUsed
+        : quota;
 
     const [record] = await apiKeysRepo.create({
       name: name ?? `user-${userId}-key`,

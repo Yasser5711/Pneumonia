@@ -1,4 +1,3 @@
-import { fastifyTRPCOpenApiPlugin, generateOpenApiDocument } from '@9or9/trpc-openapi';
 import fastifyBasicAuth from '@fastify/basic-auth';
 import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
@@ -8,8 +7,11 @@ import rateLimit from '@fastify/rate-limit';
 import ScalarApiReference from '@scalar/fastify-api-reference';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import Fastify from 'fastify';
+import { fastifyTRPCOpenApiPlugin, generateOpenApiDocument } from 'trpc-to-openapi';
 import { renderTrpcPanel } from 'trpc-ui';
+
 import pkg from '../package.json' assert { type: 'json' };
+
 import { env } from './env';
 import { setLogger } from './logger';
 import { appRouter } from './router/_app';

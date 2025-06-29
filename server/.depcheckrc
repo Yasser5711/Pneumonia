@@ -18,3 +18,4 @@ ignores:
   - 'src'
   - 'tsconfig-paths'
   - '@eslint/eslintrc'
+  - '@types/ms'

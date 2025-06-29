@@ -14,26 +14,7 @@ beforeAll(() => {
       CNN_PREDICT_URL: 'http://localhost:8000/predict',
     },
   }));
-  vi.mock('axios', () => {
-    return {
-      default: {
-        post: vi.fn(() =>
-          Promise.resolve({
-            data: {
-              data: {
-                model: 'yassermekhfi/pneumonia',
-                model_version: 'latest',
-                prediction: {
-                  class: 'Normal',
-                  probability: 0.42,
-                },
-              },
-            },
-          }),
-        ),
-      },
-    };
-  });
+
   vi.mock('sharp', () => {
     return {
       default: () => ({

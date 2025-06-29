@@ -7,7 +7,7 @@
       "command": "python scripts/setup_venv.py",
       "problemMatcher": [],
       "runOptions": {
-        "runOn": "folderOpen"
+        // "runOn": "folderOpen"
       }
     }
   ]

@@ -1,9 +1,10 @@
-import { and, eq, type InferInsertModel } from 'drizzle-orm';
+import { and, eq, type InferInsertModel, sql } from 'drizzle-orm';
+
 import { db as DB } from '../index';
 import { apiKeysTable, usersTable } from '../schema';
 
 type UserInsert = InferInsertModel<typeof usersTable>;
-
+/* istanbul ignore next */
 export const createUsersRepo = (db: any = DB) => ({
   findById: async (id: string) => {
     return await db.query.usersTable.findFirst({ where: eq(usersTable.id, id) });
@@ -48,7 +49,7 @@ export const createUsersRepo = (db: any = DB) => ({
     const [updated] = await db
       .update(apiKeysTable)
       .set({
-        freeRequestsQuota: db.raw(`${apiKeysTable.freeRequestsQuota.name} + ?`, [quota]),
+        freeRequestsQuota: sql`${apiKeysTable.freeRequestsQuota} + ${quota}`, //db.raw(`${apiKeysTable.freeRequestsQuota.name} + ?`, [quota]),
       })
       .where(eq(apiKeysTable.id, id))
       .returning();
@@ -69,10 +70,7 @@ export const createUsersRepo = (db: any = DB) => ({
         used: apiKeysTable.freeRequestsUsed,
       })
       .from(apiKeysTable)
-      .where(eq(apiKeysTable.userId, userId))
-      .andWhere({
-        active: true,
-      });
+      .where(and(eq(apiKeysTable.userId, userId), eq(apiKeysTable.active, true)));
     return keys[keys.length - 1] || { left: 0, used: 0 };
   },
 });

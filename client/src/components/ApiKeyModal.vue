@@ -1,5 +1,4 @@
 <script setup lang="ts">
-
 import { toTypedSchema } from '@vee-validate/zod'
 import { useField, useForm } from 'vee-validate'
 import { z } from 'zod'
@@ -44,7 +43,7 @@ function onClear() {
   apiKey.value = ''
 }
 function generateKey1() {
-  generateKey(undefined,{
+  generateKey(undefined, {
     onSuccess: ({ apiKey }) => {
       store.setKeyInLocalStorage('apiKey', apiKey)
       closeModal()
@@ -55,15 +54,14 @@ function generateKey1() {
   })
 }
 watch(isOpen, (open) => {
-  if (open && isLoggedIn.value === false) refreshMe()
+  if (open && isLoggedIn.value === true) refreshMe()
 })
 </script>
 
 <template>
-  <v-dialog v-model="isOpen" persistent max-width="420px">
+  <v-dialog v-model="isOpen" persistent max-width="700px">
     <v-card :title="isLoggedIn ? 'Your API Key' : 'Enter your API Key'">
       <template v-if="isLoggedIn">
-        <!-- Logged‑in view -->
         <v-card-text>
           <v-text-field
             v-model="apiKey"
@@ -79,7 +77,8 @@ watch(isOpen, (open) => {
             variant="plain"
             :loading="isGenerating"
             @click="generateKey1"
-          >🔄 Generate new key</v-btn>
+            >🔄 Generate new key</v-btn
+          >
           <v-spacer />
           <v-btn color="error" variant="plain" @click="logout">🚪 Logout</v-btn>
           <v-btn icon title="Profile" @click="openProfile">
@@ -89,7 +88,6 @@ watch(isOpen, (open) => {
       </template>
 
       <template v-else>
-        <!-- Anonymous view -->
         <v-form @submit.prevent="submit">
           <v-card-text>
             <v-text-field
@@ -108,10 +106,18 @@ watch(isOpen, (open) => {
           <v-card-actions>
             <LoginButton />
             <v-spacer />
-            <v-btn color="error" variant="plain" :disabled="!apiKey" @click="onClear"
+            <v-btn
+              color="error"
+              variant="plain"
+              :disabled="!apiKey"
+              @click="onClear"
               >Clear</v-btn
             >
-            <v-btn type="submit" color="success" variant="plain" :disabled="!apiKey"
+            <v-btn
+              type="submit"
+              color="success"
+              variant="plain"
+              :disabled="!apiKey"
               >Submit</v-btn
             >
           </v-card-actions>

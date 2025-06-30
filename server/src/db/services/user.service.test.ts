@@ -74,7 +74,7 @@ describe('getMe', () => {
 
     expect(me).toEqual({
       user: { id: 'me' },
-      keys: [{ id: 'key' }],
+      // keys: [{ id: 'key' }],
       quota: { left: 5, used: 1 },
     });
   });

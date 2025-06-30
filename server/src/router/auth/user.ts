@@ -16,7 +16,7 @@ export const userRouter = router({
     .output(
       z.object({
         user: z.any(),
-        keys: z.array(z.any()),
+        // keys: z.array(z.any()),
         quota: z.object({ left: z.number(), used: z.number() }),
       }),
     )

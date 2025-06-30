@@ -28,7 +28,7 @@ export const createUserService = (repo: Repositories['usersRepo']) => ({
   getMe: async (userId: string) => {
     return {
       user: await repo.findById(userId),
-      keys: await repo.getMyKeys(userId),
+      // keys: await repo.getMyKeys(userId),
       quota: await repo.getMyQuota(userId),
     };
   },

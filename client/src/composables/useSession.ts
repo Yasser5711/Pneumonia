@@ -1,12 +1,11 @@
 import { useQueryClient } from '@tanstack/vue-query'
 
 import { useLogout as useLogoutMutation, useMeQuery } from '@/queries/useAuth'
+import type { User } from '@/types/app'
 
 import { useApiKeyModal } from '../components/useApiKeyModal'
-
 export function useSession() {
-  const user =
-    ref<Awaited<ReturnType<typeof useMeQuery>['data']['value']>>(undefined)
+  const user = ref<User>(undefined)
   const store = useStorageStore()
   const apiKeyRef = store.getKeyFromLocalStorage('apiKey', '')
   const router = useRouter()
@@ -25,7 +24,10 @@ export function useSession() {
       console.warn('ME query error → logout soft', error)
       user.value = undefined
     } else if (me) {
-      user.value = me
+      user.value = me.user
+      if (user.value) {
+        user.value.quota = me.quota
+      }
     }
   })
 

@@ -7,15 +7,14 @@ import { useGenerateKeyHandler } from '@/composables/useAuthHandler'
 import { useSession } from '@/composables/useSession'
 
 import { useApiKeyModal } from './useApiKeyModal'
-// import { useProfileModal } from './useProfileModal'
+import { useProfileModal } from './useProfileModal'
 const show = ref(false)
 const { isOpen, closeModal } = useApiKeyModal()
 const store = useStorageStore()
 const { isLoggedIn, refreshMe, logout } = useSession()
-// const { openModal: openProfileModal } = useProfileModal()
+const { openModal: openProfileModal } = useProfileModal()
 const { generateKey, isPending: isGenerating } = useGenerateKeyHandler()
 const router = useRouter()
-// const loggedIn = computed(() => !!user.value)
 const schema = z.object({
   apiKey: z.string().nonempty('API key is required'),
 })
@@ -35,7 +34,7 @@ const submit = handleSubmit((values) => {
 })
 function openProfile() {
   closeModal()
-  router.push({ path: '/profile' }) // triggers modal via route page
+  openProfileModal()
 }
 function onClear() {
   resetForm()
@@ -125,4 +124,5 @@ watch(isOpen, (open) => {
       </template>
     </v-card>
   </v-dialog>
+  <ProfileModal />
 </template>

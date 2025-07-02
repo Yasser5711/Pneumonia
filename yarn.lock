@@ -5339,6 +5339,7 @@ __metadata:
     prettier: "npm:^3.5.3"
     prettier-plugin-sort-json: "npm:^4.1.1"
     prettier-plugin-tailwindcss: "npm:^0.6.11"
+    radash: "npm:^12.1.1"
     sass: "npm:1.89.0"
     sass-embedded: "npm:^1.89.0"
     stylelint: "npm:^16.19.1"
@@ -11188,6 +11189,13 @@ __metadata:
   version: 4.0.4
   resolution: "quick-format-unescaped@npm:4.0.4"
   checksum: 10c0/fe5acc6f775b172ca5b4373df26f7e4fd347975578199e7d74b2ae4077f0af05baa27d231de1e80e8f72d88275ccc6028568a7a8c9ee5e7368ace0e18eff93a4
+  languageName: node
+  linkType: hard
+
+"radash@npm:^12.1.1":
+  version: 12.1.1
+  resolution: "radash@npm:12.1.1"
+  checksum: 10c0/f8cbe85c0a8a444f1d2892c82875e00333e58a7b8afdbf3d8d04574d0532d895484bae20650c197c87dd91abfbd1e0af1c819cd12e6dc306633acec30222af7e
   languageName: node
   linkType: hard
 

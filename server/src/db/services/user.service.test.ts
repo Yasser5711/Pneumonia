@@ -23,11 +23,12 @@ describe('createOrUpdateOAuthUser', () => {
     provider: 'github' as const,
     providerId: '123',
     email: 'g@hub.com',
+    avatarUrl: 'https://avatars.githubusercontent.com/u/12345678?v=4',
   };
 
   it('returns existing user when repo.findByProvider hits', async () => {
     mockUserRepo.findByProvider.mockResolvedValue({ id: 'exists' });
-
+    mockUserRepo.update.mockResolvedValue([{ id: 'exists' }]);
     const result = await userService.createOrUpdateOAuthUser(input);
     expect(result).toEqual({ id: 'exists' });
     expect(mockUserRepo.create).not.toHaveBeenCalled();
@@ -46,6 +47,7 @@ describe('createOrUpdateOAuthUser', () => {
         email: 'g@hub.com',
       }),
     );
+    expect(mockUserRepo.update).not.toHaveBeenCalled();
   });
 });
 

@@ -1,5 +1,7 @@
-import { useRafFn, useWindowSize } from '@vueuse/core'
 import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+
+import { useRafFn, useWindowSize } from '@vueuse/core'
+
 import { useTheme } from './useTheme'
 const { isDark } = useTheme()
 
@@ -50,7 +52,7 @@ const stateColors: Record<string, { light: string[]; dark: string[] }> = {
   },
 }
 
-export function useCanvasAnimation() {
+function createCanvasAnimation() {
   const canvasRef = ref<HTMLCanvasElement | null>(null)
   const { width, height } = useWindowSize()
 
@@ -383,4 +385,10 @@ export function useCanvasAnimation() {
     resetParticlesSmooth,
     changeTo,
   }
+}
+let _instance: ReturnType<typeof createCanvasAnimation> | null = null
+
+export function useCanvasAnimation() {
+  if (!_instance) _instance = createCanvasAnimation()
+  return _instance
 }

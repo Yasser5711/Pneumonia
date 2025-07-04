@@ -11,7 +11,7 @@ definePage({
     title: 'Index',
     icon: '/icons/home.png',
     description: 'Home page',
-    layout: 'ChatLayout',
+    layout: 'default',
   },
 })
 </script>

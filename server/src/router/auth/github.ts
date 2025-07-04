@@ -27,10 +27,12 @@ async function exchangeCodeForToken(code: string) {
 }
 
 async function fetchProfile(token: string) {
-  return await githubRequest<{ id: number; email: string | null; login: string }>(
-    'https://api.github.com/user',
-    { headers: { Authorization: `Bearer ${token}` } },
-  );
+  return await githubRequest<{
+    id: number;
+    email: string | null;
+    login: string;
+    avatar_url: string;
+  }>('https://api.github.com/user', { headers: { Authorization: `Bearer ${token}` } });
 }
 
 async function fetchEmails(token: string) {
@@ -79,7 +81,7 @@ export const githubRouter = router({
       const token = await exchangeCodeForToken(input.code);
       const profile = await fetchProfile(token);
       let email = profile.email;
-
+      const avatarUrl = profile.avatar_url;
       if (!email) {
         const emails = await fetchEmails(token);
         const primary = emails.find((e) => e.primary && e.verified);
@@ -89,6 +91,7 @@ export const githubRouter = router({
         provider: 'github',
         providerId: String(profile.id),
         email,
+        avatarUrl,
       });
       const { key } = await ctx.services.apiKeyService.generateKey({
         userId: user.id,

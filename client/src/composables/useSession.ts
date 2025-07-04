@@ -11,7 +11,7 @@ export function useSession() {
   const router = useRouter()
   const qc = useQueryClient()
   const { closeModal } = useApiKeyModal()
-  const { refetch } = useMeQuery({ enabled: !!apiKeyRef.value })
+  const { refetch } = useMeQuery({ enabled: false })
 
   watchEffect(async () => {
     if (!apiKeyRef.value) {
@@ -39,11 +39,11 @@ export function useSession() {
     } catch {
       /* API down? on s’en fiche, on wipe local */
     }
+    closeModal()
     store.removeKeyFromLocalStorage('apiKey')
     user.value = undefined
-    await qc.invalidateQueries()
-    closeModal()
     await router.push({ name: 'IndexPage' })
+    await qc.invalidateQueries()
   }
   const isLoggedIn = computed(() => !!user.value)
 

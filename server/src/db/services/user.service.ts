@@ -8,16 +8,25 @@ export const createUserService = (repo: Repositories['usersRepo']) => ({
     provider,
     providerId,
     email,
+    avatarUrl,
   }: {
     provider: 'github' | 'google';
     providerId: string;
     email: string | null;
+    avatarUrl: string | null;
   }) => {
     let user = await repo.findByProvider({ provider, providerId });
     if (!user) {
-      const [created] = await repo.create({ provider, providerId, email });
+      const [created] = await repo.create({ provider, providerId, email, avatarUrl });
       user = created;
+      return user;
     }
+    [user] = await repo.update({
+      id: user.id,
+      updates: {
+        avatarUrl: avatarUrl || user.avatarUrl,
+      },
+    });
     return user;
   },
 

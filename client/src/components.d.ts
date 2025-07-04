@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ApiKeyContent: typeof import('./components/ApiKeyContent.vue')['default']
     ApiKeyModal: typeof import('./components/ApiKeyModal.vue')['default']
     AppFooter: typeof import('./components/AppFooter.vue')['default']
     AppHeader: typeof import('./components/AppHeader.vue')['default']
@@ -25,6 +26,7 @@ declare module 'vue' {
     LogoutButton: typeof import('./components/LogoutButton.vue')['default']
     MessageInput: typeof import('./components/MessageInput.vue')['default']
     ProfileModal: typeof import('./components/ProfileModal.vue')['default']
+    ResponsiveModal: typeof import('./components/ResponsiveModal.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ScrollToBottomButton: typeof import('./components/ScrollToBottomButton.vue')['default']

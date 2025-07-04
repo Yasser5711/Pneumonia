@@ -13,7 +13,7 @@ async function fetchGoogleProfile(token: string) {
   const res = await googleRequest('https://www.googleapis.com/oauth2/v3/userinfo', {
     headers: { Authorization: `Bearer ${token}` },
   });
-  return res as { sub: string; email: string };
+  return res as { sub: string; email: string; picture: string | null };
 }
 
 export const googleRouter = router({
@@ -51,6 +51,7 @@ export const googleRouter = router({
         provider: 'google',
         providerId: profile.sub,
         email: profile.email,
+        avatarUrl: profile.picture || null,
       });
       const { key } = await ctx.services.apiKeyService.generateKey({ userId: user.id, quota: 10 });
       setSession({ res: ctx.res, userId: user.id, ttl: '7d' });

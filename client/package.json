@@ -51,9 +51,9 @@
     "pinia": "^3.0.2",
     "radash": "^12.1.1",
     "vee-validate": "^4.15.0",
-    "vue": "^3.5.15",
+    "vue": "^3.5.17",
     "vue-router": "^4.5.1",
-    "vuetify": "^3.8.7",
+    "vuetify": "^3.8.12",
     "zod": "^3.25.30"
   },
   "devDependencies": {

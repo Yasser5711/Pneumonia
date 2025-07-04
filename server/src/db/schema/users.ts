@@ -14,6 +14,9 @@ export const usersTable = pgTable(
     createdAt: t.timestamp('created_at').defaultNow(),
     lastLogin: t.timestamp('last_login'),
     updatedAt: t.timestamp('updated_at').$onUpdateFn(() => new Date()),
+    avatarUrl: t
+      .text('avatar_url')
+      .$defaultFn(() => `https://ui-avatars.com/api/?name=${sql`email`}&background=random`),
   }),
   (table) => [
     uniqueIndex('emailUniqueIndex').on(sql`lower(${table.email})`),

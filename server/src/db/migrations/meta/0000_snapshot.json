@@ -1,5 +1,5 @@
 {
-  "id": "f4ff32aa-73fc-4e9d-84c7-08801586d9d8",
+  "id": "53629932-f248-48aa-bfc9-6ad60fd49748",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -97,8 +97,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "last_updated_at": {
-          "name": "last_updated_at",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false,
@@ -201,9 +201,15 @@
           "primaryKey": false,
           "notNull": false
         },
-        "guest_last_request": {
-          "name": "guest_last_request",
+        "updated_at": {
+          "name": "updated_at",
           "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "avatar_url": {
+          "name": "avatar_url",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         }

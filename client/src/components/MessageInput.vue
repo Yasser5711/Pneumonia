@@ -263,12 +263,12 @@ const isTextFieldDisabled = computed(() => {
       }"
     />
 
-    <div
-      
+    <v-sheet
+      :elevation="2"
+      :border="'md'"
       :class="[
         'd-flex align-start ga-2 pa-1 pa-sm-2 transition-swing rounded-xl',
       ]"
-      
       style="
         transition:
           box-shadow 0.2s ease-out,
@@ -279,7 +279,7 @@ const isTextFieldDisabled = computed(() => {
       <v-text-field
         v-model="messageInput"
         :placeholder="textFieldPlaceholder"
-        variant="outlined"
+        variant="solo"
         flat
         hide-details
         class="flex-grow-1"
@@ -347,7 +347,7 @@ const isTextFieldDisabled = computed(() => {
           </template>
         </v-btn>
       </div>
-    </div>
+    </v-sheet>
   </div>
 </template>
 

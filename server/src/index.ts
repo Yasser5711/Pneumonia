@@ -159,6 +159,7 @@ async function main() {
       });
     },
   });
+
   await fastify.register(fastifyBasicAuth, {
     validate: (username, password, req, reply, done) => {
       const USER = env.PANEL_USER;

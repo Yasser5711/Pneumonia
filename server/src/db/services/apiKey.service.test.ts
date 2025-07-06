@@ -27,57 +27,38 @@ afterEach(() => {
 describe('generateKey', () => {
   it('creates a new key and returns { key, meta }', async () => {
     mockApiKeyRepo.findByUserId.mockResolvedValue([]);
-    mockApiKeyRepo.create.mockResolvedValue([
-      {
-        id: 'id1',
-        userId: 'user1',
-        name: 'user-user1-key',
-        keyPrefix: 'aaaaaaaaaaaa',
-        hashedKey: 'hashed',
-        active: true,
-        freeRequestsQuota: 10,
-        freeRequestsUsed: 0,
-        expiresAt: null,
-        updatedAt: new Date(),
-        description: undefined,
-        lastUsedAt: null,
-        lastUsedIp: null,
-      },
-    ]);
+    mockApiKeyRepo.create.mockResolvedValue({
+      id: 'id1',
+      userId: 'user1',
+      name: 'user-user1-key',
+      keyPrefix: 'aaaaaaaaaaaa',
+      hashedKey: 'hashed',
+      active: true,
+      freeRequestsQuota: 10,
+      freeRequestsUsed: 0,
+      expiresAt: null,
+      updatedAt: new Date(),
+      description: undefined,
+      lastUsedAt: null,
+      lastUsedIp: null,
+    });
 
     const { key, meta } = await service.generateKey({
       userId: 'user1',
-      name: undefined,
-      description: undefined,
     });
-
     expect(key).toHaveLength(64);
     expect(meta.id).toBe('id1');
     expect(mockApiKeyRepo.create).toHaveBeenCalledWith(
       expect.objectContaining({
         name: 'user-user1-key',
         userId: 'user1',
-        freeRequestsQuota: 10,
       }),
     );
   });
 
-  it('re-uses remaining quota when user already has a key', async () => {
-    mockApiKeyRepo.findByUserId.mockResolvedValue([
-      { freeRequestsQuota: 20, freeRequestsUsed: 5 },
-    ] as any);
-
-    mockApiKeyRepo.create.mockResolvedValue([{}] as any);
-
-    await service.generateKey({ userId: 'u', name: 'n' });
-
-    expect(mockApiKeyRepo.create).toHaveBeenCalledWith(
-      expect.objectContaining({ freeRequestsQuota: 15 }),
-    );
-  });
   it('throws when repo.create returns []', async () => {
     (mockApiKeyRepo.findByUserId.mockResolvedValue([]),
-      mockApiKeyRepo.create.mockResolvedValue([]),
+      mockApiKeyRepo.create.mockResolvedValue(undefined),
       await expect(service.generateKey({ userId: 'u-err', name: 'x' })).rejects.toThrow(
         'API key generation failed',
       ));

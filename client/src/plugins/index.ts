@@ -5,15 +5,17 @@
  */
 
 // Plugins
+import type { App } from 'vue'
+
 import { createAppRouter } from '../router'
 import pinia from '../stores'
+
 import motion from './motion'
 import { installTanstack } from './tanstack'
 import { createTRPCPlugin } from './trpc'
 import head from './unHead'
 import vuetify from './vuetify'
 // Types
-import type { App } from 'vue'
 
 export function registerPlugins(app: App) {
   // Install plugins

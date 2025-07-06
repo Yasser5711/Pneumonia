@@ -1,7 +1,8 @@
 <script setup lang="ts">
+import { onMounted } from 'vue'
+
 import { useChatScroll } from '@/composables/useChatScroll'
 import { useChatStore } from '@/stores/chatStore'
-import { onMounted } from 'vue'
 
 const chatStore = useChatStore()
 const { showScrollButton, scrollToBottom } = useChatScroll()
@@ -14,7 +15,7 @@ useHead({
     chatStore.isTyping
       ? 'Assistant is typing...'
       : chatStore.messages.length === 0
-        ? undefined
+        ? 'Waiting to start a conversation'
         : `Chat - ${chatStore.userMessages.length} messages`,
 })
 </script>

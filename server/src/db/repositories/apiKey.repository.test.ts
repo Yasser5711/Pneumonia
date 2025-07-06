@@ -27,7 +27,7 @@ describe('apiKeysRepo', () => {
     it('persists and returns the new key (with default 10-day expiry)', async () => {
       const now = Date.now();
 
-      const [created] = await repo.create({
+      const created = await repo.create({
         name: 'CLI Token',
         keyPrefix: 'prefix123456',
         hashedKey: 'hashed-key',
@@ -89,7 +89,7 @@ describe('apiKeysRepo', () => {
 
   describe('updateUsage', () => {
     it('updates lastUsed fields and returns the new row', async () => {
-      const [key] = await repo.create({
+      const key = await repo.create({
         name: 'ToUpdate',
         keyPrefix: 'pref',
         hashedKey: 'hash',
@@ -109,7 +109,7 @@ describe('apiKeysRepo', () => {
 
   describe('updateLimits', () => {
     it('increments freeRequestsUsed by 1', async () => {
-      const [key] = await repo.create({
+      const key = await repo.create({
         name: 'Limiter',
         keyPrefix: 'pref',
         hashedKey: 'hash',
@@ -123,7 +123,7 @@ describe('apiKeysRepo', () => {
 
   describe('updateExpiration', () => {
     it('sets a new expiresAt and refreshes updatedAt', async () => {
-      const [key] = await repo.create({
+      const key = await repo.create({
         name: 'ExpireMe',
         keyPrefix: 'pref',
         hashedKey: 'hash',
@@ -140,7 +140,7 @@ describe('apiKeysRepo', () => {
 
   describe('invalidateKey', () => {
     it('sets active = false', async () => {
-      const [key] = await repo.create({
+      const key = await repo.create({
         name: 'Invalidate',
         keyPrefix: 'pref',
         hashedKey: 'hash',
@@ -154,7 +154,7 @@ describe('apiKeysRepo', () => {
 
   describe('resetQuota', () => {
     it('zeros freeRequestsUsed and stamps freeQuotaResetAt', async () => {
-      const [key] = await repo.create({
+      const key = await repo.create({
         name: 'QuotaReset',
         keyPrefix: 'pref',
         hashedKey: 'hash',
@@ -172,16 +172,16 @@ describe('apiKeysRepo', () => {
 
   describe('findByUserId', () => {
     it('returns only active keys for the user', async () => {
-      const [active] = await repo.create({
-        name: 'ActiveKey',
-        keyPrefix: 'prefA',
-        hashedKey: 'hashA',
-        userId: user.id,
-      });
-      const [inactive] = await repo.create({
+      const inactive = await repo.create({
         name: 'InactiveKey',
         keyPrefix: 'prefI',
         hashedKey: 'hashI',
+        userId: user.id,
+      });
+      const active = await repo.create({
+        name: 'ActiveKey',
+        keyPrefix: 'prefA',
+        hashedKey: 'hashA',
         userId: user.id,
       });
       await repo.invalidateKey(inactive.id);

@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
+
 import { createMessage } from '../helpers/chat'
+
 import type { ImageMessage, MessageInput, TextMessage } from '../types/chat'
 
 describe('createMessage', () => {

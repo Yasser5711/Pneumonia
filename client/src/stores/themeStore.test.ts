@@ -1,7 +1,9 @@
+import { nextTick, ref } from 'vue'
+
 import { usePreferredDark } from '@vueuse/core'
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest'
-import { nextTick, ref } from 'vue'
+
 import { useThemeStore } from '../stores/themeStore'
 
 vi.mock('@vueuse/core', async () => {

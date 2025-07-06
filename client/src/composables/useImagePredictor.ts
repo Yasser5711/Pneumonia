@@ -1,5 +1,6 @@
-import { usePredictPneumonia } from '@/queries/usePredictPneumonia'
 import { ref } from 'vue'
+
+import { usePredictPneumonia } from '@/queries/usePredictPneumonia'
 export interface PredictionResult {
   label: string
   probability_pneumonia: number

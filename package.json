@@ -20,7 +20,9 @@
     "dev": "wireit",
     "changeset": "changeset",
     "changeset:version": "changeset version",
-    "changeset:publish": "changeset publish"
+    "changeset:publish": "changeset publish",
+    "delete:node_modules": "echo 'npx npkill'",
+    "clean:cache": "echo 'yarn cache clean'"
   },
   "wireit": {
     "dev": {
@@ -37,7 +39,7 @@
     "@changesets/cli": "^2.29.4",
     "@testing-library/vue": "^8.1.0",
     "@typescript-eslint/eslint-plugin": "^8.32.1",
-    "@vitest/ui": "^3.1.4",
+    "@vitest/ui": "^3.2.4",
     "concurrently": "^9.1.2",
     "jsdom": "^26.1.0",
     "postcss-html": "^1.8.0",
@@ -45,7 +47,7 @@
     "stylelint-config-html": "^1.1.0",
     "stylelint-config-recommended-vue": "^1.6.0",
     "stylelint-config-standard": "^38.0.0",
-    "vitest": "^3.1.4",
+    "vitest": "^3.2.4",
     "wireit": "^0.14.12"
   }
 }

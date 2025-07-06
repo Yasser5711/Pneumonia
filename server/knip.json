@@ -15,6 +15,7 @@
     "vitest"
   ],
   "ignoreDependencies": [
+    "@trpc/client",
     "@types/ws",
     "@vitest/coverage-v8",
     "@vitest/ui",
@@ -36,6 +37,7 @@
     "eslint-config-prettier",
     "prettier",
     "ms",
-    "@types/ms"
+    "@types/ms",
+    "zod-openapi"
   ]
 }

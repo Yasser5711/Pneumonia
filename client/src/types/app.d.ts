@@ -19,8 +19,8 @@ export type StorageValue<K extends keyof StorageMap> = RemovableRef<
   StorageMap[K]
 >
 export type Quota = {
-  left: number
   used: number
+  total: number
 }
 export type User =
   | {

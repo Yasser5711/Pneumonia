@@ -1,5 +1,7 @@
-import { describe, expect, it, vi, type Mock } from 'vitest'
 import { getCurrentInstance } from 'vue'
+
+import { describe, expect, it, vi, type Mock } from 'vitest'
+
 import { useTRPC } from './useTRPC'
 
 vi.mock('vue', async (importOriginal) => {

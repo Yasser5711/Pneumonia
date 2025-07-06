@@ -62,7 +62,7 @@ watch(isOpen, (open) => {
           label="API Key"
           variant="underlined"
           readonly
-          :hint="`Quota: ${user?.quota?.used} / ${user?.quota?.left}`"
+          :hint="`Quota: ${user?.quota?.used} / ${user?.quota?.total}`"
           persistent-hint
           :append-inner-icon="copied ? 'mdi-check' : 'mdi-content-copy'"
           @click:append-inner="handleCopy"

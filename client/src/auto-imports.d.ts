@@ -174,8 +174,6 @@ declare module 'vue' {
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
     readonly useFileUpload: UnwrapRef<typeof import('./composables/useFileUpload')['useFileUpload']>
     readonly useGenerateKeyHandler: UnwrapRef<typeof import('./composables/useAuthHandler')['useGenerateKeyHandler']>
-    readonly useGitHubCallback: UnwrapRef<typeof import('./composables/useGitHubCallback')['useGitHubCallback']>
-    readonly useGitHubLogin: UnwrapRef<typeof import('./composables/useGitHubLogin')['useGitHubLogin']>
     readonly useGithubCallbackHandler: UnwrapRef<typeof import('./composables/useAuthHandler')['useGithubCallbackHandler']>
     readonly useGlobalFileDragState: UnwrapRef<typeof import('./composables/useGlobalFileDragState')['useGlobalFileDragState']>
     readonly useGoogleCallbackHandler: UnwrapRef<typeof import('./composables/useAuthHandler')['useGoogleCallbackHandler']>

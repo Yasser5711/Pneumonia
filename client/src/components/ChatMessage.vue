@@ -1,9 +1,12 @@
 <script setup lang="ts">
-import { CheckCheckIcon, CheckIcon } from 'lucide-vue-next'
 import { computed, ref } from 'vue'
-import type { Message } from '../types/chat'
+
+import { CheckCheckIcon, CheckIcon } from 'lucide-vue-next'
+
 import HoverImage from './HoverImage.vue'
 import ImageModal from './ImageModal.vue'
+
+import type { Message } from '../types/chat'
 
 const props = defineProps<{
   message: Message

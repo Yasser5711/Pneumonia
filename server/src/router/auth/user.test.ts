@@ -26,7 +26,7 @@ describe('userRouter', () => {
     const fakeMe = {
       user: { id: 'u-42', email: 'john@example.com' },
       // keys: [],
-      quota: { left: 10, used: 0 },
+      quota: { used: 10, total: 0 },
     };
     mockServices.userService.getMe.mockResolvedValue(fakeMe);
 

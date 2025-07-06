@@ -9,7 +9,7 @@ definePage({
   meta: {
     guestOnly: true,
     title: 'Index',
-    icon: '/icons/home.png',
+    icon: '/icons/index.png',
     description: 'Home page',
     layout: 'default',
   },

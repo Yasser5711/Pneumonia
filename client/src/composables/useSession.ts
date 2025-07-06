@@ -3,9 +3,9 @@ import { useQueryClient } from '@tanstack/vue-query'
 import { useLogout as useLogoutMutation, useMeQuery } from '@/queries/useAuth'
 import type { User } from '@/types/app'
 
+const user = ref<User>(undefined)
 import { useApiKeyModal } from '../components/useApiKeyModal'
 export function useSession() {
-  const user = ref<User>(undefined)
   const store = useStorageStore()
   const apiKeyRef = store.getKeyFromLocalStorage('apiKey', '')
   const router = useRouter()

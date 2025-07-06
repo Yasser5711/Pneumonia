@@ -9,8 +9,10 @@ export const apiKeysTable = pgTable(
     hashedKey: t.text('hashed_key').notNull().unique(), // hashed API key
     keyPrefix: t.varchar('key_prefix', { length: 12 }).notNull().unique(), // first 12 characters of the API key
     name: t.text('name').notNull(), // e.g., "Admin Panel" or "CLI Token"
-    userId: t.uuid('user_id').references(() => usersTable.id),
-    // .notNull(), // user who created the API key
+    userId: t
+      .uuid('user_id')
+      .references(() => usersTable.id)
+      .notNull(),
     active: t.boolean('active').default(true),
     freeRequestsQuota: t.integer('free_requests_quota').notNull().default(10),
     freeRequestsUsed: t.integer('free_requests_used').notNull().default(0),

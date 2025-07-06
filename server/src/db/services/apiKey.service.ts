@@ -10,7 +10,6 @@ export const createApiKeyService = (apiKeysRepo: Repositories['apiKeysRepo']) =>
     userId,
     name,
     description,
-    quota = 10,
   }: {
     userId: string;
     name?: string;
@@ -21,19 +20,12 @@ export const createApiKeyService = (apiKeysRepo: Repositories['apiKeysRepo']) =>
     const prefix = rawKey.slice(0, 12);
     const secretPart = rawKey.slice(12);
     const hashed = await hashApiKey(secretPart);
-    const existingKeys = await apiKeysRepo.findByUserId(userId);
-    quota =
-      existingKeys.length > 0
-        ? existingKeys[0].freeRequestsQuota - existingKeys[0].freeRequestsUsed
-        : quota;
-
-    const [record] = await apiKeysRepo.create({
+    const record = await apiKeysRepo.create({
       name: name ?? `user-${userId}-key`,
       description,
       userId,
       keyPrefix: prefix,
       hashedKey: hashed,
-      freeRequestsQuota: quota,
     });
 
     if (!record) {

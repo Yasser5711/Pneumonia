@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest'
+
 import { renderComposable } from '../tests/renderComposable'
+
 import { useApiKeyModal } from './useApiKeyModal'
 
 describe('useApiKeyModal', () => {

@@ -1,8 +1,15 @@
-import { useStorageStore } from '@/stores/storageStore'
-import type { AppRouter } from '@server/router/_app'
-import { createTRPCClient, httpBatchLink, type TRPCClient } from '@trpc/client'
 import type { App } from 'vue'
 
+import { createTRPCClient, httpBatchLink, type TRPCClient } from '@trpc/client'
+
+import { useStorageStore } from '@/stores/storageStore'
+
+import type {
+  AppRouter,
+  RouterInputs,
+  RouterOutputs,
+} from '@server/router/_app'
+export { type AppRouter, type RouterInputs, type RouterOutputs }
 export function createTRPCPlugin({ url }: { url: string }) {
   return {
     install(app: App) {

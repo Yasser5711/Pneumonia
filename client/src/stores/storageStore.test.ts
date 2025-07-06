@@ -1,7 +1,9 @@
 import { useStorage } from '@vueuse/core'
 import { createPinia, setActivePinia } from 'pinia'
 import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest'
+
 import { useStorageStore } from '../stores/storageStore'
+
 import type { StorageKeys, StorageMap } from '../types/app'
 vi.mock('@vueuse/core', () => {
   return {

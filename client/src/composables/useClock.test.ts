@@ -1,4 +1,5 @@
-import type { RemovableRef } from '@vueuse/core'
+import { ref } from 'vue'
+
 import {
   afterEach,
   beforeEach,
@@ -8,11 +9,14 @@ import {
   vi,
   type Mock,
 } from 'vitest'
-import { ref } from 'vue'
+
 import { useStorageStore } from '../stores/storageStore'
 import { renderComposable } from '../tests/renderComposable'
-import type { StorageMap } from '../types/app'
+
 import { useClock } from './useClock'
+
+import type { StorageMap } from '../types/app'
+import type { RemovableRef } from '@vueuse/core'
 
 vi.mock('@/stores/storageStore', () => ({
   useStorageStore: vi.fn(),

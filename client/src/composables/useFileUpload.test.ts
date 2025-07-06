@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { renderComposable } from '../tests/renderComposable'
+
 import { useFileUpload } from './useFileUpload'
 
 const setupFileReaderMock = (

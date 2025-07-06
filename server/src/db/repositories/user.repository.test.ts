@@ -36,13 +36,12 @@ beforeEach(async () => {
     })
     .returning();
 
-  [key1] = await keysRepo.create({
+  key1 = await keysRepo.create({
     name: 'Initial key',
     keyPrefix: 'pref-user1',
     hashedKey: 'hash1',
     userId: user1.id,
     freeRequestsQuota: 5,
-    freeRequestsUsed: 3,
   });
 });
 
@@ -120,12 +119,12 @@ describe('getMyKeys', () => {
 });
 
 describe('getMyQuota', () => {
-  it('returns { left, used } for the latest active key', async () => {
-    expect(await usersRepo.getMyQuota(user1.id)).toEqual({ left: 5, used: 3 });
+  it('returns { total, used } for the latest active key', async () => {
+    expect(await usersRepo.getMyQuota(user1.id)).toEqual({ total: 5, used: 0 });
   });
 
   it('returns { 0, 0 } when the user has no key', async () => {
-    expect(await usersRepo.getMyQuota(user2.id)).toEqual({ left: 0, used: 0 });
+    expect(await usersRepo.getMyQuota(user2.id)).toEqual({ total: 0, used: 0 });
   });
 });
 

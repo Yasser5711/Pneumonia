@@ -57,20 +57,18 @@ export const createUsersRepo = (db: any = DB) => ({
   },
   getMyKeys: async (userId: string) => {
     return await db.query.apiKeysTable.findMany({
-      where: eq(apiKeysTable.userId, userId),
-      with: {
-        user: true,
-      },
+      where: and(eq(apiKeysTable.userId, userId), eq(apiKeysTable.active, true)),
     });
   },
   getMyQuota: async (userId: string) => {
     const keys = await db
       .select({
-        left: apiKeysTable.freeRequestsQuota,
+        total: apiKeysTable.freeRequestsQuota,
         used: apiKeysTable.freeRequestsUsed,
       })
       .from(apiKeysTable)
       .where(and(eq(apiKeysTable.userId, userId), eq(apiKeysTable.active, true)));
-    return keys[keys.length - 1] || { left: 0, used: 0 };
+    return keys[keys.length - 1] || { used: 0, total: 0 };
   },
 });
+// todo: adding soft delete for apikey when new one created(blacklist token) or just make active to false + better handle of the getmyquota

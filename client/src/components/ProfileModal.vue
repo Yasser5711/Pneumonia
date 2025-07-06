@@ -14,7 +14,7 @@ const avatarUrl = computed(() => user.value?.avatarUrl)
 
 const quotaPct = computed(() => {
   const q = user.value?.quota
-  return q ? Math.round((q.used / q.left) * 100) : 0
+  return q ? Math.round((q.used / q.total) * 100) : 0
 })
 
 const createdAt = computed(() =>
@@ -27,6 +27,9 @@ const lastLogin = computed(() =>
     ? useDateFormat(user.value.lastLogin, 'YYYY-MM-DD HH:mm').value
     : '—',
 )
+useHead({
+  title: () => (isProfileOpen.value ? 'Mon Profil' : undefined),
+})
 </script>
 
 <template>
@@ -90,14 +93,22 @@ const lastLogin = computed(() =>
         <template v-if="user.quota">
           <v-divider class="my-3" />
           <div class="text-body-2 font-weight-medium mb-2">
-            Quota: {{ user.quota.used }} /
-            {{ user.quota.left }}
+            Quota: {{ user.quota.used }} / {{ user.quota.total }} ({{
+              quotaPct
+            }}%)
           </div>
           <v-progress-linear
             :model-value="quotaPct"
             height="8"
             rounded
-            color="primary"
+            :color="
+              ['success', 'warning', 'error'][
+                Math.min(
+                  2,
+                  Math.floor(user.quota.used / (user.quota.total / 3)),
+                )
+              ]
+            "
           />
         </template>
       </v-card-text>

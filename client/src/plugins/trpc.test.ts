@@ -1,6 +1,8 @@
+import type { App } from 'vue'
+
 import { httpBatchLink } from '@trpc/client'
 import { describe, expect, it, vi, type Mock } from 'vitest'
-import type { App } from 'vue'
+
 import { createTRPCPlugin } from './trpc'
 
 vi.mock('@trpc/client', async (importOriginal) => {
@@ -11,11 +13,20 @@ vi.mock('@trpc/client', async (importOriginal) => {
     httpBatchLink: vi.fn().mockReturnValue(() => {}),
   }
 })
-vi.mock('@/stores/storageStore', () => ({
-  useStorageStore: () => ({
-    getKeyFromLocalStorage: vi.fn().mockReturnValue({ value: 'test-api-key' }),
-  }),
-}))
+
+vi.mock('@/stores/storageStore', () => {
+  const setKeyInLocalStorage = vi.fn()
+  const getKeyFromLocalStorage = vi
+    .fn()
+    .mockReturnValue({ value: 'test-api-key' })
+
+  return {
+    useStorageStore: vi.fn(() => ({
+      setKeyInLocalStorage,
+      getKeyFromLocalStorage,
+    })),
+  }
+})
 describe('createTRPCPlugin', () => {
   it('injects a tRPC client with correct config into Vue app', () => {
     const app = { config: { globalProperties: {} } }
@@ -30,6 +41,7 @@ describe('createTRPCPlugin', () => {
     expect(httpBatchLink).toHaveBeenCalledWith({
       url: 'https://api.example.com/trpc',
       headers: expect.any(Function),
+      fetch: expect.any(Function),
     })
 
     const config = (httpBatchLink as Mock).mock.calls[0][0]

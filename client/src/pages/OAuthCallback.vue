@@ -25,6 +25,20 @@ const { isPending, isSuccess, isError } =
   provider.value === 'github'
     ? useGithubCallbackHandler()
     : useGoogleCallbackHandler()
+useHead({
+  title: () =>
+    isPending.value ? 'Connexion en cours...' : 'Connexion réussie',
+  meta: [
+    {
+      name: 'description',
+      content: isPending.value
+        ? 'Connexion en cours via OAuth 2.0...'
+        : isSuccess.value
+          ? 'Connexion réussie !'
+          : 'Une erreur est survenue lors de la connexion OAuth.',
+    },
+  ],
+})
 </script>
 
 <template>

@@ -46,6 +46,4 @@ function onLeftButtonClick() {
   </v-app-bar>
 </template>
 
-
-
 <style scoped></style>

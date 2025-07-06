@@ -17,7 +17,7 @@ export const userRouter = router({
       z.object({
         user: z.any(),
         // keys: z.array(z.any()),
-        quota: z.object({ left: z.number(), used: z.number() }),
+        quota: z.object({ used: z.number(), total: z.number() }),
       }),
     )
     .query(({ ctx }) => {

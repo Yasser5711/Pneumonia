@@ -77,8 +77,6 @@
     "useCssVars": true,
     "useFileUpload": true,
     "useGenerateKeyHandler": true,
-    "useGitHubCallback": true,
-    "useGitHubLogin": true,
     "useGithubCallbackHandler": true,
     "useGlobalFileDragState": true,
     "useGoogleCallbackHandler": true,

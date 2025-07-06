@@ -2,6 +2,9 @@
 import { useApiKeyModal } from './useApiKeyModal'
 
 const { isOpen } = useApiKeyModal()
+useHead({
+  title: () => (isOpen.value ? 'Mon API Key' : undefined),
+})
 </script>
 
 <template>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { useIntersectionObserver } from '@vueuse/core'
 import { ref, watch } from 'vue'
+
+import { useIntersectionObserver } from '@vueuse/core'
 
 const props = defineProps<{
   src: string

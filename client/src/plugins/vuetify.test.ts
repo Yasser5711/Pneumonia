@@ -1,5 +1,7 @@
-import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest'
 import { ref, type App } from 'vue'
+
+import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest'
+
 import plugin from './vuetify'
 
 const resolvedTheme = ref<'light' | 'dark'>('light')

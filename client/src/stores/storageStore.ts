@@ -1,6 +1,7 @@
-import type { StorageKeys, StorageMap, StorageValue } from '@/types/app'
 import { useStorage, type RemovableRef } from '@vueuse/core'
 import { defineStore } from 'pinia'
+
+import type { StorageKeys, StorageMap, StorageValue } from '@/types/app'
 export const useStorageStore = defineStore('app', () => {
   const storageCache: Partial<Record<StorageKeys, StorageValue<StorageKeys>>> =
     {}

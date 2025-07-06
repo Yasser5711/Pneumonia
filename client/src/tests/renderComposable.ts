@@ -1,25 +1,35 @@
-import type { AppRouter } from '@server/router/_app'
+import { type App, createApp } from 'vue'
+
 import {
   QueryClient,
   VueQueryPlugin,
   type VueQueryPluginOptions,
 } from '@tanstack/vue-query'
-import type { TRPCClient } from '@trpc/client'
 import { createPinia } from 'pinia'
-import { type App, createApp } from 'vue'
+
+import { createAppRouter } from '@/router'
+
 import vuetify from '../plugins/vuetify'
 
 import { MOCK_TRPC } from './trpc'
 
+import type { AppRouter } from '@server/router/_app'
+import type { TRPCClient } from '@trpc/client'
+
 interface RenderComposableOptions {
   trpc: Partial<TRPCClient<AppRouter>>
   queryClient: QueryClient
+  route?: {
+    name?: string
+    path?: string
+    query?: Record<string, string | string[]>
+  }
 }
 
 export function renderComposable<T>(
   composable: () => T,
   options: Partial<RenderComposableOptions & { useVuetify?: boolean }> = {},
-): [T, App<Element>] {
+): [T, App<Element>, ReturnType<typeof createAppRouter>] {
   let result: T | undefined = undefined
 
   const innerOptions: RenderComposableOptions = {
@@ -29,7 +39,9 @@ export function renderComposable<T>(
       new QueryClient({
         defaultOptions: { queries: { retry: false } },
       }),
+    route: options.route,
   }
+  const router = createAppRouter('/')
 
   const app = createApp({
     setup() {
@@ -44,7 +56,9 @@ export function renderComposable<T>(
 
   // app.provide('trpc', innerOptions.trpc)
   app.config.globalProperties.$trpc = innerOptions.trpc as TRPCClient<AppRouter>
+
   app.use(createPinia())
+  app.use(router)
   if (options.useVuetify) {
     app.use(vuetify)
   }
@@ -54,5 +68,5 @@ export function renderComposable<T>(
   if (!result) {
     throw new Error('result must be defined.')
   }
-  return [result, app]
+  return [result, app, router]
 }

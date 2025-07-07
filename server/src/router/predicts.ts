@@ -1,5 +1,4 @@
 import { TRPCError } from '@trpc/server';
-import sharp from 'sharp';
 import { z } from 'zod';
 
 import { env } from '../env';
@@ -30,12 +29,20 @@ export const predictRouter = protectedProcedureAPI
   )
   .output(
     z.object({
-      model: z.string(),
-      model_version: z.string(),
+      model_details: z
+        .object({
+          name: z.string(),
+          version: z.string(),
+          input_size: z.tuple([z.number(), z.number()]),
+          decision_threshold: z.number(),
+          class_mapping: z.record(z.string(), z.number()),
+        })
+        .optional(),
       prediction: z.object({
         class: z.string(),
         probability: z.number(),
       }),
+      heatmap_base64: z.string().optional(),
     }),
   )
   .mutation(async ({ input }) => {
@@ -47,32 +54,12 @@ export const predictRouter = protectedProcedureAPI
       });
     const { imageBase64 } = input;
 
-    const imageBuffer = Buffer.from(imageBase64.replace(/^data:image\/\w+;base64,/, ''), 'base64');
-
-    const { data } = await sharp(imageBuffer)
-      .resize(128, 128)
-      .grayscale()
-      .raw()
-      .toBuffer({ resolveWithObject: true });
-
-    const floatArray = Array.from(data).map((v) => v / 255);
-    const imageArray: number[][][] = [];
-
-    for (let y = 0; y < 128; y++) {
-      const row: number[][] = [];
-      for (let x = 0; x < 128; x++) {
-        const idx = y * 128 + x;
-        row.push([floatArray[idx]]);
-      }
-      imageArray.push(row);
-    }
-
     let response: Response;
     try {
       response = await fetch(PREDICT_URL, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ data: [{ image_array: imageArray }] }),
+        body: JSON.stringify({ data: imageBase64 }),
       });
     } catch (err) {
       logger().error({ err, url: PREDICT_URL }, '🔴 Fetch failed');

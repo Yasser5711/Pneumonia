@@ -42,6 +42,7 @@ describe('useImagePredictor', () => {
         class: 'Pneumonia',
         probability: 0.92,
       },
+      heatmap_base64: 'data:image/png;base64,MOCKED_HEATMAP==',
     }
 
     predictAsync.mockResolvedValue(mockResponse)
@@ -58,8 +59,8 @@ describe('useImagePredictor', () => {
     const result = await predictor.predictFromFile(file)
 
     const expected: PredictionResult = {
-      label: 'Pneumonia',
-      probability_pneumonia: 0.92,
+      prediction: { class: 'Pneumonia', probability: 0.92 },
+      heatmap_base64: 'data:image/png;base64,MOCKED_HEATMAP==',
     }
 
     expect(result).toEqual(expected)
@@ -83,8 +84,8 @@ describe('useImagePredictor', () => {
     expect(predictor.selectedFile.value?.name).toBe('remote.jpg')
     expect(predictAsync).toHaveBeenCalledWith({ imageBase64: FAKE_BASE64 })
     expect(result).toEqual({
-      label: 'Pneumonia',
-      probability_pneumonia: 0.92,
+      prediction: { class: 'Pneumonia', probability: 0.92 },
+      heatmap_base64: 'data:image/png;base64,MOCKED_HEATMAP==',
     })
     app.unmount()
   })

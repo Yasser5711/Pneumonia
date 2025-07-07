@@ -3,6 +3,7 @@ import type {
   TextMessage,
   ImageMessage,
   MessageInput,
+  PredictionMessage,
 } from '../types/chat'
 
 export function createMessage(input: MessageInput): Message {
@@ -24,6 +25,12 @@ export function createMessage(input: MessageInput): Message {
       ...base,
       ...input,
     } satisfies ImageMessage
+  }
+  if (input.type === 'prediction') {
+    return {
+      ...base,
+      ...input,
+    } satisfies PredictionMessage
   }
 
   // If we ever add more types, this will protect us

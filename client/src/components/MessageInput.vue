@@ -142,11 +142,25 @@ const sendMessage = async () => {
     try {
       const prediction = await predictFromFile(imageFileForPrediction)
       if (!prediction) throw new Error('Aucune prédiction reçue.')
+      // chatStore.addMessage({
+      //   type: 'prediction',
+      //   sender: 'assistant',
+      //   originalImageName: imageFileForPrediction.name,
+      //   prediction: prediction.prediction,
+      //   heatmapUrl: prediction.heatmap_base64,
+      // })
       chatStore.addMessage({
         type: 'text',
-        content: `🩺 J'ai analysé l'image "${imageFileForPrediction.name}", et elle semble montrer **${prediction.label}**, avec une confiance de **${(prediction.probability_pneumonia * 100).toFixed(2)}%**.`,
+        content: `🩺 J'ai analysé l'image "${imageFileForPrediction.name}", et elle semble montrer **${prediction.prediction.class}**, avec une confiance de **${(prediction.prediction.probability * 100).toFixed(2)}%**.`,
         sender: 'assistant',
       })
+      if (prediction.heatmap_base64)
+        chatStore.addMessage({
+          type: 'image',
+          url: prediction.heatmap_base64 || '',
+          alt: `Heatmap de la prédiction pour ${imageFileForPrediction.name}`,
+          sender: 'assistant',
+        })
     } catch (predictionErr) {
       chatStore.addMessage({
         type: 'text',

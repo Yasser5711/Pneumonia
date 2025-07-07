@@ -12,10 +12,15 @@ describe('usePredictPneumonia', () => {
 
     expect(mutation.isSuccess.value).toBe(true)
     expect(mutation.data.value).toEqual({
-      data: { image_array: [[[0]]] },
-      model: 'example-model',
-      model_version: '1.0',
+      model_details: {
+        name: 'example-model',
+        version: '1.0',
+        input_size: [224, 224],
+        decision_threshold: 0.5,
+        class_mapping: { Pneumonia: 0, Normal: 1 },
+      },
       prediction: { class: 'example-class', probability: 0.99 },
+      heatmap_base64: 'data:image/png;base64,example-heatmap==',
     })
 
     app.unmount()

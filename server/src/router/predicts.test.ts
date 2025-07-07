@@ -42,9 +42,15 @@ describe('predictPneumonia router', () => {
       new Response(
         JSON.stringify({
           data: {
-            model: 'm',
-            model_version: 'v',
-            prediction: { class: 'Normal', probability: 0.8 },
+            model_details: {
+              name: 'example-model',
+              version: '1.0',
+              input_size: [224, 224],
+              decision_threshold: 0.5,
+              class_mapping: { Pneumonia: 0, Normal: 1 },
+            },
+            prediction: { class: 'example-class', probability: 0.99 },
+            heatmap_base64: 'data:image/png;base64,example-heatmap==',
           },
         }),
         { status: 200, headers: { 'content-type': 'application/json' } },
@@ -54,9 +60,15 @@ describe('predictPneumonia router', () => {
     const result = await createTestCaller({}).predictPneumonia({ imageBase64: goodImage });
 
     expect(result).toEqual({
-      model: 'm',
-      model_version: 'v',
-      prediction: { class: 'Normal', probability: 0.8 },
+      model_details: {
+        name: 'example-model',
+        version: '1.0',
+        input_size: [224, 224],
+        decision_threshold: 0.5,
+        class_mapping: { Pneumonia: 0, Normal: 1 },
+      },
+      prediction: { class: 'example-class', probability: 0.99 },
+      heatmap_base64: 'data:image/png;base64,example-heatmap==',
     });
 
     expect(fetch).toHaveBeenCalledWith(

@@ -2,8 +2,11 @@ import { ref } from 'vue'
 
 import { usePredictPneumonia } from '@/queries/usePredictPneumonia'
 export interface PredictionResult {
-  label: string
-  probability_pneumonia: number
+  prediction: {
+    class: string
+    probability: number
+  }
+  heatmap_base64: string | null
 }
 export const useImagePredictor = () => {
   const selectedFile = ref<File | null>(null)
@@ -27,8 +30,8 @@ export const useImagePredictor = () => {
     const base64 = await toBase64(f)
     const result = await predictAsync({ imageBase64: base64 })
     return {
-      label: result.prediction.class,
-      probability_pneumonia: result.prediction.probability,
+      prediction: result.prediction,
+      heatmap_base64: result.heatmap_base64,
     } as PredictionResult
   }
 

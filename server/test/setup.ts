@@ -19,23 +19,6 @@ beforeAll(() => {
       SESSION_SECRET: 'test_session_secret',
     },
   }));
-
-  vi.mock('sharp', () => {
-    return {
-      default: () => ({
-        resize: () => ({
-          grayscale: () => ({
-            raw: () => ({
-              toBuffer: () =>
-                Promise.resolve({
-                  data: new Uint8Array(128 * 128), // simule du grayscale
-                }),
-            }),
-          }),
-        }),
-      }),
-    };
-  });
 });
 
 afterEach(() => {

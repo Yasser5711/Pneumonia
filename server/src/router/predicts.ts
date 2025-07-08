@@ -47,6 +47,7 @@ export const predictRouter = protectedProcedureAPI
   )
   .mutation(async ({ input }) => {
     const PREDICT_URL = env.CNN_PREDICT_URL;
+    const MODEL_API_KEY = env.CNN_MODEL_API_KEY;
     if (!PREDICT_URL)
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
@@ -58,7 +59,8 @@ export const predictRouter = protectedProcedureAPI
     try {
       response = await fetch(PREDICT_URL, {
         method: 'POST',
-        headers: { 'content-type': 'application/json' },
+        headers: { 'content-type': 'application/json', Authorization: `${MODEL_API_KEY}` },
+
         body: JSON.stringify({ data: imageBase64 }),
       });
     } catch (err) {

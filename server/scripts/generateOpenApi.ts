@@ -1,6 +1,8 @@
 /* eslint-disable no-console */
-import { generateOpenApiDocument } from '@9or9/trpc-openapi';
 import { writeFileSync } from 'fs';
+
+import { generateOpenApiDocument } from 'trpc-to-openapi';
+
 import { version } from '../package.json';
 import { env } from '../src/env';
 import { appRouter } from '../src/router/_app';

@@ -3,15 +3,15 @@
  *
  * Bootstraps Vuetify and other plugins then mounts the App`
  */
+import { createApp } from 'vue'
 
 // Plugins
+import App from './App.vue'
 import { registerPlugins } from './plugins'
 
 // Components
-import App from './App.vue'
 import './styles/style.css'
 // Composables
-import { createApp } from 'vue'
 
 const app = createApp(App)
 

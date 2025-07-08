@@ -1,26 +1,29 @@
-import type { OpenApiMeta } from '@9or9/trpc-openapi';
 import { initTRPC } from '@trpc/server';
-import type { FastifyReply, FastifyRequest } from 'fastify';
-import type { Services } from './db/services/index';
+
 import * as defaultServices from './db/services/index';
 
-export const createContext = ({
-  req,
-  res,
-  services,
-}: {
+import type { Services } from './db/services/index';
+import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import type { OpenApiMeta } from 'trpc-to-openapi';
+
+export interface CreateContextOptions {
   req: FastifyRequest;
   res: FastifyReply;
   services?: Services;
-}) => {
+  fastify: FastifyInstance;
+}
+export const createContext = (opts: CreateContextOptions) => {
+  const { req, res, services, fastify } = opts;
+
   return {
     apiKey: req.headers['x-api-key'] as string | undefined,
     services: services ?? defaultServices,
     req,
     res,
+    fastify,
   };
 };
-type Context = Awaited<ReturnType<typeof createContext>>;
+export type Context = Awaited<ReturnType<typeof createContext>>;
 // export type AuthenticatedContext = Context & {
 //   apiKeyRecord: Awaited<ReturnType<typeof defaultServices.apiKeyService.validateKey>>;
 // };

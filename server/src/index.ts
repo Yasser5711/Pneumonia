@@ -1,19 +1,25 @@
-import { fastifyTRPCOpenApiPlugin, generateOpenApiDocument } from '@9or9/trpc-openapi';
 import fastifyBasicAuth from '@fastify/basic-auth';
+import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
+import oauthPlugin from '@fastify/oauth2';
 import rateLimit from '@fastify/rate-limit';
 import ScalarApiReference from '@scalar/fastify-api-reference';
 import { fastifyTRPCPlugin } from '@trpc/server/adapters/fastify';
 import Fastify from 'fastify';
+import { fastifyTRPCOpenApiPlugin, generateOpenApiDocument } from 'trpc-to-openapi';
 import { renderTrpcPanel } from 'trpc-ui';
+
 import pkg from '../package.json' assert { type: 'json' };
+
 import { env } from './env';
 import { setLogger } from './logger';
 import { appRouter } from './router/_app';
-import { createContext } from './trpc';
+import { createContext, type CreateContextOptions } from './trpc';
 const isDev = env.NODE_ENV === 'development';
+
 const fastify = Fastify({
+  trustProxy: true,
   logger: isDev
     ? {
         level: 'info',
@@ -43,6 +49,34 @@ async function main() {
           }
         : true,
   });
+  await fastify.register(cookie, {
+    secret: env.SESSION_SECRET ?? 'secret',
+    hook: 'onRequest',
+    parseOptions: {
+      sameSite: 'none',
+      secure: true,
+    },
+  });
+  await fastify.register(oauthPlugin, {
+    name: 'githubOauth',
+    scope: ['user:email'],
+    credentials: {
+      client: { id: env.GITHUB_CLIENT_ID ?? '', secret: env.GITHUB_CLIENT_SECRET ?? '' },
+      auth: oauthPlugin.GITHUB_CONFIGURATION,
+    },
+    startRedirectPath: '/auth/github/login',
+    callbackUri: `${env.FRONTEND_ORIGIN}/github-callback`,
+  });
+  await fastify.register(oauthPlugin, {
+    name: 'googleOauth',
+    scope: ['openid', 'email', 'profile'],
+    credentials: {
+      client: { id: env.GOOGLE_CLIENT_ID ?? '', secret: env.GOOGLE_CLIENT_SECRET ?? '' },
+      auth: oauthPlugin.GOOGLE_CONFIGURATION,
+    },
+    startRedirectPath: '/auth/google',
+    callbackUri: `${env.FRONTEND_ORIGIN}/google-callback`,
+  });
   await fastify.register(cors, {
     origin: (origin, cb) => {
       const isPreview = origin?.includes('.netlify.app') && env.NODE_ENV === 'preview';
@@ -59,6 +93,13 @@ async function main() {
         cb(new Error(`Origin ${origin} not allowed by CORS`), false);
       }
     },
+    // 2) **Crucial** → ajoute Access-Control-Allow-Credentials: true
+    credentials: true,
+
+    // 3) Autorise pré-vols (OPTIONS) & en-têtes customs si besoin
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-API-KEY'],
+    exposedHeaders: ['Set-Cookie'],
   });
   await fastify.register(rateLimit, {
     max: 10, // 🔥 Allow 3 requests
@@ -76,14 +117,56 @@ async function main() {
     prefix: '/trpc',
     trpcOptions: {
       router: appRouter,
-      createContext,
+      createContext: ({
+        req,
+        res,
+      }: {
+        req: CreateContextOptions['req'];
+        res: CreateContextOptions['res'];
+      }) => {
+        return createContext({
+          req,
+          res,
+          fastify,
+        });
+      },
+    },
+    onError(opts: any) {
+      const { error, path } = opts;
+      // Log the full error to the server console in development
+      // eslint-disable-next-line no-console
+      console.error(`❌ tRPC Error on '${path}':`, error);
+    },
+    formatError(opts: any) {
+      const { shape, error } = opts;
+      return {
+        ...shape,
+        data: {
+          ...shape.data,
+          // Also include the error stack in the response during development
+          stack: isDev ? error.stack : undefined,
+        },
+      };
     },
   });
   await fastify.register(fastifyTRPCOpenApiPlugin, {
     router: appRouter,
     prefix: '/api',
-    createContext,
+    createContext: ({
+      req,
+      res,
+    }: {
+      req: CreateContextOptions['req'];
+      res: CreateContextOptions['res'];
+    }) => {
+      return createContext({
+        req,
+        res,
+        fastify,
+      });
+    },
   });
+
   await fastify.register(fastifyBasicAuth, {
     validate: (username, password, req, reply, done) => {
       const USER = env.PANEL_USER;

@@ -1,142 +1,201 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
+
 import { applyMigration, db, resetDb } from '../../../test/db';
-import { apiKeysTable } from '../schema';
+import { apiKeysTable, usersTable } from '../schema';
+
 import { createApiKeysRepo } from './apiKey.repository';
 
 const repo = createApiKeysRepo(db);
+let user: typeof usersTable.$inferSelect;
 
 describe('apiKeysRepo', () => {
   beforeEach(async () => {
     await applyMigration();
-  });
-  afterEach(async () => {
-    await resetDb();
-  });
-
-  it('should create a new API key record and return it', async () => {
-    const [result] = await repo.create({
-      name: 'CLI Token',
-      keyPrefix: 'prefix123456',
-      hashedKey: 'hashed-key',
-      description: 'test key',
-    });
-    expect(result).toMatchObject({
-      name: 'CLI Token',
-      keyPrefix: 'prefix123456',
-      hashedKey: 'hashed-key',
-      description: 'test key',
-      active: true,
-      expiresAt: expect.any(Date),
-    });
-
-    expect(result.id).toBeDefined();
+    [user] = await db
+      .insert(usersTable)
+      .values({
+        email: 'test@example.com',
+        provider: 'guest',
+        providerId: 'test@example.com',
+      })
+      .returning();
   });
 
-  it('should find a record by prefix and return only active keys', async () => {
-    await db.insert(apiKeysTable).values([
-      {
-        name: 'Active Key',
+  afterEach(resetDb);
+
+  describe('create', () => {
+    it('persists and returns the new key (with default 10-day expiry)', async () => {
+      const now = Date.now();
+
+      const created = await repo.create({
+        name: 'CLI Token',
         keyPrefix: 'prefix123456',
-        hashedKey: 'hash1',
+        hashedKey: 'hashed-key',
+        description: 'test key',
+        userId: user.id,
+      });
+
+      expect(created).toMatchObject({
+        name: 'CLI Token',
+        userId: user.id,
+        keyPrefix: 'prefix123456',
+        hashedKey: 'hashed-key',
+        description: 'test key',
         active: true,
-        description: 'active key',
-      },
-      {
-        name: 'Inactive Key',
-        keyPrefix: 'prefix789123',
-        hashedKey: 'hash2',
-        active: false,
-        description: 'inactive key',
-      },
-    ]);
-
-    const result = await repo.findByPrefix('prefix123456');
-
-    expect(result).toHaveLength(1);
-    expect(result[0].name).toBe('Active Key');
-    expect(result[0].active).toBe(true);
-    const resultInactive = await repo.findByPrefix('prefix789123');
-    expect(resultInactive).toHaveLength(0);
-    expect(resultInactive).toEqual([]);
-  });
-
-  it('should update usage info and return the updated record', async () => {
-    const [created] = await repo.create({
-      name: 'KeyToUpdate',
-      keyPrefix: 'prefix999999',
-      hashedKey: 'hash3',
+      });
+      expect(created.id).toBeDefined();
+      expect(created.expiresAt!.getTime()).toBeGreaterThanOrEqual(now + 9.9 * 24 * 60 * 60 * 1_000);
     });
-
-    const updateTime = new Date('2025-01-01T00:00:00Z');
-    const [updated] = await repo.updateUsage({
-      id: created.id,
-      updates: {
-        lastUsedAt: updateTime,
-        lastUsedIp: '127.0.0.1',
-      },
-    });
-
-    expect(updated.id).toBe(created.id);
-    expect(updated.lastUsedAt?.toISOString()).toBe(updateTime.toISOString());
-    expect(updated.lastUsedIp).toBe('127.0.0.1');
   });
 
-  it('should return an empty array if no keys found', async () => {
-    const result = await repo.findByPrefix('nonexistent');
-    expect(result).toEqual([]);
-  });
-  it('should return an empty array if findByPrefix gets invalid data', async () => {
-    const customRepo = createApiKeysRepo({
-      query: {
-        apiKeysTable: {
-          findMany: () => [],
+  describe('findByPrefix', () => {
+    it('returns only active keys for the given prefix', async () => {
+      await db.insert(apiKeysTable).values([
+        {
+          name: 'Active Key',
+          keyPrefix: 'prefix123456',
+          hashedKey: 'hash1',
+          active: true,
+          description: 'active key',
+          userId: user.id,
         },
-      },
+        {
+          name: 'Inactive Key',
+          keyPrefix: 'prefix789000',
+          hashedKey: 'hash2',
+          active: false,
+          description: 'inactive key',
+          userId: user.id,
+        },
+      ]);
+
+      const keys = await repo.findByPrefix('prefix123456');
+      expect(keys).toHaveLength(1);
+      expect(keys[0].active).toBe(true);
     });
 
-    const result = await customRepo.findByPrefix('prefix');
-    expect(result).toEqual([]);
+    it('returns [] when DB returns undefined or empty array', async () => {
+      const stubUndefined = createApiKeysRepo({
+        query: { apiKeysTable: { findMany: () => undefined } },
+      });
+      const stubEmpty = createApiKeysRepo({
+        query: { apiKeysTable: { findMany: () => [] } },
+      });
+
+      expect(await stubUndefined.findByPrefix('p')).toEqual([]);
+      expect(await stubEmpty.findByPrefix('p')).toEqual([]);
+    });
   });
-  it('should update request limits and return the updated record', async () => {
-    const [created] = await repo.create({
-      name: 'KeyToUpdate',
-      keyPrefix: 'prefix999999',
-      hashedKey: 'hash3',
-    });
-    expect(created.freeRequestsUsed).toBe(0);
-    expect(created.freeRequestsQuota).toBe(10);
-    const [updated] = await repo.updateLimits(created.id);
 
-    expect(updated.id).toBe(created.id);
-    expect(updated.freeRequestsUsed).toBe(1);
-    expect(updated.freeRequestsQuota).toBe(10);
+  describe('updateUsage', () => {
+    it('updates lastUsed fields and returns the new row', async () => {
+      const key = await repo.create({
+        name: 'ToUpdate',
+        keyPrefix: 'pref',
+        hashedKey: 'hash',
+        userId: user.id,
+      });
+
+      const stamp = new Date('2025-01-01T00:00:00Z');
+      const [updated] = await repo.updateUsage({
+        id: key.id,
+        updates: { lastUsedAt: stamp, lastUsedIp: '127.0.0.1' },
+      });
+
+      expect(updated.lastUsedAt?.toISOString()).toBe(stamp.toISOString());
+      expect(updated.lastUsedIp).toBe('127.0.0.1');
+    });
   });
-  it('should update expiration and return the updated record', async () => {
-    const [created] = await repo.create({
-      name: 'KeyToUpdate',
-      keyPrefix: 'prefix999999',
-      hashedKey: 'hash3',
-    });
 
-    const updateTime = new Date('2025-01-01T00:00:00Z');
-    const [updated] = await repo.updateExpiration({
-      id: created.id,
-      expiresAt: updateTime,
-    });
+  describe('updateLimits', () => {
+    it('increments freeRequestsUsed by 1', async () => {
+      const key = await repo.create({
+        name: 'Limiter',
+        keyPrefix: 'pref',
+        hashedKey: 'hash',
+        userId: user.id,
+      });
 
-    expect(updated.id).toBe(created.id);
-    expect(updated.expiresAt?.toISOString()).toBe(updateTime.toISOString());
-    expect(updated.updatedAt).not.toEqual(created.updatedAt);
+      const [updated] = await repo.updateLimits(key.id);
+      expect(updated.freeRequestsUsed).toBe(1);
+    });
   });
-  it('should invalidate a key and return the updated record', async () => {
-    const [created] = await repo.create({
-      name: 'KeyToInvalidate',
-      keyPrefix: 'prefix111111',
-      hashedKey: 'hash4',
+
+  describe('updateExpiration', () => {
+    it('sets a new expiresAt and refreshes updatedAt', async () => {
+      const key = await repo.create({
+        name: 'ExpireMe',
+        keyPrefix: 'pref',
+        hashedKey: 'hash',
+        userId: user.id,
+      });
+
+      const stamp = new Date('2025-01-01T00:00:00Z');
+      const [updated] = await repo.updateExpiration({ id: key.id, expiresAt: stamp });
+
+      expect(updated.expiresAt?.toISOString()).toBe(stamp.toISOString());
+      expect(updated.updatedAt.getTime()).toBeGreaterThan(key.updatedAt.getTime());
+    });
+  });
+
+  describe('invalidateKey', () => {
+    it('sets active = false', async () => {
+      const key = await repo.create({
+        name: 'Invalidate',
+        keyPrefix: 'pref',
+        hashedKey: 'hash',
+        userId: user.id,
+      });
+
+      const [invalidated] = await repo.invalidateKey(key.id);
+      expect(invalidated.active).toBe(false);
+    });
+  });
+
+  describe('resetQuota', () => {
+    it('zeros freeRequestsUsed and stamps freeQuotaResetAt', async () => {
+      const key = await repo.create({
+        name: 'QuotaReset',
+        keyPrefix: 'pref',
+        hashedKey: 'hash',
+        freeRequestsUsed: 5,
+        userId: user.id,
+      });
+
+      const before = Date.now();
+      const [reset] = await repo.resetQuota({ id: key.id });
+
+      expect(reset.freeRequestsUsed).toBe(0);
+      expect(reset.freeQuotaResetAt.getTime()).toBeGreaterThanOrEqual(before);
+    });
+  });
+
+  describe('findByUserId', () => {
+    it('returns only active keys for the user', async () => {
+      const inactive = await repo.create({
+        name: 'InactiveKey',
+        keyPrefix: 'prefI',
+        hashedKey: 'hashI',
+        userId: user.id,
+      });
+      const active = await repo.create({
+        name: 'ActiveKey',
+        keyPrefix: 'prefA',
+        hashedKey: 'hashA',
+        userId: user.id,
+      });
+      await repo.invalidateKey(inactive.id);
+
+      const keys = await repo.findByUserId(user.id);
+      expect(keys).toHaveLength(1);
+      expect(keys[0].id).toBe(active.id);
     });
 
-    const [invalidated] = await repo.invalidateKey(created.id);
-    expect(invalidated.id).toBe(created.id);
-    expect(invalidated.active).toBe(false);
+    it('returns [] when DB returns undefined', async () => {
+      const stub = createApiKeysRepo({
+        query: { apiKeysTable: { findMany: () => undefined } },
+      });
+      expect(await stub.findByUserId('user-id')).toEqual([]);
+    });
   });
 });

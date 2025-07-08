@@ -1,12 +1,36 @@
-import vue from '@vitejs/plugin-vue'
 import { fileURLToPath, URL } from 'node:url'
+
+import vue from '@vitejs/plugin-vue'
+import AutoImport from 'unplugin-auto-import/vite'
+import VueRouter from 'unplugin-vue-router/vite'
+import Layouts from 'vite-plugin-vue-layouts'
 import vuetify from 'vite-plugin-vuetify'
 import { defineConfig, mergeConfig, type ViteUserConfig } from 'vitest/config'
+
 import baseConfig from '../vitest.config'
 
 export default defineConfig(
   mergeConfig(baseConfig as ViteUserConfig, {
-    plugins: [vue(), vuetify({ autoImport: true })],
+    plugins: [
+      VueRouter({
+        dts: 'src/typed-router.d.ts',
+      }),
+      AutoImport({
+        // Match the configuration from your vite.config.ts
+        imports: [
+          'vue',
+          {
+            'vue-router/auto': ['useRoute', 'useRouter'],
+          },
+        ],
+        // Point to the directories where your composables and stores are
+        dirs: ['src/composables', 'src/stores'],
+        dts: 'src/auto-imports.d.ts', // Optional for tests, but good practice
+      }),
+      vue(),
+      Layouts(),
+      vuetify({ autoImport: true }),
+    ],
     test: {
       environment: 'happy-dom',
       setupFiles: ['./vitest/setupTest.ts'],

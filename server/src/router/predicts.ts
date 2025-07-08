@@ -1,11 +1,9 @@
 import { TRPCError } from '@trpc/server';
-import axios from 'axios';
-import sharp from 'sharp';
 import { z } from 'zod';
-import { logger } from '../logger';
-import { protectedProcedureAPI } from '../middlewares/index';
 
 import { env } from '../env';
+import { logger } from '../logger';
+import { protectedProcedureAPI } from '../middlewares/index';
 
 export const predictRouter = protectedProcedureAPI
   .meta({
@@ -31,16 +29,25 @@ export const predictRouter = protectedProcedureAPI
   )
   .output(
     z.object({
-      model: z.string(),
-      model_version: z.string(),
+      model_details: z
+        .object({
+          name: z.string(),
+          version: z.string(),
+          input_size: z.tuple([z.number(), z.number()]),
+          decision_threshold: z.number(),
+          class_mapping: z.record(z.string(), z.number()),
+        })
+        .optional(),
       prediction: z.object({
         class: z.string(),
         probability: z.number(),
       }),
+      heatmap_base64: z.string().optional(),
     }),
   )
   .mutation(async ({ input }) => {
     const PREDICT_URL = env.CNN_PREDICT_URL;
+    const MODEL_API_KEY = env.CNN_MODEL_API_KEY;
     if (!PREDICT_URL)
       throw new TRPCError({
         code: 'INTERNAL_SERVER_ERROR',
@@ -48,34 +55,30 @@ export const predictRouter = protectedProcedureAPI
       });
     const { imageBase64 } = input;
 
-    const imageBuffer = Buffer.from(imageBase64.replace(/^data:image\/\w+;base64,/, ''), 'base64');
+    let response: Response;
+    try {
+      response = await fetch(PREDICT_URL, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', Authorization: `${MODEL_API_KEY}` },
 
-    const { data } = await sharp(imageBuffer)
-      .resize(128, 128)
-      .grayscale()
-      .raw()
-      .toBuffer({ resolveWithObject: true });
-
-    const floatArray = Array.from(data).map((v) => v / 255);
-    const imageArray: number[][][] = [];
-
-    for (let y = 0; y < 128; y++) {
-      const row: number[][] = [];
-      for (let x = 0; x < 128; x++) {
-        const idx = y * 128 + x;
-        row.push([floatArray[idx]]);
-      }
-      imageArray.push(row);
+        body: JSON.stringify({ data: imageBase64 }),
+      });
+    } catch (err) {
+      logger().error({ err, url: PREDICT_URL }, '🔴 Fetch failed');
+      throw new TRPCError({
+        code: 'BAD_GATEWAY',
+        message: 'Failed to get prediction from the model server. Please try again later.',
+      });
     }
 
-    const response = await axios
-      .post(PREDICT_URL, { data: [{ image_array: imageArray }] })
-      .catch((err) => {
-        logger().error({ err, url: PREDICT_URL }, '🔴 Erreur lors de la prédiction CNN');
-        throw new TRPCError({
-          code: 'BAD_GATEWAY',
-          message: 'Failed to get prediction from the model server. Please try again later.',
-        });
+    if (!response.ok) {
+      logger().error({ status: response.status, url: PREDICT_URL }, '🔴 Bad status from model');
+      throw new TRPCError({
+        code: 'BAD_GATEWAY',
+        message: 'Failed to get prediction from the model server. Please try again later.',
       });
-    return response.data.data;
+    }
+
+    const json = await response.json();
+    return json.data;
   });

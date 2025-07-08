@@ -1,4 +1,5 @@
 import { TRPCError } from '@trpc/server';
+
 import {
   ApiKeyExpiredError,
   ApiKeyInactiveError,
@@ -7,8 +8,11 @@ import {
   QuotaExceededError,
 } from '../errors/apiKey.errors';
 import { logger } from '../logger';
-import { t } from '../trpc';
-export const requireAuth = t.middleware(async ({ ctx, next }) => {
+import { realIp } from '../utils/functions';
+
+import { sessionMiddleware } from './session.middleware';
+
+export const requireAuth = sessionMiddleware.unstable_pipe(async ({ ctx, next }) => {
   const key = ctx.apiKey?.trim();
   if (!key) throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Missing API key' });
 
@@ -36,9 +40,10 @@ export const requireAuth = t.middleware(async ({ ctx, next }) => {
   }
 
   logger().info({ key, ip: ctx.req.ip }, '✅ Valid API key');
-
-  await ctx.services.apiKeyService.markKeyUsed({ id: record.id, ip: ctx.req.ip });
+  const ip = realIp(ctx.req);
+  await ctx.services.apiKeyService.markKeyUsed({ id: record.id, ip });
   return next({
     ctx: { ...ctx, apiKeyRecord: record },
   });
 });
+// curl -H "X-Forwarded-For: 8.8.8.8" https://api.example.com/ping to check

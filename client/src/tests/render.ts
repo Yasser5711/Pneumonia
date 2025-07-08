@@ -1,5 +1,3 @@
-import motion from '@/plugins/motion'
-import vuetify from '@/plugins/vuetify'
 import { type QueryClientConfig, VueQueryPlugin } from '@tanstack/vue-query'
 import {
   type RenderOptions,
@@ -7,6 +5,10 @@ import {
   render as renderVue,
 } from '@testing-library/vue'
 import { createPinia, setActivePinia } from 'pinia'
+
+import motion from '@/plugins/motion'
+import vuetify from '@/plugins/vuetify'
+
 import { createTRPCPlugin } from '../plugins/trpc'
 import { createAppRouter } from '../router'
 

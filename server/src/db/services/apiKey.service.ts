@@ -1,17 +1,29 @@
 import { randomBytes } from 'crypto';
+
 import * as apiKeyErrors from '../../errors/apiKey.errors';
 import { logger } from '../../logger';
 import { compareApiKey, hashApiKey } from '../../utils/hash';
+
 import type { Repositories } from '../repositories/index';
 export const createApiKeyService = (apiKeysRepo: Repositories['apiKeysRepo']) => ({
-  generateKey: async ({ name, description }: { name: string; description?: string }) => {
+  generateKey: async ({
+    userId,
+    name,
+    description,
+  }: {
+    userId: string;
+    name?: string;
+    description?: string;
+    quota?: number;
+  }) => {
     const rawKey = randomBytes(32).toString('hex');
     const prefix = rawKey.slice(0, 12);
     const secretPart = rawKey.slice(12);
     const hashed = await hashApiKey(secretPart);
-    const [record] = await apiKeysRepo.create({
-      name,
+    const record = await apiKeysRepo.create({
+      name: name ?? `user-${userId}-key`,
       description,
+      userId,
       keyPrefix: prefix,
       hashedKey: hashed,
     });
@@ -62,7 +74,7 @@ export const createApiKeyService = (apiKeysRepo: Repositories['apiKeysRepo']) =>
     throw new apiKeyErrors.ApiKeyInvalidError();
   },
 
-  markKeyUsed: async ({ id, ip }: { id: string; ip?: string }) => {
+  markKeyUsed: async ({ id, ip }: { id: string; ip?: string }): Promise<void> => {
     await apiKeysRepo.updateUsage({
       id: id,
       updates: {
@@ -72,7 +84,7 @@ export const createApiKeyService = (apiKeysRepo: Repositories['apiKeysRepo']) =>
     });
     await apiKeysRepo.updateLimits(id);
   },
-  updateExpiration: async ({ id }: { id: string }) => {
+  updateExpiration: async ({ id }: { id: string }): Promise<void> => {
     await apiKeysRepo.updateExpiration({
       id: id,
       expiresAt: new Date(Date.now() + 10 * 24 * 60 * 60 * 1000), // 10 days

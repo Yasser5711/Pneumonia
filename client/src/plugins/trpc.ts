@@ -1,8 +1,15 @@
-import { useStorageStore } from '@/stores/storageStore'
-import type { AppRouter } from '@server/router/_app'
-import { createTRPCClient, httpBatchLink, type TRPCClient } from '@trpc/client'
 import type { App } from 'vue'
 
+import { createTRPCClient, httpBatchLink, type TRPCClient } from '@trpc/client'
+
+import { useStorageStore } from '@/stores/storageStore'
+
+import type {
+  AppRouter,
+  RouterInputs,
+  RouterOutputs,
+} from '@server/router/_app'
+export { type AppRouter, type RouterInputs, type RouterOutputs }
 export function createTRPCPlugin({ url }: { url: string }) {
   return {
     install(app: App) {
@@ -12,6 +19,8 @@ export function createTRPCPlugin({ url }: { url: string }) {
         links: [
           httpBatchLink({
             url,
+            fetch: (input, init) =>
+              fetch(input, { ...init, credentials: 'include' }),
             headers: () => {
               const key = store.getKeyFromLocalStorage('apiKey').value
               return key ? { 'x-api-key': key } : {}

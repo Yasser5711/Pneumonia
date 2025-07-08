@@ -1,5 +1,6 @@
-import { useStorageStore } from '@/stores/storageStore'
 import { computed, onMounted, onUnmounted, ref } from 'vue'
+
+import { useStorageStore } from '@/stores/storageStore'
 
 export const useClock = () => {
   const storageStore = useStorageStore()

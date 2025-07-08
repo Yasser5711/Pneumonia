@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest'
+
 import { createMessage } from '../helpers/chat'
-import type { ImageMessage, MessageInput, TextMessage } from '../types/chat'
+
+import type {
+  ImageMessage,
+  MessageInput,
+  TextMessage,
+  PredictionMessage,
+} from '../types/chat'
 
 describe('createMessage', () => {
   it('should create a text message with base fields', () => {
@@ -38,7 +45,28 @@ describe('createMessage', () => {
     expect(typeof msg.id).toBe('string')
     expect(msg.timestamp).toBeInstanceOf(Date)
   })
-
+  it('should create a prediction message with base fields', () => {
+    const input: MessageInput = {
+      type: 'prediction',
+      sender: 'user',
+      originalImageName: 'chest-xray.png',
+      prediction: {
+        class: 'pneumonia',
+        probability: 0.95,
+      },
+      heatmapUrl: 'data:image/png;base64,...',
+    }
+    const msg = createMessage(input) as PredictionMessage
+    expect(msg.type).toBe('prediction')
+    expect(msg.prediction.class).toBe('pneumonia')
+    expect(msg.prediction.probability).toBe(0.95)
+    expect(msg.heatmapUrl).toBe('data:image/png;base64,...')
+    expect(msg.sender).toBe('user')
+    expect(msg.status).toBe('sending')
+    expect(msg.originalImageName).toBe('chest-xray.png')
+    expect(typeof msg.id).toBe('string')
+    expect(msg.timestamp).toBeInstanceOf(Date)
+  })
   it('should throw an error for unsupported message types', () => {
     const input = {
       type: 'video',

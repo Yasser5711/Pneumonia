@@ -1,5 +1,6 @@
 import { createPinia, setActivePinia } from 'pinia'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { useChatStore } from '../stores/chatStore'
 
 import type { ImageMessage, MessageInput, TextMessage } from '../types/chat'

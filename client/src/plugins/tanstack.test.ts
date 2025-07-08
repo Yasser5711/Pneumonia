@@ -1,5 +1,7 @@
-import { describe, expect, it, vi } from 'vitest'
 import type { App } from 'vue'
+
+import { describe, expect, it, vi } from 'vitest'
+
 import { installTanstack, queryClient } from './tanstack'
 describe('installTanstack', () => {
   it('installs VueQueryPlugin with shared queryClient', () => {

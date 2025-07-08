@@ -1,10 +1,16 @@
-<!-- src/app/layouts/ChatLayout.vue -->
 <template>
-  <DefaultLayout>
-    <CanvasBackground />
-  </DefaultLayout>
+  <BaseLayout>
+    <template #header>
+      <CanvasBackground />
+      <AppHeader />
+    </template>
+
+    <template #footer>
+      <AppFooter />
+    </template>
+  </BaseLayout>
 </template>
 
 <script setup lang="ts">
-import DefaultLayout from './default.vue'
+import BaseLayout from './BaseLayout.vue'
 </script>

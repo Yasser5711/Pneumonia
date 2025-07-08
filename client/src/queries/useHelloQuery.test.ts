@@ -1,4 +1,5 @@
 import { describe, expect, it, vitest } from 'vitest'
+
 import { useHelloQuery } from '../queries/useHelloQuery'
 import { renderComposable } from '../tests/renderComposable'
 

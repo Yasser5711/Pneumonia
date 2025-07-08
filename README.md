@@ -12,6 +12,16 @@ To start the project with **Docker Compose**, run:
 docker-compose --profile front --profile back --env-file .env up -d
 ```
 
+### Environment variables
+
+```
+GITHUB_CLIENT_ID=
+GITHUB_CLIENT_SECRET=
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+SESSION_SECRET=
+```
+
 ## 📦 Tech Stack
 
 - 🖥️ Vue 3 + Vite + TypeScript

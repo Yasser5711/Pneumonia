@@ -1,5 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { renderComposable } from '../tests/renderComposable'
+
 import { useChatScroll } from './useChatScroll'
 describe('useChatScroll', () => {
   const originalScrollTo = window.scrollTo

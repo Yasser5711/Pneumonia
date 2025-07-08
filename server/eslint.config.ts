@@ -1,7 +1,7 @@
+import { FlatCompat } from '@eslint/eslintrc';
 import tsPlugin from '@typescript-eslint/eslint-plugin'; // ✅ plugin import
 import parser from '@typescript-eslint/parser';
-
-import { FlatCompat } from '@eslint/eslintrc';
+import importPlugin from 'eslint-plugin-import';
 import nodePlugin from 'eslint-plugin-n';
 import eslintPluginPrettier from 'eslint-plugin-prettier';
 import securityPlugin from 'eslint-plugin-security';
@@ -30,18 +30,58 @@ export default [
       },
     },
     plugins: {
+      import: importPlugin,
       prettier: eslintPluginPrettier,
       ts: tsPlugin, // ✅ register plugin with a key
       node: nodePlugin,
       security: securityPlugin,
     },
     rules: {
+      // ✅ Tri des imports
+      'import/order': [
+        'error',
+        {
+          groups: [
+            'builtin',
+            'external',
+            'internal',
+            'parent',
+            'sibling',
+            'index',
+            'object',
+            'type',
+          ],
+          pathGroups: [
+            {
+              pattern: '{react,vue,next,@*}',
+              group: 'external',
+              position: 'before',
+            },
+          ],
+          'newlines-between': 'always',
+          alphabetize: { order: 'asc', caseInsensitive: true },
+          distinctGroup: true,
+        },
+      ],
+      'import/no-duplicates': 'error',
+      'no-duplicate-imports': 'off',
+
       // ✅ Prettier formatting
-      'prettier/prettier': 'error',
+      'prettier/prettier': [
+        'error',
+        {
+          importOrder: ['^react', '<THIRD_PARTY_MODULES>', '^@/.*', '^[./]'],
+          importOrderSeparation: true,
+          importOrderSortSpecifiers: true,
+          // Pour respecter les `type` séparés si tu veux :
+          importOrderTypeScriptVersion: '5.0.0',
+        },
+      ],
 
       // ✅ General TS hygiene
       'ts/ban-ts-comment': 'error',
       'ts/consistent-type-imports': ['error', { prefer: 'type-imports' }],
+      'no-unused-vars': 'off',
       'ts/no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       // 'ts/explicit-function-return-type': ['warn', { allowExpressions: true }],
       'ts/no-floating-promises': 'error',
@@ -54,7 +94,6 @@ export default [
       // ✅ Other good backend defaults
       'no-console': 'error', // could be info-only for logs
       'require-await': 'error',
-      'no-duplicate-imports': 'error',
       'no-useless-catch': 'error',
       // ✅ Security rules
       'security/detect-object-injection': 'off', // false positive prone — disable or audit manually

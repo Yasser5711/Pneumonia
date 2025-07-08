@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+
+import { storeToRefs } from 'pinia'
+
 import {
   useFileUpload,
   type FileUploadResult,
@@ -8,6 +10,7 @@ import {
 import { useGlobalFileDragState } from '../composables/useGlobalFileDragState' // Importez le nouveau composable
 import { useImagePredictor } from '../composables/useImagePredictor'
 import { useChatStore } from '../stores/chatStore'
+
 import ImagePreview from './ImagePreview.vue'
 
 const { predictFromFile, error: predictionError } = useImagePredictor()
@@ -139,11 +142,25 @@ const sendMessage = async () => {
     try {
       const prediction = await predictFromFile(imageFileForPrediction)
       if (!prediction) throw new Error('Aucune prédiction reçue.')
+      // chatStore.addMessage({
+      //   type: 'prediction',
+      //   sender: 'assistant',
+      //   originalImageName: imageFileForPrediction.name,
+      //   prediction: prediction.prediction,
+      //   heatmapUrl: prediction.heatmap_base64,
+      // })
       chatStore.addMessage({
         type: 'text',
-        content: `🩺 J'ai analysé l'image "${imageFileForPrediction.name}", et elle semble montrer **${prediction.label}**, avec une confiance de **${(prediction.probability_pneumonia * 100).toFixed(2)}%**.`,
+        content: `🩺 J'ai analysé l'image "${imageFileForPrediction.name}", et elle semble montrer **${prediction.prediction.class}**, avec une confiance de **${(prediction.prediction.probability * 100).toFixed(2)}%**.`,
         sender: 'assistant',
       })
+      if (prediction.heatmap_base64)
+        chatStore.addMessage({
+          type: 'image',
+          url: prediction.heatmap_base64 || '',
+          alt: `Heatmap de la prédiction pour ${imageFileForPrediction.name}`,
+          sender: 'assistant',
+        })
     } catch (predictionErr) {
       chatStore.addMessage({
         type: 'text',
@@ -262,10 +279,10 @@ const isTextFieldDisabled = computed(() => {
 
     <v-sheet
       :elevation="2"
+      :border="'md'"
       :class="[
         'd-flex align-start ga-2 pa-1 pa-sm-2 transition-swing rounded-xl',
       ]"
-      :border="'md'"
       style="
         transition:
           box-shadow 0.2s ease-out,

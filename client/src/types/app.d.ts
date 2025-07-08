@@ -18,3 +18,20 @@ export type StorageMap = {
 export type StorageValue<K extends keyof StorageMap> = RemovableRef<
   StorageMap[K]
 >
+export type Quota = {
+  used: number
+  total: number
+}
+export type User =
+  | {
+      createdAt: Date
+      email: string
+      id: string
+      lastLogin: Date
+      provider: 'github' | 'google'
+      providerId: string
+      updatedAt: Date
+      quota: Quota
+      avatarUrl?: string
+    }
+  | undefined

@@ -1,3 +1,14 @@
+<script lang="ts" setup>
+import { useApiKeyModal } from '@/components/useApiKeyModal'
+import { useTheme } from '@/composables/useTheme'
+
+const { themeMode, cycleTheme } = useTheme()
+const { openModal: openApiKeyModal } = useApiKeyModal()
+
+function onLeftButtonClick() {
+  openApiKeyModal()
+}
+</script>
 <template>
   <v-app-bar
     app
@@ -34,17 +45,5 @@
     </v-btn>
   </v-app-bar>
 </template>
-
-<script lang="ts" setup>
-import { useApiKeyModal } from '@/components/useApiKeyModal'
-import { useTheme } from '@/composables/useTheme'
-
-const { themeMode, cycleTheme } = useTheme()
-const { openModal: openApiKeyModal } = useApiKeyModal()
-
-function onLeftButtonClick() {
-  openApiKeyModal()
-}
-</script>
 
 <style scoped></style>

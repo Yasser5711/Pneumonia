@@ -1,6 +1,9 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue'
+
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+
 import { renderComposable } from '../tests/renderComposable'
+
 import { useTheme } from './useTheme'
 
 // Mock the theme store

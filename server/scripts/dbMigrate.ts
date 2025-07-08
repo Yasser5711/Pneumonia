@@ -1,10 +1,12 @@
 /* eslint-disable no-console */
 
+import { dirname, resolve } from 'path';
+import { fileURLToPath } from 'url';
+
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';
-import { dirname, resolve } from 'path';
 import postgres from 'postgres';
-import { fileURLToPath } from 'url';
+
 import { env } from '../src/env';
 
 const __filename = fileURLToPath(import.meta.url);

@@ -6,9 +6,10 @@
  */
 
 // Styles
-import { useThemeStore } from '@/stores/themeStore'
+
 import '@mdi/font/css/materialdesignicons.css'
 import { watch } from 'vue'
+
 // import { VFileUpload } from 'vuetify/labs/VFileUpload'
 import 'vuetify/styles'
 // Composables

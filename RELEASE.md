@@ -5,6 +5,13 @@
    - Run `yarn changeset`
    - Answer the prompts
    - Commit the generated `.changeset/*.md` file
+
+   ✅ **Example commit message (Conventional Commit):**
+
+   ```bash
+   chore(release): v1.3.0
+   ```
+
 3. Merge the Pull Request into `master`
 4. Manually trigger the GitHub Action: `Deploy Production (Client + Server)`
 5. This action will automatically:

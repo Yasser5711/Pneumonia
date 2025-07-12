@@ -1,5 +1,11 @@
 # server
 
+## 4.0.0
+
+### Major Changes
+
+- 4b8cc4f: adding oauth2
+
 ## 3.0.0
 
 ### Major Changes

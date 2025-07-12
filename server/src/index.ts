@@ -17,7 +17,9 @@ import { setLogger } from './logger';
 import { appRouter } from './router/_app';
 import { createContext, type CreateContextOptions } from './trpc';
 const isDev = env.NODE_ENV === 'development';
-
+const frontendUrl = new URL(env.FRONTEND_ORIGIN!);
+const hostnameParts = frontendUrl.hostname.split('.');
+const parentDomain = '.' + hostnameParts.slice(-2).join('.');
 const fastify = Fastify({
   trustProxy: true,
   logger: isDev
@@ -55,6 +57,7 @@ async function main() {
     parseOptions: {
       sameSite: 'none',
       secure: true,
+      domain: parentDomain,
     },
   });
   await fastify.register(oauthPlugin, {

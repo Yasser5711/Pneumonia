@@ -1,8 +1,100 @@
-include:
-  - path: "docker/db/compose.yml"
-  # - path: "docker/tools/compose.yml"
-  - path: "docker/server/compose.yml"
-  - path: "docker/client/compose.yml"
+services:
+  client:
+    container_name: client
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+    working_dir: /app/client
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./client:/app/client
+      - /app/client/node_modules
+    env_file:
+      - .env
+    profiles:
+      - front
+    networks:
+      - app_network
+
+  server:
+    container_name: fastify-server
+    depends_on:
+      db:
+        condition: service_healthy
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    working_dir: /app/server
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      # FIX: This now correctly overrides the DATABASE_URL from the .env file
+      # to use the Docker service name 'db' instead of 'localhost'.
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      - NODE_ENV=development
+    volumes:
+      - ./server:/app/server
+      - /app/server/node_modules
+    restart: always
+    networks:
+      - app_network
+    profiles:
+      - back
+
+  db:
+    image: postgres:13
+    container_name: db
+    env_file:
+      - .env
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    profiles:
+      - back
+    networks:
+      - app_network
+    healthcheck:
+      test:
+        ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    build:
+      context: ./docker/tools/pgadmin
+      dockerfile: Dockerfile
+    container_name: pgadmin
+    env_file:
+      - .env
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    ports:
+      - "8003:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    profiles:
+      - back
+    networks:
+      - app_network
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/tools/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - server
+      - client
+    networks:
+      - app_network
+
 volumes:
   db_data:
   pgadmin_data:

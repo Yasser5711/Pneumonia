@@ -7,7 +7,7 @@ COPY client/package.json ./client/
 COPY server/package.json ./server/
 RUN yarn install --immutable
 
-# --- Stage 2: Build the client application ---
+
 FROM node:20-slim AS builder
 WORKDIR /app
 RUN corepack enable
@@ -19,11 +19,11 @@ COPY --from=deps /app/yarn.lock ./
 COPY . .
 RUN yarn workspace client build
 
-# --- Stage 3: Create the final, lean production image ---
+
 FROM node:20-slim AS release
 WORKDIR /app
 ENV NODE_ENV=production
-# FIX: Enable corepack in the final stage for the CMD
+
 RUN corepack enable
 
 COPY --from=builder /app/node_modules ./node_modules

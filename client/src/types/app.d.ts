@@ -28,6 +28,7 @@ export type User =
       email: string
       id: string
       lastLogin: Date
+      lastUsedIp?: string
       provider: 'github' | 'google'
       providerId: string
       updatedAt: Date

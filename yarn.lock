@@ -10511,6 +10511,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pneumoniacnn@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "pneumoniacnn@workspace:."
+  dependencies:
+    "@changesets/cli": "npm:^2.29.4"
+    "@testing-library/vue": "npm:^8.1.0"
+    "@typescript-eslint/eslint-plugin": "npm:^8.32.1"
+    "@vitest/ui": "npm:^3.2.4"
+    concurrently: "npm:^9.1.2"
+    jsdom: "npm:^26.1.0"
+    node-fetch: "npm:^3.3.2"
+    postcss-html: "npm:^1.8.0"
+    stylelint: "npm:^16.19.1"
+    stylelint-config-html: "npm:^1.1.0"
+    stylelint-config-recommended-vue: "npm:^1.6.0"
+    stylelint-config-standard: "npm:^38.0.0"
+    vitest: "npm:^3.2.4"
+    wireit: "npm:^0.14.12"
+  languageName: unknown
+  linkType: soft
+
 "popmotion@npm:^11.0.5":
   version: 11.0.5
   resolution: "popmotion@npm:11.0.5"
@@ -12559,27 +12580,6 @@ __metadata:
   checksum: 10c0/a1de5131ee527512afcaafceb2399b2f3e63678e56b831e1cb2dc7019c972a8b654703a3b94ef4166868f87eb984ea252b467c9d9e486b018ec2e6a55c24dfd8
   languageName: node
   linkType: hard
-
-"t_dev_800@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "t_dev_800@workspace:."
-  dependencies:
-    "@changesets/cli": "npm:^2.29.4"
-    "@testing-library/vue": "npm:^8.1.0"
-    "@typescript-eslint/eslint-plugin": "npm:^8.32.1"
-    "@vitest/ui": "npm:^3.2.4"
-    concurrently: "npm:^9.1.2"
-    jsdom: "npm:^26.1.0"
-    node-fetch: "npm:^3.3.2"
-    postcss-html: "npm:^1.8.0"
-    stylelint: "npm:^16.19.1"
-    stylelint-config-html: "npm:^1.1.0"
-    stylelint-config-recommended-vue: "npm:^1.6.0"
-    stylelint-config-standard: "npm:^38.0.0"
-    vitest: "npm:^3.2.4"
-    wireit: "npm:^0.14.12"
-  languageName: unknown
-  linkType: soft
 
 "table@npm:^6.9.0":
   version: 6.9.0

@@ -68,14 +68,14 @@ describe('upgradeQuota', () => {
 
 describe('getMe', () => {
   it('returns user, keys and quota aggregated', async () => {
-    mockUserRepo.findById.mockResolvedValue({ id: 'me' });
+    mockUserRepo.findById.mockResolvedValue({ id: 'me', apiKeys: [] });
     mockUserRepo.getMyKeys.mockResolvedValue([{ id: 'key' }]);
     mockUserRepo.getMyQuota.mockResolvedValue({ used: 5, total: 1 });
 
     const me = await userService.getMe('me');
 
     expect(me).toEqual({
-      user: { id: 'me' },
+      user: { id: 'me', lastUsedIp: null },
       // keys: [{ id: 'key' }],
       quota: { used: 5, total: 1 },
     });

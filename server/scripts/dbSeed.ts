@@ -8,6 +8,7 @@ config();
 
 async function seedDevApiKey(): Promise<void> {
   const DEV_USER_EMAIL = 'dev-cli@system.local';
+  const DEFAULT_AVATAR_URL = 'https://ui-avatars.com/api/?name=Dev&background=random';
   let devUser = await usersRepo.findByProvider({
     provider: 'guest',
     providerId: DEV_USER_EMAIL,
@@ -18,7 +19,7 @@ async function seedDevApiKey(): Promise<void> {
       email: DEV_USER_EMAIL,
       provider: 'guest',
       providerId: DEV_USER_EMAIL,
-      avatarUrl: 'https://ui-avatars.com/api/?name=Dev&background=random',
+      avatarUrl: DEFAULT_AVATAR_URL,
     });
     devUser = newUserResult[0];
     console.log(`✅ System user created successfully (ID: ${devUser.id})`);

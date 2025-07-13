@@ -61,7 +61,7 @@ jobs:
         run: |
           yarn db:push
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL_STAG_MIG }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL_STAG }}
           NODE_ENV: preview
 
   deploy:

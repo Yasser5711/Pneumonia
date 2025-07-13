@@ -28,11 +28,8 @@ services:
     working_dir: /app/server
     ports:
       - "3000:3000"
-    env_file:
-      - .env
+    env_file: .env
     environment:
-      # FIX: This now correctly overrides the DATABASE_URL from the .env file
-      # to use the Docker service name 'db' instead of 'localhost'.
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
       - NODE_ENV=development
     volumes:
@@ -47,8 +44,7 @@ services:
   db:
     image: postgres:13
     container_name: db
-    env_file:
-      - .env
+    env_file: .env
     volumes:
       - db_data:/var/lib/postgresql/data
     profiles:
@@ -73,6 +69,8 @@ services:
       - pgadmin_data:/var/lib/pgadmin
     ports:
       - "8003:80"
+    links:
+      - db
     depends_on:
       db:
         condition: service_healthy

@@ -258,7 +258,7 @@ async function main() {
 
   await fastify.listen({ port: 3000, host: '0.0.0.0' });
   // eslint-disable-next-line no-console
-  console.log('✅ Fastify + tRPC server running on http://localhost:3000');
+  console.log(`✅ Fastify + tRPC server running on ${env.BASE_URL || 'http://localhost:3000'}`);
   // eslint-disable-next-line no-console
   console.log(`🧩 tRPC router keys: ${Object.keys(appRouter._def.procedures).join(', ')}`);
 }

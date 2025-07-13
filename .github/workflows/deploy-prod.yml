@@ -82,7 +82,7 @@ jobs:
         run: |
           yarn db:push
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL_PROD_MIG }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL_PROD }}
           NODE_ENV: preview
   deploy-server:
     name: 🚀 Deploy Backend to Render (Production)

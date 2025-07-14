@@ -1,0 +1,4 @@
+tls:
+  certificates:
+    - certFile: /certs/pneumonia.localhost.crt
+      keyFile: /certs/pneumonia.localhost-key.crt

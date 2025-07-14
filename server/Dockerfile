@@ -9,7 +9,7 @@ RUN yarn install --immutable
 
 FROM node:20-slim AS release
 WORKDIR /app
-ENV NODE_ENV=production
+#ENV NODE_ENV=production
 RUN corepack enable
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/.yarn ./.yarn

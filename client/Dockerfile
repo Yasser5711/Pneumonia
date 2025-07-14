@@ -5,7 +5,7 @@ COPY package.json yarn.lock .yarnrc.yml ./
 COPY .yarn ./.yarn
 COPY client/package.json ./client/
 COPY server/package.json ./server/
-RUN yarn install --immutable
+RUN yarn install --immutable 
 
 
 FROM node:20-slim AS builder
@@ -22,7 +22,7 @@ RUN yarn workspace client build
 
 FROM node:20-slim AS release
 WORKDIR /app
-ENV NODE_ENV=production
+# ENV NODE_ENV=production
 
 RUN corepack enable
 
@@ -32,7 +32,8 @@ COPY --from=builder /app/.yarnrc.yml ./
 COPY --from=builder /app/package.json ./
 COPY --from=builder /app/yarn.lock ./
 COPY --from=builder /app/client ./client
+COPY . .
 
 WORKDIR /app/client
 EXPOSE 4000
-CMD ["yarn", "preview", "--host", "0.0.0.0", "--port", "4000"]
+CMD ["yarn", "client:dev"]

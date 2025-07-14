@@ -151,13 +151,11 @@ jobs:
         run: yarn install
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL_PROD }}
-          VITE_API_KEY: ${{ secrets.VITE_API_KEY_PROD }}
 
       - name: 🛠️ Build Client
         run: yarn build
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL_PROD }}
-          VITE_API_KEY: ${{ secrets.VITE_API_KEY_PROD }}
 
       - name: 🚀 Deploy to Netlify
         uses: nwtgck/actions-netlify@v3.0

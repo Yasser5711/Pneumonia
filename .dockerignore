@@ -1,15 +1,22 @@
-# Ignore common clutter
-node_modules
+# .dockerignore
+
+# Git and node
+.git
 .yarn/cache
-*.log
+.yarn/install-state
+node_modules
 
-# Ignore builds
+# Build artifacts
 dist
-build
+.svelte-kit
 
-# Ignore Docker config (won’t be needed inside)
-docker
+# IDE and OS files
+.vscode
+.idea
+*.DS_Store
 
-# Optional: ignore env/local config files
+# Logs and environment files
+*.log
 .env
-*.local.*
+.env.*
+!/.env.example

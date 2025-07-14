@@ -27,6 +27,8 @@ const lastLogin = computed(() =>
     ? useDateFormat(user.value.lastLogin, 'YYYY-MM-DD HH:mm').value
     : '—',
 )
+const lastUsedIp = computed(() => user.value?.lastUsedIp || '—')
+
 useHead({
   title: () => (isProfileOpen.value ? 'Mon Profil' : undefined),
 })
@@ -88,6 +90,7 @@ useHead({
           />
           <v-list-item title="Created" :subtitle="createdAt" />
           <v-list-item title="Last login" :subtitle="lastLogin" />
+          <v-list-item title="Last Used IP" :subtitle="lastUsedIp" />
         </v-list>
 
         <template v-if="user.quota">

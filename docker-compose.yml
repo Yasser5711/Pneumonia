@@ -1,8 +1,143 @@
-include:
-  - path: "docker/db/compose.yml"
-  # - path: "docker/tools/compose.yml"
-  - path: "docker/server/compose.yml"
-  - path: "docker/client/compose.yml"
+services:
+  # mkcert:
+  #   build: ./docker/tools/mkcert
+
+  #   container_name: mkcert
+  #   environment:
+  #     - CAROOT=/certs
+  #   working_dir: /certs
+  #   command:
+  #     - "-cert-file"
+  #     - "pneumonia.localhost.crt"
+  #     - "-key-file"
+  #     - "pneumonia.localhost-key.crt"
+  #     - "pneumonia.localhost"
+  #   volumes:
+  #     - ./docker/tools/traefik/certs:/certs
+
+  # traefik:
+  #   image: "traefik:v3.1"
+  #   container_name: traefik
+  #   depends_on:
+  #     - mkcert
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #     - "8080:8080"
+  #   volumes:
+  #     - "/var/run/docker.sock:/var/run/docker.sock:ro"
+  #     - ./docker/tools/traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+  #     - ./docker/tools/traefik/config:/etc/traefik/config:ro
+  #     - ./docker/tools/traefik/certs:/certs:ro
+  #   networks:
+  #     - app_network
+  client:
+    container_name: client
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+    working_dir: /app/client
+    ports:
+      - "4000:4000"
+    volumes:
+      # - ./client:/app/client
+      - /app/client/node_modules
+    env_file:
+      - .env
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    profiles:
+      - front
+    networks:
+      - app_network
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.client.rule=Host(`pneumonia.localhost`)"
+    #   - "traefik.http.routers.client.entrypoints=websecure"
+    #   - "traefik.http.routers.client.tls=true"
+    #   - "traefik.http.services.client.loadbalancer.server.port=4000"
+
+  server:
+    container_name: fastify-server
+    depends_on:
+      db:
+        condition: service_healthy
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    working_dir: /app/server
+    ports:
+      - "3000:3000"
+    env_file: .env
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    volumes:
+      - ./server:/app/server
+      - /app/server/node_modules
+    restart: always
+    networks:
+      - app_network
+    profiles:
+      - back
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.server.rule=Host(`pneumonia.localhost`) && PathPrefix(`/api`)"
+    #   - "traefik.http.routers.server.entrypoints=websecure"
+    #   - "traefik.http.routers.server.tls=true"
+    #   - "traefik.http.services.server.loadbalancer.server.port=3000"
+
+  db:
+    image: postgres:13
+    container_name: db
+    env_file: .env
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    profiles:
+      - back
+    networks:
+      - app_network
+    healthcheck:
+      test:
+        ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    build:
+      context: ./docker/tools/pgadmin
+      dockerfile: Dockerfile
+    container_name: pgadmin
+    env_file:
+      - .env
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    ports:
+      - "8003:80"
+    links:
+      - db
+    depends_on:
+      db:
+        condition: service_healthy
+    profiles:
+      - back
+    networks:
+      - app_network
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./docker/tools/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - server
+      - client
+    networks:
+      - app_network
+
 volumes:
   db_data:
   pgadmin_data:

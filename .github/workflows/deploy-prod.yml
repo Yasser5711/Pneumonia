@@ -82,7 +82,7 @@ jobs:
         run: |
           yarn db:push
         env:
-          DATABASE_URL: ${{ secrets.DATABASE_URL_PROD_MIG }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL_PROD }}
           NODE_ENV: preview
   deploy-server:
     name: 🚀 Deploy Backend to Render (Production)
@@ -151,13 +151,11 @@ jobs:
         run: yarn install
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL_PROD }}
-          VITE_API_KEY: ${{ secrets.VITE_API_KEY_PROD }}
 
       - name: 🛠️ Build Client
         run: yarn build
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL_PROD }}
-          VITE_API_KEY: ${{ secrets.VITE_API_KEY_PROD }}
 
       - name: 🚀 Deploy to Netlify
         uses: nwtgck/actions-netlify@v3.0

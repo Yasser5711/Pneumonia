@@ -5,7 +5,7 @@
       "Group": "Servers",
       "Host": "db",
       "Port": 5432,
-      "Username": "${DATABASE_USER}",
+      "Username": "${POSTGRES_USER}",
       "SSLMode": "prefer",
       "UseSSHTunnel": 0,
       "TunnelPort": "22",

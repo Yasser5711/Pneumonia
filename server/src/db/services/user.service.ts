@@ -35,8 +35,10 @@ export const createUserService = (repo: Repositories['usersRepo']) => ({
   },
 
   getMe: async (userId: string) => {
+    const { apiKeys, ...data } = await repo.findById(userId);
+    const user = { ...data, lastUsedIp: apiKeys[0]?.lastUsedIp ?? null };
     return {
-      user: await repo.findById(userId),
+      user,
       // keys: await repo.getMyKeys(userId),
       quota: await repo.getMyQuota(userId),
     };

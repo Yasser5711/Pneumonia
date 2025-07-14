@@ -7,7 +7,18 @@ type UserInsert = InferInsertModel<typeof usersTable>;
 /* istanbul ignore next */
 export const createUsersRepo = (db: any = DB) => ({
   findById: async (id: string) => {
-    return await db.query.usersTable.findFirst({ where: eq(usersTable.id, id) });
+    return await db.query.usersTable.findFirst({
+      where: eq(usersTable.id, id),
+      with: {
+        apiKeys: {
+          where: eq(apiKeysTable.active, true),
+          limit: 1,
+          columns: {
+            lastUsedIp: true,
+          },
+        },
+      },
+    });
   },
   findByProvider: async ({
     provider,

@@ -1,5 +1,5 @@
 {
-  "name": "t_dev_800",
+  "name": "pneumoniacnn",
   "private": true,
   "packageManager": "yarn@4.3.1",
   "type": "module",

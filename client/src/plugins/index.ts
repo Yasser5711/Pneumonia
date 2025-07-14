@@ -10,6 +10,7 @@ import type { App } from 'vue'
 import { createAppRouter } from '../router'
 import pinia from '../stores'
 
+// import { authClient } from './auth'
 import motion from './motion'
 import { installTanstack } from './tanstack'
 import { createTRPCPlugin } from './trpc'
@@ -27,5 +28,6 @@ export function registerPlugins(app: App) {
     .use(createAppRouter())
     .use(motion)
     .use(createTRPCPlugin({ url: `${import.meta.env.VITE_API_URL}/trpc` }))
+    // .use(authClient)
     .use(head)
 }

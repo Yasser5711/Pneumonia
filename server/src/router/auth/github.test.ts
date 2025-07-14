@@ -3,6 +3,7 @@ import { mockDeep } from 'vitest-mock-extended';
 
 import { createTestCaller } from '../../../test/caller';
 import { mockServices } from '../../../test/services';
+import { env } from '../../env';
 
 import type { FastifyInstance } from 'fastify';
 vi.stubGlobal('fetch', vi.fn());
@@ -23,6 +24,7 @@ function mockFetchOnce(json: any, status = 200) {
 }
 beforeEach(() => {
   vi.clearAllMocks();
+  env.ENABLE_LOCAL_AUTH = true;
 });
 describe('githubRouter.githubStart', () => {
   it('returns a redirect URL for GitHub OAuth', async () => {
@@ -36,6 +38,13 @@ describe('githubRouter.githubStart', () => {
     const result = await caller.auth.github.githubStart({});
 
     expect(result).toEqual({ redirectUrl });
+  });
+  it('throws if GitHub auth is disabled', async () => {
+    env.ENABLE_LOCAL_AUTH = false;
+    const caller = createTestCaller({});
+    await expect(caller.auth.github.githubStart({})).rejects.toThrow(
+      'GitHub authentication is currently disabled.',
+    );
   });
 });
 
@@ -104,6 +113,13 @@ describe('githubRouter.callback', () => {
     const caller = createTestCaller({});
     await expect(caller.auth.github.githubCallback({ code: 'bad', state: 'bad' })).rejects.toThrow(
       /GitHub request failed/,
+    );
+  });
+  it('throws if GitHub auth is disabled', async () => {
+    env.ENABLE_LOCAL_AUTH = false;
+    const caller = createTestCaller({});
+    await expect(caller.auth.github.githubCallback({ code: '123', state: 'xyz' })).rejects.toThrow(
+      'GitHub authentication is currently disabled.',
     );
   });
 });

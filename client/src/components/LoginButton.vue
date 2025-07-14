@@ -1,54 +1,40 @@
 <script setup lang="ts">
 import { useGoogleStart, useGithubStart } from '@/queries/useAuth'
 
-const {
-  isPending: isGooglePending,
-  isError: isGoogleError,
-  error: googleError,
-  mutate: googleStart,
-  data: googleData,
-} = useGoogleStart()
+import { authClient } from '../lib/auth'
 
-const {
-  isPending: isGithubPending,
-  isError: isGithubError,
-  error: githubError,
-  mutate: githubStart,
-  data: githubData,
-} = useGithubStart()
+const { signIn, signUp } = authClient
+const email = ref('')
+const password = ref('')
+const name = ref('')
 
-const currentProvider = ref<'google' | 'github' | null>(null)
+const isLoading = ref(false)
+const errorMessage = ref('')
 
-const loginWithGoogle = () => {
-  currentProvider.value = 'google'
-  googleStart()
+const handleSignIn = async (provider: 'google' | 'github' | 'email') => {
+  isLoading.value = true
+  errorMessage.value = ''
+  try {
+    if (provider === 'email') {
+      await signUp.email({
+        email: email.value,
+        password: password.value,
+        name: name.value,
+      })
+      // Sign-in successful, the useAuth composable will update the session
+      // and you can redirect or update UI elsewhere.
+    } else {
+      // This will handle the redirect automatically.
+      await signIn.social({ provider })
+    }
+  } catch (err) {
+    if (err instanceof Error) {
+      errorMessage.value = err.message || 'An unknown error occurred.'
+    }
+  } finally {
+    isLoading.value = false
+  }
 }
-const loginWithGithub = () => {
-  currentProvider.value = 'github'
-  githubStart()
-}
-
-watch([googleData, githubData], ([g, gh]) => {
-  const url = g?.redirectUrl ?? gh?.redirectUrl
-  if (url) window.location.href = url
-})
-const isSubmitting = computed(
-  () => isGooglePending.value || isGithubPending.value,
-)
-const googleLoading = computed(
-  () => isGooglePending.value && currentProvider.value === 'google',
-)
-const githubLoading = computed(
-  () => isGithubPending.value && currentProvider.value === 'github',
-)
-
-const errorMessage = computed(() => {
-  if (isGoogleError.value)
-    return googleError.value?.message ?? 'Google sign-in failed'
-  if (isGithubError.value)
-    return githubError.value?.message ?? 'GitHub sign-in failed'
-  return ''
-})
 </script>
 
 <template>
@@ -59,7 +45,7 @@ const errorMessage = computed(() => {
       elevation="10"
       rounded="lg"
     >
-      <v-card-title class="text-h5 pb-4">Sign in</v-card-title>
+      <v-card-title class="text-h5 pb-4">Sign Up or Sign In</v-card-title>
 
       <v-alert
         v-if="errorMessage"
@@ -70,15 +56,53 @@ const errorMessage = computed(() => {
         dismissible
       />
 
+      <v-text-field
+        v-model="email"
+        label="Email"
+        type="email"
+        variant="outlined"
+        class="mb-3"
+        :rules="[(v) => !!v || 'Email is required']"
+        :disabled="isLoading"
+      />
+      <v-text-field
+        v-model="password"
+        label="Password"
+        type="password"
+        variant="outlined"
+        class="mb-3"
+        :rules="[(v) => !!v || 'Password is required']"
+        :disabled="isLoading"
+      />
+      <v-text-field
+        v-model="name"
+        label="Name"
+        variant="outlined"
+        class="mb-3"
+        :rules="[(v) => !!v || 'Name is required']"
+        :disabled="isLoading"
+      />
+
       <v-btn
         block
         size="large"
         elevation="2"
-        :loading="googleLoading"
-        :disabled="isSubmitting"
-        class="text-body-1 font-weight-medium mb-3"
+        :loading="isLoading"
+        :disabled="isLoading"
+        @click="handleSignIn('email')"
+      >
+        Continue with Email
+      </v-btn>
+
+      <v-btn
+        block
+        size="large"
+        elevation="2"
+        :loading="isLoading"
+        :disabled="isLoading"
         style="background: #4285f4; color: #fff"
-        @click="loginWithGoogle"
+        class="my-3"
+        @click="handleSignIn('google')"
       >
         <template #prepend><v-icon size="22">mdi-google</v-icon></template>
         Continue with Google
@@ -90,22 +114,13 @@ const errorMessage = computed(() => {
         elevation="2"
         variant="outlined"
         color="black"
-        :loading="githubLoading"
-        :disabled="isSubmitting"
-        class="text-body-1 font-weight-medium"
-        @click="loginWithGithub"
+        :loading="isLoading"
+        :disabled="isLoading"
+        @click="handleSignIn('github')"
       >
         <template #prepend><v-icon size="22">mdi-github</v-icon></template>
         Continue with GitHub
       </v-btn>
-
-      <v-progress-linear
-        v-if="isSubmitting"
-        indeterminate
-        color="primary"
-        absolute
-        bottom
-      />
     </v-card>
   </div>
 </template>

@@ -3,9 +3,12 @@ import { pgEnum, pgTable, uniqueIndex } from 'drizzle-orm/pg-core';
 
 import { apiKeysTable } from './apiKeys';
 export const providerEnum = pgEnum('provider', ['github', 'google', 'guest']);
-
+/**
+ * @deprecated This table is deprecated and will be removed in the future.
+ * Use the `users` table instead.
+ */
 export const usersTable = pgTable(
-  'users',
+  'users_deprecated',
   (t) => ({
     id: t.uuid('id').defaultRandom().primaryKey(),
     email: t.text('email').unique(),

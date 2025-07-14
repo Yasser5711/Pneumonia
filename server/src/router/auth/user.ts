@@ -1,5 +1,7 @@
+import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
+import { env } from '../../env';
 import { protectedUserProcedure, router } from '../../middlewares';
 import { clearSession } from '../../utils/session';
 export const userRouter = router({
@@ -39,6 +41,12 @@ export const userRouter = router({
       }),
     )
     .mutation(({ ctx }) => {
+      if (!env.ENABLE_LOCAL_AUTH) {
+        throw new TRPCError({
+          code: 'NOT_IMPLEMENTED',
+          message: 'Router is currently disabled.',
+        });
+      }
       clearSession(ctx.res);
       return { success: true };
     }),

@@ -1,5 +1,6 @@
+DROP TYPE IF EXISTS "public"."provider";--> statement-breakpoint
 CREATE TYPE "public"."provider" AS ENUM('github', 'google', 'guest');--> statement-breakpoint
-CREATE TABLE "api_keys" (
+CREATE TABLE IF NOT EXISTS "api_keys" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"hashed_key" text NOT NULL,
 	"key_prefix" varchar(12) NOT NULL,
@@ -19,7 +20,7 @@ CREATE TABLE "api_keys" (
 	CONSTRAINT "api_keys_key_prefix_unique" UNIQUE("key_prefix")
 );
 --> statement-breakpoint
-CREATE TABLE "users" (
+CREATE TABLE IF NOT EXISTS "users" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"email" text,
 	"provider" "provider" NOT NULL,

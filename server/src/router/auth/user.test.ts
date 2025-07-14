@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createTestCaller } from '../../../test/caller';
 import { mockServices } from '../../../test/services';
-
+import { env } from '../../env';
 vi.mock('../../utils/session', () => {
   const clearSession = vi.fn();
   return {
@@ -14,7 +14,7 @@ vi.mock('../../utils/session', () => {
 
 beforeEach(() => {
   vi.clearAllMocks();
-
+  env.ENABLE_LOCAL_AUTH = true;
   mockServices.userService.findById.mockResolvedValue({
     id: 'u-42',
     email: 'john@example.com',
@@ -41,6 +41,11 @@ describe('userRouter', () => {
     const result = await caller.auth.user.logout({});
 
     expect(result).toEqual({ success: true });
+  });
+  it('logout → throws if local auth is disabled', async () => {
+    env.ENABLE_LOCAL_AUTH = false;
+    const caller = createTestCaller({});
+    await expect(caller.auth.user.logout({})).rejects.toThrow('Router is currently disabled.');
   });
 
   it('generateMyKey → creates a key for the current user', async () => {

@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-import { protectedProcedureAPI } from '../middlewares/index';
+import { protectedProcedure } from '../middlewares/index';
 
-export const helloWorldRouter = protectedProcedureAPI
+export const helloWorldRouter = protectedProcedure
   .meta({
     openapi: {
       method: 'GET',
@@ -22,8 +22,9 @@ export const helloWorldRouter = protectedProcedureAPI
       message: z.string(),
     }),
   )
-  .query(({ input }) => {
+  .query(({ input, ctx }) => {
     const { name } = input;
+    console.log(`Hello World request received with name: ${ctx}`);
     return {
       message: `Hello, ${name || 'Guest'}!`,
     };

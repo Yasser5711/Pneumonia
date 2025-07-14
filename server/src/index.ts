@@ -16,6 +16,8 @@ import { env } from './env';
 import { setLogger } from './logger';
 import { appRouter } from './router/_app';
 import { createContext, type CreateContextOptions } from './trpc';
+import { auth } from './utils/auth';
+import { fastifyAdapter } from './utils/fastify-adapter';
 const isDev = env.NODE_ENV === 'development';
 const frontendUrl = new URL(env.FRONTEND_ORIGIN!);
 const hostnameParts = frontendUrl.hostname.split('.');
@@ -50,6 +52,15 @@ async function main() {
             },
           }
         : true,
+  });
+  fastify.route({
+    method: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
+    url: '/api/auth/*',
+    handler: async (req, reply) => {
+      const standardRequest = fastifyAdapter.toStandardRequest(req);
+      const standardResponse = await auth.handler(standardRequest);
+      await fastifyAdapter.sendStandardResponse(reply, standardResponse);
+    },
   });
   await fastify.register(cookie, {
     secret: env.SESSION_SECRET ?? 'secret',

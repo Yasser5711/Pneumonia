@@ -1,5 +1,7 @@
+import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
+import { env } from '../../env';
 import { publicProcedure, router } from '../../middlewares';
 import { setSession } from '../../utils/session';
 
@@ -29,6 +31,12 @@ export const googleRouter = router({
     .input(z.object({}))
     .output(z.object({ redirectUrl: z.string() }))
     .mutation(async ({ ctx }) => {
+      if (!env.ENABLE_LOCAL_AUTH) {
+        throw new TRPCError({
+          code: 'NOT_IMPLEMENTED',
+          message: 'Google authentication is currently disabled.',
+        });
+      }
       const redirectUrl = await ctx.fastify.googleOauth.generateAuthorizationUri(ctx.req, ctx.res);
       return { redirectUrl };
     }),
@@ -44,6 +52,12 @@ export const googleRouter = router({
     .input(z.object({ code: z.string(), state: z.string() }))
     .output(z.object({ apiKey: z.string() }))
     .mutation(async ({ ctx, input }) => {
+      if (!env.ENABLE_LOCAL_AUTH) {
+        throw new TRPCError({
+          code: 'NOT_IMPLEMENTED',
+          message: 'Google authentication is currently disabled.',
+        });
+      }
       ctx.req.query = input;
       const token = await ctx.fastify.googleOauth.getAccessTokenFromAuthorizationCodeFlow(ctx.req);
       const profile = await fetchGoogleProfile(token.token.access_token);

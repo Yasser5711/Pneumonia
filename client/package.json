@@ -44,6 +44,7 @@
     "@unhead/vue": "^2.0.10",
     "@vueuse/core": "^13.2.0",
     "@vueuse/motion": "^3.0.3",
+    "better-auth": "^1.2.12",
     "core-js": "^3.42.0",
     "lucide-vue-next": "^0.511.0",
     "pinia": "^3.0.2",

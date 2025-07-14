@@ -17,6 +17,7 @@ beforeAll(() => {
       GOOGLE_CLIENT_ID: 'test_google_client_id',
       GOOGLE_CLIENT_SECRET: 'test_google_client_secret',
       SESSION_SECRET: 'test_session_secret',
+      ENABLE_LOCAL_AUTH: true,
     },
   }));
 });

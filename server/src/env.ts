@@ -16,6 +16,7 @@ const envSchema = z.object({
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
   SESSION_SECRET: z.string(),
+  ENABLE_LOCAL_AUTH: z.boolean().default(false),
 });
 
 const parsed = envSchema.safeParse(process.env);

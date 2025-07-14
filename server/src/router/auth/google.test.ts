@@ -3,6 +3,7 @@ import { mockDeep } from 'vitest-mock-extended';
 
 import { createTestCaller } from '../../../test/caller';
 import { mockServices } from '../../../test/services';
+import { env } from '../../env';
 
 import type { FastifyInstance } from 'fastify';
 vi.stubGlobal('fetch', vi.fn());
@@ -23,6 +24,7 @@ function mockFetchOnce(json: any, status = 200) {
 }
 beforeEach(() => {
   vi.clearAllMocks();
+  env.ENABLE_LOCAL_AUTH = true;
 });
 describe('googleRouter.googleStart', () => {
   it('returns a redirect URL for Google OAuth', async () => {
@@ -36,6 +38,13 @@ describe('googleRouter.googleStart', () => {
     const result = await caller.auth.google.googleStart({});
 
     expect(result).toEqual({ redirectUrl });
+  });
+  it('throws if Google auth is disabled', async () => {
+    env.ENABLE_LOCAL_AUTH = false;
+    const caller = createTestCaller({});
+    await expect(caller.auth.google.googleStart({})).rejects.toThrow(
+      'Google authentication is currently disabled.',
+    );
   });
 });
 
@@ -75,6 +84,13 @@ describe('googleRouter.googleCallback', () => {
     const caller = createTestCaller({ fastify: fastifyMock });
     await expect(caller.auth.google.googleCallback({ code: 'bad', state: 'bad' })).rejects.toThrow(
       /Google request failed/,
+    );
+  });
+  it('throws if Google auth is disabled', async () => {
+    env.ENABLE_LOCAL_AUTH = false;
+    const caller = createTestCaller({});
+    await expect(caller.auth.google.googleCallback({ code: '123', state: 'xyz' })).rejects.toThrow(
+      'Google authentication is currently disabled.',
     );
   });
 });

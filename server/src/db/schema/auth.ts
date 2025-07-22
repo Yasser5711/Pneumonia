@@ -1,4 +1,4 @@
-import { sql } from 'drizzle-orm';
+import { sql, relations } from 'drizzle-orm';
 import { pgTable, index } from 'drizzle-orm/pg-core';
 export const users = pgTable(
   'users',
@@ -14,15 +14,15 @@ export const users = pgTable(
       .notNull(),
     image: t
       .text('image')
-      .$defaultFn(() => `https://ui-avatars.com/api/?name=${sql`name`}&background=random`),
+      .$defaultFn(
+        () =>
+          `https://ui-avatars.com/api/?name=${sql`concat(firstName, "+", lastName)`}&background=random`,
+      ),
     createdAt: t
       .timestamp('created_at')
       .$defaultFn(() => /* @__PURE__ */ new Date())
       .notNull(),
-    updatedAt: t
-      .timestamp('updated_at')
-      .$defaultFn(() => /* @__PURE__ */ new Date())
-      .notNull(),
+    updatedAt: t.timestamp('updated_at').$onUpdateFn(() => new Date()),
   }),
   (table) => [index('email_idx').on(table.email)],
 );
@@ -34,7 +34,7 @@ export const sessions = pgTable(
     expiresAt: t.timestamp('expires_at').notNull(),
     token: t.text('token').notNull().unique(),
     createdAt: t.timestamp('created_at').notNull(),
-    updatedAt: t.timestamp('updated_at').notNull(),
+    updatedAt: t.timestamp('updated_at').$onUpdateFn(() => new Date()),
     ipAddress: t.text('ip_address'),
     userAgent: t.text('user_agent'),
     userId: t
@@ -63,7 +63,7 @@ export const accounts = pgTable(
     scope: t.text('scope'),
     password: t.text('password'),
     createdAt: t.timestamp('created_at').notNull(),
-    updatedAt: t.timestamp('updated_at').notNull(),
+    updatedAt: t.timestamp('updated_at').$onUpdateFn(() => new Date()),
   }),
   (table) => [index('account_user_id_idx').on(table.userId)],
 );
@@ -76,7 +76,55 @@ export const verifications = pgTable(
     value: t.text('value').notNull(),
     expiresAt: t.timestamp('expires_at').notNull(),
     createdAt: t.timestamp('created_at').$defaultFn(() => /* @__PURE__ */ new Date()),
-    updatedAt: t.timestamp('updated_at').$defaultFn(() => /* @__PURE__ */ new Date()),
+    updatedAt: t.timestamp('updated_at').$onUpdateFn(() => new Date()),
   }),
   (table) => [index('verification_identifier_idx').on(table.identifier)],
 );
+export const apiKeys = pgTable('api_keys', (t) => ({
+  id: t.uuid('id').defaultRandom().primaryKey(),
+  name: t.text('name'),
+  start: t.text('start'),
+  prefix: t.text('prefix'),
+  key: t.text('key').notNull(),
+  userId: t
+    .uuid('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  refillInterval: t.integer('refill_interval'),
+  refillAmount: t.integer('refill_amount'),
+  lastRefillAt: t.timestamp('last_refill_at'),
+  enabled: t.boolean('enabled').default(true),
+  rateLimitEnabled: t.boolean('rate_limit_enabled').default(true),
+  rateLimitTimeWindow: t.integer('rate_limit_time_window').default(86400000),
+  rateLimitMax: t.integer('rate_limit_max').default(10),
+  requestCount: t.integer('request_count'),
+  remaining: t.integer('remaining'),
+  lastRequest: t.timestamp('last_request'),
+  expiresAt: t.timestamp('expires_at'),
+  createdAt: t.timestamp('created_at').notNull(),
+  updatedAt: t.timestamp('updated_at').$onUpdateFn(() => new Date()),
+  permissions: t.text('permissions'),
+  metadata: t.text('metadata'),
+}));
+export const usersRelations = relations(users, ({ many }) => ({
+  accounts: many(accounts),
+  sessions: many(sessions),
+}));
+export const sessionsRelations = relations(sessions, ({ one }) => ({
+  user: one(users, {
+    fields: [sessions.userId],
+    references: [users.id],
+  }),
+}));
+export const accountsRelations = relations(accounts, ({ one }) => ({
+  user: one(users, {
+    fields: [accounts.userId],
+    references: [users.id],
+  }),
+}));
+export const apiKeysRelations = relations(apiKeys, ({ one }) => ({
+  user: one(users, {
+    fields: [apiKeys.userId],
+    references: [users.id],
+  }),
+}));

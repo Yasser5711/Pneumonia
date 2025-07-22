@@ -8,6 +8,9 @@ import { apiKeysTable } from '../schema';
 
 // type DrizzlePgDatabase = PostgresJsDatabase<typeof schema> | PgliteDatabase<typeof schema>;
 type ApiKeyInsert = InferInsertModel<typeof apiKeysTable>;
+/**
+ * @deprecated
+ */
 export const createApiKeysRepo = (db: any = DB) => ({
   create: async (
     data: Pick<ApiKeyInsert, 'userId' | 'name' | 'hashedKey' | 'keyPrefix'> &

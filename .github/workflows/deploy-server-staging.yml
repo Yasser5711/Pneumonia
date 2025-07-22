@@ -59,7 +59,7 @@ jobs:
       - name: 🧬 Run DB Migrations
         working-directory: server
         run: |
-          yarn db:push
+          yarn drizzle-kit migrate
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL_STAG }}
           NODE_ENV: preview

@@ -1,5 +1,6 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { apiKey } from 'better-auth/plugins';
 
 import { db, schemas } from '../db';
 import { env } from '../env';
@@ -56,5 +57,6 @@ export const auth = betterAuth({
       sameSite: 'lax',
     },
   },
+  plugins: [apiKey()],
   // logger: logger,
 });

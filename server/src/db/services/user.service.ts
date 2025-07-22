@@ -1,5 +1,7 @@
 import type { Repositories } from '../repositories/index';
-
+/**
+ * @deprecated
+ */
 export const createUserService = (repo: Repositories['usersRepo']) => ({
   findById: async (id: string) => {
     return await repo.findById(id);

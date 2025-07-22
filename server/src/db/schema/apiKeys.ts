@@ -2,8 +2,11 @@ import { relations } from 'drizzle-orm';
 import { pgTable, uniqueIndex } from 'drizzle-orm/pg-core';
 
 import { usersTable } from './users';
+/**
+ * @deprecated This table is deprecated and will be removed in the future.
+ */
 export const apiKeysTable = pgTable(
-  'api_keys',
+  'api_keys_deprecated',
   (t) => ({
     id: t.uuid('id').defaultRandom().primaryKey(),
     hashedKey: t.text('hashed_key').notNull().unique(), // hashed API key

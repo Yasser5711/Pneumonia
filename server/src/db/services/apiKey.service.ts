@@ -5,6 +5,9 @@ import { logger } from '../../logger';
 import { compareApiKey, hashApiKey } from '../../utils/hash';
 
 import type { Repositories } from '../repositories/index';
+/**
+ * @deprecated
+ */
 export const createApiKeyService = (apiKeysRepo: Repositories['apiKeysRepo']) => ({
   generateKey: async ({
     userId,

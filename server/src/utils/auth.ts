@@ -1,6 +1,6 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { apiKey } from 'better-auth/plugins';
+import { apiKey, customSession } from 'better-auth/plugins';
 
 import { db, schemas } from '../db';
 import { env } from '../env';
@@ -19,6 +19,12 @@ export const auth = betterAuth({
       lastName: { type: 'string', required: true },
       requestsQuota: { type: 'number', default: 10, input: false },
       requestsUsed: { type: 'number', default: 0, input: false },
+    },
+  },
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60,
     },
   },
   trustedOrigins: [env.FRONTEND_ORIGIN],
@@ -68,7 +74,13 @@ export const auth = betterAuth({
       sameSite: 'lax',
     },
   },
-  plugins: [apiKey()],
+  plugins: [
+    apiKey(),
+    // eslint-disable-next-line require-await
+    customSession(async ({ session }) => ({
+      isAuthenticated: !!session,
+    })),
+  ],
   // logger: logger,
 });
 export type auth = typeof auth;

@@ -9,7 +9,8 @@ import { setupLayouts } from 'virtual:generated-layouts'
 import { createRouter, createWebHistory } from 'vue-router/auto'
 import { routes } from 'vue-router/auto-routes'
 
-import { authClient } from '../lib/auth'
+// import { authClient } from '../lib/auth'
+import { useAuthStore } from '../stores/auth'
 
 import type { RouteLocationNormalized } from 'vue-router'
 export function createAppRouter(baseUrl: string = import.meta.env.BASE_URL) {
@@ -50,16 +51,31 @@ export function createAppRouter(baseUrl: string = import.meta.env.BASE_URL) {
     // return user.value ? true : { name: 'IndexPage' }
     const store = useStorageStore()
     const apiKey = store.getKeyFromLocalStorage('apiKey', '').value
-    try {
-      const { data } = await authClient.getSession()
-      if (!data?.user && to.meta.requiresAuth) {
-        return { name: 'IndexPage', query: { redirect: to.fullPath } }
-      }
-    } catch {
-      // 401 / réseau down / etc.
-      if (to.meta.requiresAuth) {
-        return { name: 'IndexPage', query: { redirect: to.fullPath } }
-      }
+    const auth = useAuthStore()
+    // try {
+    //   const { data, isPending } = authClient.useSession().value
+
+    //   if (!isPending && !data?.isAuthenticated && to.meta.requiresAuth) {
+    //     return { name: 'IndexPage', query: { redirect: to.fullPath } }
+    //   }
+    // } catch {
+    //   // 401 / réseau down / etc.
+    //   if (to.meta.requiresAuth) {
+    //     return { name: 'IndexPage', query: { redirect: to.fullPath } }
+    //   }
+    // }
+    if (auth.sessionRef.isPending) {
+      await new Promise((resolve) => {
+        const unwatch = watch(
+          () => auth.sessionRef.isPending,
+          (pending) => {
+            if (!pending) {
+              unwatch()
+              resolve(null)
+            }
+          },
+        )
+      })
     }
 
     if (to.meta.guestOnly && apiKey) {

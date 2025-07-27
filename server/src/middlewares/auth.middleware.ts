@@ -10,7 +10,7 @@ import {
 import { logger } from '../logger';
 import { realIp } from '../utils/functions';
 
-import { sessionMiddleware } from './session.middleware';
+import { sessionMiddleware, isAuthed } from './session.middleware';
 
 export const requireAuth = sessionMiddleware.unstable_pipe(async ({ ctx, next }) => {
   const key = ctx.apiKey?.trim();
@@ -47,3 +47,24 @@ export const requireAuth = sessionMiddleware.unstable_pipe(async ({ ctx, next })
   });
 });
 // curl -H "X-Forwarded-For: 8.8.8.8" https://api.example.com/ping to check
+
+export const requireApiKey = isAuthed.unstable_pipe(async ({ ctx, next }) => {
+  const key = ctx.apiKey?.trim();
+  if (!key) throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Missing API key' });
+
+  let record;
+  try {
+    record = await ctx.services.newApiKeyService.verifyKey(key);
+  } catch (err) {
+    logger().error({ err, key }, '🚫 Invalid API key attempt');
+    throw new TRPCError({
+      code: 'INTERNAL_SERVER_ERROR',
+      message: 'Invalid or expired API key',
+    });
+  }
+  logger().info({ key, ip: ctx.req.ip }, '✅ Valid API key');
+  await ctx.services.newUserService.updateQuota(record.userId);
+  return next({
+    ctx: { ...ctx, apiKeyRecord: record },
+  });
+});

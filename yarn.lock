@@ -11959,6 +11959,7 @@ __metadata:
     pino-pretty: "npm:^13.0.0"
     postgres: "npm:^3.4.7"
     prettier: "npm:^3.5.3"
+    superjson: "npm:^2.2.2"
     trpc-to-openapi: "npm:^2.3.2"
     trpc-ui: "npm:^1.0.15"
     ts-prune: "npm:^0.10.3"

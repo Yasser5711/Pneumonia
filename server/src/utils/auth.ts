@@ -11,12 +11,14 @@ export const auth = betterAuth({
     provider: 'pg',
     schema: schemas,
     usePlural: true,
-    debugLogs: env.NODE_ENV === 'development' || env.NODE_ENV === 'test',
+    debugLogs: true, // env.NODE_ENV === 'development' || env.NODE_ENV === 'test',
   }),
   user: {
     additionalFields: {
-      firstName: { type: 'string' },
-      lastName: { type: 'string' },
+      firstName: { type: 'string', required: true },
+      lastName: { type: 'string', required: true },
+      requestsQuota: { type: 'number', default: 10, input: false },
+      requestsUsed: { type: 'number', default: 0, input: false },
     },
   },
   trustedOrigins: [env.FRONTEND_ORIGIN],
@@ -32,15 +34,24 @@ export const auth = betterAuth({
     google: {
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
-      redirectURI: `${env.FRONTEND_ORIGIN}/google-callback`,
+      mapProfileToUser: (profile) => ({
+        firstName: profile.given_name, // Google provides this
+        lastName: profile.family_name, // Google provides this
+        // // Fallback for name if you want
+        // name: profile.name,
+      }),
+      // redirectURI: `${env.FRONTEND_ORIGIN}/chat`,
     },
   },
   advanced: {
+    database: {
+      generateId: false,
+    },
     ipAddress: {
       ipAddressHeaders: ['x-client-ip', 'x-forwarded-for'],
       disableIpTracking: false,
     },
-    useSecureCookies: true,
+    useSecureCookies: env.NODE_ENV === 'production',
     disableCSRFCheck: false,
     cookies: {
       session_token: {
@@ -60,3 +71,4 @@ export const auth = betterAuth({
   plugins: [apiKey()],
   // logger: logger,
 });
+export type auth = typeof auth;

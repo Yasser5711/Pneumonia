@@ -6,7 +6,8 @@ import { authClient } from '../lib/auth'
 const { signIn, signUp } = authClient
 const email = ref('')
 const password = ref('')
-const name = ref('')
+const firstName = ref('')
+const lastName = ref('')
 
 const isLoading = ref(false)
 const errorMessage = ref('')
@@ -19,13 +20,18 @@ const handleSignIn = async (provider: 'google' | 'github' | 'email') => {
       await signUp.email({
         email: email.value,
         password: password.value,
-        name: name.value,
+        firstName: firstName.value,
+        lastName: lastName.value,
+        name: `${firstName.value} ${lastName.value}`,
       })
       // Sign-in successful, the useAuth composable will update the session
       // and you can redirect or update UI elsewhere.
     } else {
       // This will handle the redirect automatically.
-      await signIn.social({ provider })
+      const FRONTEND_URL =
+        import.meta.env.VITE_FRONTEND_URL ?? // ← "http://localhost:4000" en dev
+        window.location.origin
+      await signIn.social({ provider, callbackURL: `${FRONTEND_URL}/chat` })
     }
   } catch (err) {
     if (err instanceof Error) {
@@ -75,11 +81,19 @@ const handleSignIn = async (provider: 'google' | 'github' | 'email') => {
         :disabled="isLoading"
       />
       <v-text-field
-        v-model="name"
-        label="Name"
+        v-model="firstName"
+        label="First Name"
         variant="outlined"
         class="mb-3"
-        :rules="[(v) => !!v || 'Name is required']"
+        :rules="[(v) => !!v || 'First Name is required']"
+        :disabled="isLoading"
+      />
+      <v-text-field
+        v-model="lastName"
+        label="Last Name"
+        variant="outlined"
+        class="mb-3"
+        :rules="[(v) => !!v || 'Last Name is required']"
         :disabled="isLoading"
       />
 

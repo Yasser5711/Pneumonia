@@ -15,3 +15,13 @@ export const sessionMiddleware = t.middleware(async ({ ctx, next }) => {
   await ctx.services.userService.updateLastSeen({ userId: user.id, lastSeen: new Date() });
   return next({ ctx: { ...ctx, user } });
 });
+
+export const isAuthed = t.middleware(({ ctx, next }) => {
+  if (!ctx.session) {
+    throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' });
+  }
+  const user = ctx.session.user;
+  return next({
+    ctx: { ...ctx, user },
+  });
+});

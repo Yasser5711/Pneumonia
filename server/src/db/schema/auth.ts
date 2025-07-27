@@ -18,6 +18,8 @@ export const users = pgTable(
         () =>
           `https://ui-avatars.com/api/?name=${sql`concat(firstName, "+", lastName)`}&background=random`,
       ),
+    requestsQuota: t.integer('requests_quota').notNull().default(10),
+    requestsUsed: t.integer('requests_used').notNull().default(0),
     createdAt: t
       .timestamp('created_at')
       .$defaultFn(() => /* @__PURE__ */ new Date())
@@ -109,6 +111,7 @@ export const apiKeys = pgTable('api_keys', (t) => ({
 export const usersRelations = relations(users, ({ many }) => ({
   accounts: many(accounts),
   sessions: many(sessions),
+  apiKeys: many(apiKeys),
 }));
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, {

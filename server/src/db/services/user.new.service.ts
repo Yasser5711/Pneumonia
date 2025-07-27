@@ -1,8 +1,8 @@
 import type { Repositories } from '../repositories/index';
 
 export const createNewUserService = (repo: Repositories['newUsersRepo']) => ({
-  findById: async (id: string, includeApiKeys: boolean = false) => {
-    return await repo.findById(id, includeApiKeys);
+  findById: async ({ id, includeApiKeys = false }: { id: string; includeApiKeys?: boolean }) => {
+    return await repo.findById({ id, includeApiKeys });
   },
 
   /**
@@ -10,7 +10,7 @@ export const createNewUserService = (repo: Repositories['newUsersRepo']) => ({
    * @param userId - The ID of the user to retrieve
    */
   getMe: async (userId: string) => {
-    const user = await repo.findById(userId, true);
+    const user = await repo.findById({ id: userId, includeApiKeys: true });
     if (!user) {
       throw new Error('User not found');
     }
@@ -19,8 +19,17 @@ export const createNewUserService = (repo: Repositories['newUsersRepo']) => ({
 
   updateProfile: async (
     userId: string,
-    updates: { firstName?: string; lastName?: string; image?: string },
+    updates: {
+      firstName?: string;
+      lastName?: string;
+      image?: string;
+      requestsQuota?: number;
+      requestsUsed?: number;
+    },
   ) => {
     return await repo.update({ id: userId, updates });
+  },
+  updateQuota: async (userId: string) => {
+    await repo.updateQuota(userId);
   },
 });

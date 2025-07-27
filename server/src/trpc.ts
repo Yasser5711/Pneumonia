@@ -1,4 +1,6 @@
 import { initTRPC } from '@trpc/server';
+import superjson from 'superjson';
+import { ZodError } from 'zod';
 
 import * as defaultServices from './db/services/index';
 import { auth } from './utils/auth';
@@ -41,4 +43,16 @@ export type Context = Awaited<ReturnType<typeof createContext>>;
 //   apiKeyRecord: Awaited<ReturnType<typeof defaultServices.apiKeyService.validateKey>>;
 // };
 
-export const t = initTRPC.meta<OpenApiMeta>().context<Context>().create();
+export const t = initTRPC
+  .meta<OpenApiMeta>()
+  .context<Context>()
+  .create({
+    transformer: superjson,
+    errorFormatter: ({ shape, error }) => ({
+      ...shape,
+      data: {
+        ...shape.data,
+        zodError: error.cause instanceof ZodError ? error.cause.flatten() : null,
+      },
+    }),
+  });

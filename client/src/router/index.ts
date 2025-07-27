@@ -9,6 +9,8 @@ import { setupLayouts } from 'virtual:generated-layouts'
 import { createRouter, createWebHistory } from 'vue-router/auto'
 import { routes } from 'vue-router/auto-routes'
 
+import { authClient } from '../lib/auth'
+
 import type { RouteLocationNormalized } from 'vue-router'
 export function createAppRouter(baseUrl: string = import.meta.env.BASE_URL) {
   const router = createRouter({
@@ -48,9 +50,16 @@ export function createAppRouter(baseUrl: string = import.meta.env.BASE_URL) {
     // return user.value ? true : { name: 'IndexPage' }
     const store = useStorageStore()
     const apiKey = store.getKeyFromLocalStorage('apiKey', '').value
-
-    if (to.meta.requiresAuth && !apiKey) {
-      return { name: 'IndexPage', query: { redirect: to.fullPath } }
+    try {
+      const { data } = await authClient.getSession()
+      if (!data?.user && to.meta.requiresAuth) {
+        return { name: 'IndexPage', query: { redirect: to.fullPath } }
+      }
+    } catch {
+      // 401 / réseau down / etc.
+      if (to.meta.requiresAuth) {
+        return { name: 'IndexPage', query: { redirect: to.fullPath } }
+      }
     }
 
     if (to.meta.guestOnly && apiKey) {

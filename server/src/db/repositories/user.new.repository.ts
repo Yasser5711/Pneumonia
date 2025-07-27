@@ -1,4 +1,4 @@
-import { eq, type InferSelectModel, type InferInsertModel } from 'drizzle-orm';
+import { eq, type InferSelectModel, type InferInsertModel, sql } from 'drizzle-orm';
 
 import { db as DB } from '../index';
 // Importing the new 'users' table and apiKeys from the 'auth' schema file.
@@ -22,7 +22,7 @@ export const createNewUsersRepo = (db: DrizzleDB = DB) => ({
    * @param id - The UUID of the user.
    * @param includeApiKeys - Whether to include the user's API keys in the result.
    */
-  findById: async (id: string, includeApiKeys: boolean = false) => {
+  findById: async ({ id, includeApiKeys = false }: { id: string; includeApiKeys?: boolean }) => {
     return await db.query.users.findFirst({
       where: eq(usersTable.id, id),
       with: {
@@ -64,5 +64,13 @@ export const createNewUsersRepo = (db: DrizzleDB = DB) => ({
       .returning();
 
     return updatedUser;
+  },
+  updateQuota: async (id: string) => {
+    await db
+      .update(usersTable)
+      .set({
+        requestsUsed: sql`${usersTable.requestsUsed} + 1`,
+      })
+      .where(eq(usersTable.id, id));
   },
 });

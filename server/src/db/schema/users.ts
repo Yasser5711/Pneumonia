@@ -30,6 +30,6 @@ export const usersTable = pgTable(
   ],
 );
 
-export const usersRelations = relations(usersTable, ({ many }) => ({
+export const old_usersRelations = relations(usersTable, ({ many }) => ({
   apiKeys: many(apiKeysTable),
 }));

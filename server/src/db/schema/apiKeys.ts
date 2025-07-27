@@ -32,7 +32,7 @@ export const apiKeysTable = pgTable(
   }),
   (table) => [uniqueIndex('key_prefix_idx').on(table.keyPrefix)],
 );
-export const apiKeysRelations = relations(apiKeysTable, ({ one }) => ({
+export const old_apiKeysRelations = relations(apiKeysTable, ({ one }) => ({
   user: one(usersTable, {
     fields: [apiKeysTable.userId],
     references: [usersTable.id],

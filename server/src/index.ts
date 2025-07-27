@@ -19,6 +19,7 @@ import { createContext, type CreateContextOptions } from './trpc';
 import { auth } from './utils/auth';
 import { fastifyAdapter } from './utils/fastify-adapter';
 const isDev = env.NODE_ENV === 'development';
+const isProd = env.NODE_ENV === 'production';
 const frontendUrl = new URL(env.FRONTEND_ORIGIN!);
 const hostnameParts = frontendUrl.hostname.split('.');
 const parentDomain = '.' + hostnameParts.slice(-2).join('.');
@@ -66,9 +67,9 @@ async function main() {
     secret: env.SESSION_SECRET ?? 'secret',
     hook: 'onRequest',
     parseOptions: {
-      sameSite: 'none',
-      secure: true,
-      domain: parentDomain,
+      sameSite: isProd ? 'none' : 'lax',
+      secure: isProd,
+      domain: isProd ? parentDomain : undefined,
     },
   });
   await fastify.register(oauthPlugin, {

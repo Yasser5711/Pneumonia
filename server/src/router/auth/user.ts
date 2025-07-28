@@ -23,7 +23,7 @@ export const userRouter = router({
       }),
     )
     .query(({ ctx }) => {
-      return ctx.services.userService.getMe(ctx.user.id);
+      return ctx.services.newUserService.getMe(ctx.user.id);
     }),
   logout: protectedUserProcedure
     .meta({
@@ -62,7 +62,7 @@ export const userRouter = router({
     .input(z.object({}))
     .output(z.object({ apiKey: z.string() }))
     .mutation(async ({ ctx }) => {
-      const { key } = await ctx.services.apiKeyService.generateKey({
+      const { key } = await ctx.services.newApiKeyService.generateKey({
         userId: ctx.user.id,
       });
       return { apiKey: key };

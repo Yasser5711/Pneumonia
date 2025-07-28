@@ -1,4 +1,3 @@
-// src/stores/auth.ts  (Pinia)
 import { computed } from 'vue'
 
 import { defineStore } from 'pinia'

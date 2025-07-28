@@ -18,52 +18,14 @@ export function createAppRouter(baseUrl: string = import.meta.env.BASE_URL) {
     history: createWebHistory(baseUrl),
     routes: setupLayouts([
       ...routes,
-      // {
-      //   path: '/',
-      //   component: () => import('@/pages/IndexPage.vue'),
-      // },
       {
         path: '/:pathMatch(.*)*',
         redirect: '/chat',
       },
     ]),
   })
-  // router.beforeEach(async (to: RouteLocationNormalized) => {
-  //   const layoutName = (to.meta.layout as string) || 'DefaultLayout'
-  //   const layout = await import(`../layouts/${layoutName}.vue`)
-  //   to.matched[0].components = {
-  //     default: to.matched[0].components!.default,
-  //     layout: layout.default,
-  //   }
-  // })
   router.beforeEach(async (to, _from) => {
-    // if (!to.meta.requiresAuth) return true
-
-    // const store = useStorageStore()
-    // const apiKey = store.getKeyFromLocalStorage('apiKey', '').value
-
-    // if (apiKey) return true
-    // return { name: 'IndexPage', query: { redirect: to.fullPath } }
-
-    // const { refreshMe, user } = useSession()
-    // if (!user.value) await refreshMe()
-
-    // return user.value ? true : { name: 'IndexPage' }
-    const store = useStorageStore()
-    const apiKey = store.getKeyFromLocalStorage('apiKey', '').value
     const auth = useAuthStore()
-    // try {
-    //   const { data, isPending } = authClient.useSession().value
-
-    //   if (!isPending && !data?.isAuthenticated && to.meta.requiresAuth) {
-    //     return { name: 'IndexPage', query: { redirect: to.fullPath } }
-    //   }
-    // } catch {
-    //   // 401 / réseau down / etc.
-    //   if (to.meta.requiresAuth) {
-    //     return { name: 'IndexPage', query: { redirect: to.fullPath } }
-    //   }
-    // }
     if (auth.sessionRef.isPending) {
       await new Promise((resolve) => {
         const unwatch = watch(
@@ -77,9 +39,12 @@ export function createAppRouter(baseUrl: string = import.meta.env.BASE_URL) {
         )
       })
     }
+    if (to.meta.requiresAuth && !auth.isAuthenticated) {
+      return { name: 'SignIn', query: { redirect: to.fullPath } }
+    }
 
-    if (to.meta.guestOnly && apiKey) {
-      return { name: 'ChatPage' } // ou path: '/chat'
+    if (to.meta.guestOnly && auth.isAuthenticated) {
+      return { name: 'ChatPage' }
     }
     return true
   })

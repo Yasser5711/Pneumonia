@@ -12,6 +12,7 @@ declare module 'vue' {
     ApiKeyModal: typeof import('./components/ApiKeyModal.vue')['default']
     AppFooter: typeof import('./components/AppFooter.vue')['default']
     AppHeader: typeof import('./components/AppHeader.vue')['default']
+    AuthForm: typeof import('./components/AuthForm.vue')['default']
     CanvasBackground: typeof import('./components/CanvasBackground.vue')['default']
     ChatMessage: typeof import('./components/ChatMessage.vue')['default']
     ChatWindow: typeof import('./components/ChatWindow.vue')['default']

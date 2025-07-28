@@ -33,6 +33,6 @@ export type User =
       providerId: string
       updatedAt: Date
       quota: Quota
-      avatarUrl?: string
+      image?: string
     }
   | undefined

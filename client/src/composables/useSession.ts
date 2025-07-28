@@ -42,7 +42,7 @@ export function useSession() {
     closeModal()
     store.removeKeyFromLocalStorage('apiKey')
     user.value = undefined
-    await router.push({ name: 'IndexPage' })
+    await router.push({ name: 'SignIn' })
     await qc.invalidateQueries()
   }
   const isLoggedIn = computed(() => !!user.value)

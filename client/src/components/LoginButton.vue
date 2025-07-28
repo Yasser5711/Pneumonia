@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { useGoogleStart, useGithubStart } from '@/queries/useAuth'
-
 import { authClient } from '../lib/auth'
 
 const { signIn, signUp } = authClient

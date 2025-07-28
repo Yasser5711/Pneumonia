@@ -69,6 +69,8 @@
     "unref": true,
     "useAppStore": true,
     "useAttrs": true,
+    "useAuthForm": true,
+    "useAuthStore": true,
     "useCanvasAnimation": true,
     "useChatScroll": true,
     "useChatStore": true,

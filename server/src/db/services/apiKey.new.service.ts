@@ -11,7 +11,7 @@ export const createNewApiKeyService = (repo: Repositories['newApiKeysRepo']) => 
     expiresIn = 30 * 24 * 60 * 60,
   }: {
     userId: string;
-    name: string;
+    name?: string;
     expiresIn?: number;
   }) => {
     try {

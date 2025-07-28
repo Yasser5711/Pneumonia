@@ -10,7 +10,7 @@ import { useProfileModal } from './useProfileModal'
 const { isProfileOpen, closeModal } = useProfileModal()
 const { user } = useSession()
 
-const avatarUrl = computed(() => user.value?.avatarUrl)
+const avatarUrl = computed(() => user.value?.image)
 
 const quotaPct = computed(() => {
   const q = user.value?.quota

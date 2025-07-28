@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useSession } from '@/composables/useSession'
-const { logout } = useSession()
+import { useAuthForm } from '../composables/useAuthForm'
+const { logout } = useAuthForm()
 </script>
 
 <template>

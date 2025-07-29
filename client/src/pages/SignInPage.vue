@@ -23,7 +23,7 @@ function handleSubmitted() {
     style="min-height: 100vh"
     ><AuthForm
       mode="signin"
-      :initial-email="(route.query.email as string) || ''"
+      :initial-email="(route.query.email as string) ?? ''"
       @submitted="handleSubmitted"
   /></v-container>
 </template>

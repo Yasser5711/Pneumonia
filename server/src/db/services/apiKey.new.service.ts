@@ -53,7 +53,16 @@ export const createNewApiKeyService = (repo: Repositories['newApiKeysRepo']) => 
 
     return { ...res, userId };
   },
-
+  /**
+   * Get my API key.
+   */
+  getMyKey: async (userId: string) => {
+    const key = await repo.findByUserId({ userId });
+    if (!key) {
+      throw new Error('No API key found for this user');
+    }
+    return key[0];
+  },
   // /**
   //  * List keys for a user (for a management UI).
   //  */

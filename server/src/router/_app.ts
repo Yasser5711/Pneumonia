@@ -13,7 +13,7 @@ export const appRouter = router({
     google: auth.googleRouter,
     user: auth.userRouter,
   },
-});
+}); //.strict(); //no undefined
 
 export type AppRouter = typeof appRouter;
 // ts-prune-ignore-next

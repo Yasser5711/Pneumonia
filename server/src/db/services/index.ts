@@ -7,7 +7,7 @@ import { createUserService } from './user.service';
 export const apiKeyService = createApiKeyService(apiKeysRepo);
 export const userService = createUserService(usersRepo);
 export const newApiKeyService = createNewApiKeyService(newApiKeysRepo);
-export const newUserService = createNewUserService(newUsersRepo);
+export const newUserService = createNewUserService(newUsersRepo, newApiKeyService);
 export type Services = {
   apiKeyService: typeof apiKeyService;
   userService: typeof userService;

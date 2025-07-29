@@ -1,20 +1,26 @@
 import { useQueryClient } from '@tanstack/vue-query'
 
-import { useLogout as useLogoutMutation, useMeQuery } from '@/queries/useAuth'
+import { useMeQuery } from '@/queries/useAuth'
+import { useAuthStore } from '@/stores/auth'
 import type { User } from '@/types/app'
 
-const user = ref<User>(undefined)
 import { useApiKeyModal } from '../components/useApiKeyModal'
+
+import { useAuthForm } from './useAuthForm'
+
+const user = ref<User>(undefined)
+
 export function useSession() {
   const store = useStorageStore()
+  const { isAuthenticated } = useAuthStore()
   const apiKeyRef = store.getKeyFromLocalStorage('apiKey', '')
   const router = useRouter()
   const qc = useQueryClient()
   const { closeModal } = useApiKeyModal()
   const { refetch } = useMeQuery({ enabled: false })
-
+  const { logout: authLogout } = useAuthForm()
   watchEffect(async () => {
-    if (!apiKeyRef.value) {
+    if (!isAuthenticated) {
       user.value = undefined
       return
     }
@@ -28,22 +34,24 @@ export function useSession() {
       if (user.value) {
         user.value.quota = me.quota
       }
+      if (user.value?.apiKey) {
+        store.setKeyInLocalStorage('apiKey', user.value.apiKey)
+      }
     }
   })
 
-  const { mutateAsync: remoteLogout } = useLogoutMutation()
-
   async function logout() {
     try {
-      await remoteLogout()
+      await authLogout(async () => {
+        closeModal()
+        store.removeKeyFromLocalStorage('apiKey')
+        user.value = undefined
+        await router.push({ name: 'SignIn' })
+        await qc.invalidateQueries()
+      })
     } catch {
       /* API down? on s’en fiche, on wipe local */
     }
-    closeModal()
-    store.removeKeyFromLocalStorage('apiKey')
-    user.value = undefined
-    await router.push({ name: 'SignIn' })
-    await qc.invalidateQueries()
   }
   const isLoggedIn = computed(() => !!user.value)
 

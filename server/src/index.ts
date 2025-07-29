@@ -42,56 +42,6 @@ const fastify = Fastify({
 });
 setLogger(fastify.log);
 async function main() {
-  await fastify.register(helmet, {
-    contentSecurityPolicy:
-      isDev || env.NODE_ENV === 'preview'
-        ? {
-            directives: {
-              ...helmet.contentSecurityPolicy.getDefaultDirectives(),
-              'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-              // 'connect-src': ["'self'", 'http://localhost:*'],
-            },
-          }
-        : true,
-  });
-  fastify.route({
-    method: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'HEAD', 'OPTIONS'],
-    url: '/api/auth/*',
-    handler: async (req, reply) => {
-      const standardRequest = fastifyAdapter.toStandardRequest(req);
-      const standardResponse = await auth.handler(standardRequest);
-      await fastifyAdapter.sendStandardResponse(reply, standardResponse);
-    },
-  });
-  await fastify.register(cookie, {
-    secret: env.SESSION_SECRET ?? 'secret',
-    hook: 'onRequest',
-    parseOptions: {
-      sameSite: isProd ? 'none' : 'lax',
-      secure: isProd,
-      domain: isProd ? parentDomain : undefined,
-    },
-  });
-  await fastify.register(oauthPlugin, {
-    name: 'githubOauth',
-    scope: ['user:email'],
-    credentials: {
-      client: { id: env.GITHUB_CLIENT_ID ?? '', secret: env.GITHUB_CLIENT_SECRET ?? '' },
-      auth: oauthPlugin.GITHUB_CONFIGURATION,
-    },
-    startRedirectPath: '/auth/github/login',
-    callbackUri: `${env.FRONTEND_ORIGIN}/github-callback`,
-  });
-  await fastify.register(oauthPlugin, {
-    name: 'googleOauth',
-    scope: ['openid', 'email', 'profile'],
-    credentials: {
-      client: { id: env.GOOGLE_CLIENT_ID ?? '', secret: env.GOOGLE_CLIENT_SECRET ?? '' },
-      auth: oauthPlugin.GOOGLE_CONFIGURATION,
-    },
-    startRedirectPath: '/auth/google',
-    callbackUri: `${env.FRONTEND_ORIGIN}/google-callback`,
-  });
   await fastify.register(cors, {
     origin: (origin, cb) => {
       const isPreview = origin?.includes('.netlify.app') && env.NODE_ENV === 'preview';
@@ -112,10 +62,84 @@ async function main() {
     credentials: true,
 
     // 3) Autorise pré-vols (OPTIONS) & en-têtes customs si besoin
-    methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-API-KEY'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'x-api-key'],
+
+    maxAge: 86400,
     exposedHeaders: ['Set-Cookie'],
   });
+  await fastify.register(helmet, {
+    contentSecurityPolicy:
+      isDev || env.NODE_ENV === 'preview'
+        ? {
+            directives: {
+              ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+              'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+              // 'connect-src': ["'self'", 'http://localhost:*'],
+            },
+          }
+        : true,
+  });
+  await fastify.register(cookie, {
+    secret: env.SESSION_SECRET ?? 'secret',
+    hook: 'onRequest',
+    parseOptions: {
+      sameSite: 'none',
+      secure: true,
+      domain: parentDomain,
+    },
+  });
+  // TODO: Problem with customSessionClient not working with Fastify
+  fastify.route({
+    method: ['GET', 'POST'],
+    url: '/api/auth/*',
+    async handler(request, reply) {
+      try {
+        const url = new URL(request.url, `http://${request.headers.host}`);
+        const headers = new Headers();
+        Object.entries(request.headers).forEach(([key, value]) => {
+          if (value) headers.append(key, value.toString());
+        });
+        const req = new Request(url.toString(), {
+          method: request.method,
+          headers,
+          body: request.body ? JSON.stringify(request.body) : undefined,
+        });
+        const response = await auth.handler(req);
+        reply.status(response.status);
+        response.headers.forEach((value, key) => reply.header(key, value));
+        reply.send(response.body ? await response.text() : null);
+      } catch (error) {
+        fastify.log.error('Authentication Error:', error);
+        reply.status(500).send({
+          error: 'Internal authentication error',
+          code: 'AUTH_FAILURE',
+        });
+      }
+    },
+  });
+
+  await fastify.register(oauthPlugin, {
+    name: 'githubOauth',
+    scope: ['user:email'],
+    credentials: {
+      client: { id: env.GITHUB_CLIENT_ID ?? '', secret: env.GITHUB_CLIENT_SECRET ?? '' },
+      auth: oauthPlugin.GITHUB_CONFIGURATION,
+    },
+    startRedirectPath: '/auth/github/login',
+    callbackUri: `${env.FRONTEND_ORIGIN}/github-callback`,
+  });
+  await fastify.register(oauthPlugin, {
+    name: 'googleOauth',
+    scope: ['openid', 'email', 'profile'],
+    credentials: {
+      client: { id: env.GOOGLE_CLIENT_ID ?? '', secret: env.GOOGLE_CLIENT_SECRET ?? '' },
+      auth: oauthPlugin.GOOGLE_CONFIGURATION,
+    },
+    startRedirectPath: '/auth/google',
+    callbackUri: `${env.FRONTEND_ORIGIN}/google-callback`,
+  });
+
   await fastify.register(rateLimit, {
     max: 10, // 🔥 Allow 3 requests
     timeWindow: '1 minute', // 🕒 per minute

@@ -1,19 +1,26 @@
+import type { createNewApiKeyService } from './apiKey.new.service';
 import type { Repositories } from '../repositories/index';
 type UserOutput = {
-  id: string;
-  name: string | null;
-  email: string;
-  createdAt: Date;
-  updatedAt: Date | null;
-  firstName: string;
-  lastName: string;
-  image: string | null;
+  user: {
+    id: string;
+    name: string | null;
+    email: string;
+    createdAt: Date;
+    updatedAt: Date | null;
+    firstName: string;
+    lastName: string;
+    image: string | null;
+    apiKey?: string | null;
+  };
   quota: {
     used: number;
     total: number;
   };
 };
-export const createNewUserService = (repo: Repositories['newUsersRepo']) => ({
+export const createNewUserService = (
+  repo: Repositories['newUsersRepo'],
+  apiKeyService: ReturnType<typeof createNewApiKeyService>,
+) => ({
   findById: async ({ id, includeApiKeys = false }: { id: string; includeApiKeys?: boolean }) => {
     return await repo.findById({ id, includeApiKeys });
   },
@@ -27,9 +34,27 @@ export const createNewUserService = (repo: Repositories['newUsersRepo']) => ({
     if (!user) {
       throw new Error('User not found');
     }
+    let apiKey: string | null = user.apiKeys?.[0]?.key || null;
+    if (!apiKey) {
+      const generated = await apiKeyService.generateKey({ userId });
+      apiKey = generated.key;
+    }
     return {
-      ...user,
-      quota: { total: user.requestsQuota, used: user.requestsUsed },
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        image: user.image,
+        apiKey: apiKey || null,
+      },
+      quota: {
+        total: user.requestsQuota,
+        used: user.requestsUsed,
+      },
     };
   },
 

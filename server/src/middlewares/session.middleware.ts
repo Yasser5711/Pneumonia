@@ -20,8 +20,11 @@ export const isAuthed = t.middleware(({ ctx, next }) => {
   if (!ctx.session) {
     throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Not authenticated' });
   }
-  const user = ctx.session.user;
+  const userId = ctx.session?.userId;
+  if (!userId) {
+    throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Invalid session (no user id)' });
+  }
   return next({
-    ctx: { ...ctx, user },
+    ctx: { ...ctx, userId },
   });
 });

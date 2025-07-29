@@ -17,8 +17,11 @@ function handleSubmitted() {
 </script>
 
 <template>
-  <v-container class="" style="min-height: 100vh"
-    ><AuthForm mode="signup" @submitted="handleSubmitted"
+  <v-container
+    class="d-flex align-center justify-center"
+    style="min-height: 100vh"
+  >
+    <AuthForm mode="signup" @submitted="handleSubmitted"
   /></v-container>
 </template>
 

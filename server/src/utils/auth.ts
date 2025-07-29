@@ -9,7 +9,13 @@ export const auth = betterAuth({
   basePath: '/api/auth',
   database: drizzleAdapter(db, {
     provider: 'pg',
-    schema: schemas,
+    schema: {
+      users: schemas.users,
+      sessions: schemas.sessions,
+      accounts: schemas.accounts,
+      verifications: schemas.verifications,
+      apikeys: schemas.apiKeys,
+    },
     usePlural: true,
     debugLogs: true, // env.NODE_ENV === 'development' || env.NODE_ENV === 'test',
   }),
@@ -53,32 +59,40 @@ export const auth = betterAuth({
     database: {
       generateId: false,
     },
-    ipAddress: {
-      ipAddressHeaders: ['x-client-ip', 'x-forwarded-for'],
-      disableIpTracking: false,
-    },
-    useSecureCookies: env.NODE_ENV === 'production',
-    disableCSRFCheck: false,
-    cookies: {
-      session_token: {
-        name: 'custom_session_token',
-        attributes: {
-          httpOnly: true,
-          secure: true,
-        },
-      },
-    },
-    defaultCookieAttributes: {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'lax',
-    },
+    // useSecureCookies: env.NODE_ENV === 'production', // ✅
+    // defaultCookieAttributes: {
+    //   sameSite: 'none', // ✅ cross‑origin
+    //   secure: env.NODE_ENV === 'production', // ✅
+    //   domain: undefined, // ✅ pas de .localhost
+    // },
+    // ipAddress: {
+    //   ipAddressHeaders: ['x-client-ip', 'x-forwarded-for'],
+    //   disableIpTracking: false,
+    // },
+    // useSecureCookies: env.NODE_ENV === 'production',
+    // disableCSRFCheck: false,
+    // cookies: {
+    //   session_token: {
+    //     name: 'custom_session_token',
+    //     attributes: {
+    //       httpOnly: true,
+    //       secure: env.NODE_ENV === 'production',
+    //       sameSite: 'none',
+    //     },
+    //   },
+    // },
+    // defaultCookieAttributes: {
+    //   httpOnly: true,
+    //   secure: env.NODE_ENV === 'production',
+    //   sameSite: 'none',
+    // },
   },
   plugins: [
     apiKey(),
     // eslint-disable-next-line require-await
     customSession(async ({ session }) => ({
       isAuthenticated: !!session,
+      userId: session?.userId,
     })),
   ],
   // logger: logger,

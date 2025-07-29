@@ -1,6 +1,7 @@
 import type { App } from 'vue'
 
 import { createTRPCClient, httpBatchLink, type TRPCClient } from '@trpc/client'
+import SuperJSON from 'superjson'
 
 import { useStorageStore } from '@/stores/storageStore'
 
@@ -19,6 +20,7 @@ export function createTRPCPlugin({ url }: { url: string }) {
         links: [
           httpBatchLink({
             url,
+            transformer: SuperJSON,
             fetch: (input, init) =>
               fetch(input, { ...init, credentials: 'include' } as RequestInit),
             headers: () => {

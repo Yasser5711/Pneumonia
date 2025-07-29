@@ -7,6 +7,8 @@ export function useAuthForm() {
   const lastName = ref('')
   const isLoading = ref(false)
   const errorMsg = ref('')
+  const FRONTEND_URL =
+    import.meta.env.VITE_FRONTEND_URL ?? window.location.origin
   const router = useRouter()
   async function signIn() {
     isLoading.value = true
@@ -43,7 +45,7 @@ export function useAuthForm() {
     }
   }
 
-  async function logout() {
+  async function logout(callback: () => void) {
     isLoading.value = true
     errorMsg.value = ''
     try {
@@ -53,6 +55,22 @@ export function useAuthForm() {
             router.push({ name: 'SignIn' })
           },
         },
+      })
+    } catch (e) {
+      errorMsg.value = (e as Error).message ?? 'Unknown error'
+      throw e
+    } finally {
+      isLoading.value = false
+      callback?.()
+    }
+  }
+  async function socialSignIn(provider: 'google' | 'github') {
+    isLoading.value = true
+    errorMsg.value = ''
+    try {
+      await authClient.signIn.social({
+        provider,
+        callbackURL: `${FRONTEND_URL}/chat`,
       })
     } catch (e) {
       errorMsg.value = (e as Error).message ?? 'Unknown error'
@@ -74,5 +92,6 @@ export function useAuthForm() {
     signIn,
     signUp,
     logout,
+    socialSignIn,
   }
 }

@@ -3358,6 +3358,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-devtools@npm:5.81.2":
+  version: 5.81.2
+  resolution: "@tanstack/query-devtools@npm:5.81.2"
+  checksum: 10c0/f942cba7bd3ecb471063cd472eeebb2ec76005feeb7e0f357b191da5ab9f769aa767bc88d4da82b2b39c4fcbb16dfed38ce3c77b6eea4d4c30405368c1120207
+  languageName: node
+  linkType: hard
+
+"@tanstack/vue-query-devtools@npm:^5.83.0":
+  version: 5.83.0
+  resolution: "@tanstack/vue-query-devtools@npm:5.83.0"
+  dependencies:
+    "@tanstack/query-devtools": "npm:5.81.2"
+  peerDependencies:
+    "@tanstack/vue-query": ^5.83.0
+    vue: ^3.3.0
+  checksum: 10c0/9e63e54501ee66b473e8f846d130f2ce064b41f1ae7cf08e81063aacf5bff3f500991fdab12a7b928370f7b62e150cf1c4483baac97c536ffcc7a127eb5fc046
+  languageName: node
+  linkType: hard
+
 "@tanstack/vue-query@npm:^5.77.2":
   version: 5.81.5
   resolution: "@tanstack/vue-query@npm:5.81.5"
@@ -5210,6 +5229,7 @@ __metadata:
     "@tailwindcss/vite": "npm:^4.1.7"
     "@tanstack/eslint-plugin-query": "npm:^5.81.2"
     "@tanstack/vue-query": "npm:^5.77.2"
+    "@tanstack/vue-query-devtools": "npm:^5.83.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/vue": "npm:^8.1.0"
     "@trpc/client": "npm:^11.4.3"
@@ -5252,6 +5272,7 @@ __metadata:
     stylelint-config-recommended-vue: "npm:^1.6.0"
     stylelint-config-standard: "npm:^38.0.0"
     stylelint-config-tailwindcss: "npm:^1.0.0"
+    superjson: "npm:^2.2.2"
     tailwindcss: "npm:^4.1.7"
     ts-prune: "npm:^0.10.3"
     typescript: "npm:^5.8.3"

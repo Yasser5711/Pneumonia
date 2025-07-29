@@ -8,13 +8,23 @@ const props = defineProps<{
 
 const emit = defineEmits<{ submitted: [] }>()
 
-const auth = useAuthForm()
+const {
+  email,
+  password,
+  firstName,
+  lastName,
+  isLoading,
+  errorMsg,
+  signIn,
+  signUp,
+  socialSignIn,
+} = useAuthForm()
 
-if (props.initialEmail) auth.email.value = props.initialEmail
+if (props.initialEmail) email.value = props.initialEmail
 
 const handle = async () => {
   try {
-    props.mode === 'signup' ? await auth.signUp() : await auth.signIn()
+    props.mode === 'signup' ? await signUp() : await signIn()
     emit('submitted')
   } catch {
     /* auth.errorMsg */
@@ -25,70 +35,90 @@ const showName = computed(() => props.mode === 'signup')
 </script>
 
 <template>
-  <div class="d-flex align-center fill-height justify-center">
-    <v-card
-      class="pa-6 text-center"
-      max-width="420"
-      elevation="10"
-      rounded="lg"
+  <v-card
+    class="pa-6 text-center"
+    max-width="640"
+    width="100%"
+    elevation="10"
+    rounded="lg"
+  >
+    <v-card-title class="text-h5 pb-4">
+      {{ props.mode === 'signup' ? 'SignUp' : 'SignIn' }}
+    </v-card-title>
+
+    <v-alert
+      v-if="errorMsg"
+      type="error"
+      variant="tonal"
+      class="mb-4"
+      :text="errorMsg"
+      dismissible
+    />
+
+    <v-text-field
+      v-model="email"
+      label="Email"
+      type="email"
+      variant="outlined"
+      :rules="[(v) => !!v || 'Email is required']"
+      :disabled="isLoading"
+    />
+    <v-text-field
+      v-model="password"
+      label="Password"
+      type="password"
+      variant="outlined"
+      :rules="[(v) => !!v || 'Password is required']"
+      :disabled="isLoading"
+    />
+    <!-- SignUp -->
+    <template v-if="showName">
+      <v-text-field
+        v-model="firstName"
+        label="First Name"
+        variant="outlined"
+        :rules="[(v) => !!v || 'First Name is required']"
+        :disabled="isLoading"
+      />
+      <v-text-field
+        v-model="lastName"
+        label="Last Name"
+        variant="outlined"
+        :rules="[(v) => !!v || 'Last Name is required']"
+        :disabled="isLoading"
+      />
+    </template>
+
+    <v-btn
+      block
+      size="large"
+      elevation="2"
+      :loading="isLoading"
+      :disabled="isLoading"
+      @click="handle"
     >
-      <v-card-title class="text-h5 pb-4">
-        {{ props.mode === 'signup' ? 'SignUp' : 'SignIn' }}
-      </v-card-title>
-
-      <v-alert
-        v-if="auth.errorMsg"
-        type="error"
-        variant="tonal"
-        class="mb-4"
-        :text="auth.errorMsg.value"
-        dismissible
-      />
-
-      <v-text-field
-        v-model="auth.email"
-        label="Email"
-        type="email"
-        variant="outlined"
-        :rules="[(v) => !!v || 'Email is required']"
-        :disabled="auth.isLoading.value"
-      />
-      <v-text-field
-        v-model="auth.password"
-        label="Password"
-        type="password"
-        variant="outlined"
-        :rules="[(v) => !!v || 'Password is required']"
-        :disabled="auth.isLoading.value"
-      />
-      <!-- SignUp -->
-      <template v-if="showName">
-        <v-text-field
-          v-model="auth.firstName"
-          label="First Name"
-          variant="outlined"
-          :rules="[(v) => !!v || 'First Name is required']"
-          :disabled="auth.isLoading.value"
-        />
-        <v-text-field
-          v-model="auth.lastName"
-          label="Last Name"
-          variant="outlined"
-          :rules="[(v) => !!v || 'Last Name is required']"
-          :disabled="auth.isLoading.value"
-        />
-      </template>
-
-      <v-btn
-        block
-        size="large"
-        elevation="2"
-        :loading="auth.isLoading.value"
-        :disabled="auth.isLoading.value"
-        @click="handle"
-      >
-        {{ props.mode === 'signup' ? 'Create account' : 'Continue' }}
-      </v-btn>
-    </v-card>
-  </div>
+      {{ props.mode === 'signup' ? 'Create account' : 'Continue' }}
+    </v-btn>
+    <v-btn
+      block
+      size="large"
+      :loading="isLoading"
+      :disabled="isLoading"
+      class="my-3"
+      @click="socialSignIn('google')"
+    >
+      <template #prepend><v-icon size="22">mdi-google</v-icon></template>
+      Continue with Google
+    </v-btn>
+    <v-btn
+      block
+      size="large"
+      :loading="isLoading"
+      :disabled="isLoading"
+      @click="socialSignIn('github')"
+    >
+      <template #prepend><v-icon size="22">mdi-github</v-icon></template>
+      Continue with GitHub
+    </v-btn>
+  </v-card>
 </template>

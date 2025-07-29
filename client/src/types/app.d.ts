@@ -34,5 +34,6 @@ export type User =
       updatedAt: Date
       quota: Quota
       image?: string
+      apiKey?: string | null
     }
   | undefined

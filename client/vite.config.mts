@@ -72,6 +72,10 @@ export default defineConfig({
       usePolling: true,
     },
     port: 4000,
+    proxy: {
+      '/api': 'http://localhost:3000',
+      '/trpc': 'http://localhost:3000',
+    },
   },
   css: {
     preprocessorOptions: {

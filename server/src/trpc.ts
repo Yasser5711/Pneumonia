@@ -1,5 +1,5 @@
 import { initTRPC } from '@trpc/server';
-import superjson from 'superjson';
+import SuperJSON from 'superjson';
 import { ZodError } from 'zod';
 
 import * as defaultServices from './db/services/index';
@@ -47,7 +47,7 @@ export const t = initTRPC
   .meta<OpenApiMeta>()
   .context<Context>()
   .create({
-    transformer: superjson,
+    transformer: SuperJSON,
     errorFormatter: ({ shape, error }) => ({
       ...shape,
       data: {

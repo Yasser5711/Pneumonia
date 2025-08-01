@@ -7,7 +7,7 @@ definePage({
   path: '/',
   name: 'IndexPage',
   meta: {
-    guestOnly: true,
+    disabled: true,
     title: 'Index',
     icon: '/icons/index.png',
     description: 'Home page',

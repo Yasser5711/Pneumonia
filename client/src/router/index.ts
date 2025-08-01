@@ -20,11 +20,21 @@ export function createAppRouter(baseUrl: string = import.meta.env.BASE_URL) {
       ...routes,
       {
         path: '/:pathMatch(.*)*',
-        redirect: '/chat',
+        name: 'NotFound',
+        component: () => import('../pages/404.vue'),
+        meta: {
+          title: '404 - Page Not Found',
+          icon: '/icons/404.png',
+          description: 'The page you are looking for does not exist',
+          layout: 'default',
+        },
       },
     ]),
   })
   router.beforeEach(async (to, _from) => {
+    if (to.matched.some((r) => r.meta.disabled)) {
+      return { name: 'NotFound', replace: true }
+    }
     const auth = useAuthStore()
     if (auth.sessionRef.isPending) {
       await new Promise((resolve) => {
@@ -101,6 +111,8 @@ export function createAppRouter(baseUrl: string = import.meta.env.BASE_URL) {
   router.isReady().then(() => {
     localStorage.removeItem('vuetify:dynamic-reload')
   })
+
+  // router.removeRoute('IndexPage')
   return router
 }
 

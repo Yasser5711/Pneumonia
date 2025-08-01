@@ -88,13 +88,23 @@ export const auth = betterAuth({
     // },
   },
   plugins: [
-    apiKey(),
+    apiKey({
+      apiKeyHeaders: ['x-api-key'],
+      defaultKeyLength: 43,
+      disableKeyHashing: true, // For development only, do not use in production
+      rateLimit: {
+        enabled: false,
+      },
+    }),
     // eslint-disable-next-line require-await
     customSession(async ({ session }) => ({
       isAuthenticated: !!session,
       userId: session?.userId,
     })),
   ],
+  // rateLimit: {
+  //   enabled: false,
+  // },
   // logger: logger,
 });
 export type auth = typeof auth;

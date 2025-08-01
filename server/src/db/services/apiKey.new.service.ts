@@ -15,17 +15,7 @@ export const createNewApiKeyService = (repo: Repositories['newApiKeysRepo']) => 
     expiresIn?: number;
   }) => {
     try {
-      await repo.disableMyKeys(userId);
-      const { key } = await auth.api.createApiKey({
-        body: {
-          userId,
-          name,
-          expiresIn,
-        },
-      });
-      return {
-        key,
-      };
+      return await repo.create({ userId, name, expiresIn });
     } catch (error) {
       throw new Error(`Failed to generate API key: ${(error as Error).message}`);
     }
@@ -35,10 +25,13 @@ export const createNewApiKeyService = (repo: Repositories['newApiKeysRepo']) => 
    * Validate an API key. This is typically called by your tRPC middleware.
    */
   verifyKey: async (key: string) => {
-    const res = await auth.api.verifyApiKey({ body: { key } }).catch((err) => {
-      throw new Error(`Failed to verify API key: ${(err as Error).message}`);
-    });
-    if (!res || !res.key) {
+    let res;
+    try {
+      res = await auth.api.verifyApiKey({ body: { key } });
+    } catch (error) {
+      throw new Error(`Failed to verify API key: ${(error as Error).message}`);
+    }
+    if (!res || !res.key || !res.valid) {
       throw new Error('Invalid API key');
     }
     const { requestsQuota, requestsUsed, userId } = await repo.getQuota(res.key.id);

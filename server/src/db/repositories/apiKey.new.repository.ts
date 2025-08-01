@@ -1,5 +1,6 @@
-import { eq, type InferSelectModel, type InferInsertModel, and } from 'drizzle-orm';
+import { eq, ne, type InferSelectModel, type InferInsertModel, and } from 'drizzle-orm';
 
+import { auth } from '../../utils/auth';
 import { db as DB } from '../index';
 import { apiKeys as apiKeysTable, users as usersTable } from '../schema/auth';
 
@@ -60,5 +61,32 @@ export const createNewApiKeysRepo = (db: DrizzleDB = DB) => ({
       .leftJoin(usersTable, eq(apiKeysTable.userId, usersTable.id))
       .where(eq(apiKeysTable.id, keyId))
       .then((rows) => rows[0]);
+  },
+  create: async ({
+    userId,
+    name,
+    expiresIn = 30 * 24 * 60 * 60,
+  }: {
+    userId: string;
+    name?: string;
+    expiresIn?: number;
+  }) => {
+    return await db.transaction(async (tx) => {
+      const { key, id: newId } = await auth.api.createApiKey({
+        body: {
+          userId,
+          name,
+          expiresIn,
+          prefix: 'pneumonia_',
+        },
+      });
+
+      await tx
+        .update(apiKeysTable)
+        .set({ enabled: false })
+        .where(and(eq(apiKeysTable.userId, userId), ne(apiKeysTable.id, newId)));
+
+      return { key };
+    });
   },
 });

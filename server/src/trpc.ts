@@ -3,6 +3,7 @@ import SuperJSON from 'superjson';
 import { ZodError } from 'zod';
 
 import * as defaultServices from './db/services/index';
+import { logger } from './logger';
 import { auth } from './utils/auth';
 
 import type { Services } from './db/services/index';
@@ -28,14 +29,19 @@ export const createContext = async (opts: CreateContextOptions) => {
       }
     });
   }
+  const apiKey = req.headers['x-api-key'] as string | undefined;
+  // eslint-disable-next-line drizzle/enforce-delete-with-where
+  headers.delete('x-api-key');
   const session = await auth.api.getSession({ headers });
+
   return {
-    apiKey: req.headers['x-api-key'] as string | undefined,
+    apiKey,
     services: services ?? defaultServices,
     req,
     res,
     fastify,
     session,
+    logger,
   };
 };
 export type Context = Awaited<ReturnType<typeof createContext>>;

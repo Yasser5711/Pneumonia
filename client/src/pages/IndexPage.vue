@@ -6,6 +6,7 @@
 definePage({
   path: '/',
   name: 'IndexPage',
+  redirect: '/chat',
   meta: {
     disabled: true,
     title: 'Index',

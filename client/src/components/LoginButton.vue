@@ -22,13 +22,9 @@ const handleSignIn = async (provider: 'google' | 'github' | 'email') => {
         lastName: lastName.value,
         name: `${firstName.value} ${lastName.value}`,
       })
-      // Sign-in successful, the useAuth composable will update the session
-      // and you can redirect or update UI elsewhere.
     } else {
-      // This will handle the redirect automatically.
       const FRONTEND_URL =
-        import.meta.env.VITE_FRONTEND_URL ?? // ← "http://localhost:4000" en dev
-        window.location.origin
+        import.meta.env.VITE_FRONTEND_URL ?? window.location.origin
       await signIn.social({ provider, callbackURL: `${FRONTEND_URL}/chat` })
     }
   } catch (err) {
@@ -140,5 +136,5 @@ const handleSignIn = async (provider: 'google' | 'github' | 'email') => {
 <style scoped>
 .fill-height {
   min-height: 100vh;
-} /* mobile-safe full height */
+}
 </style>

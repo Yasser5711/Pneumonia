@@ -1,21 +1,15 @@
 import { eq, type InferSelectModel, type InferInsertModel, sql } from 'drizzle-orm';
 
 import { db as DB } from '../index';
-// Importing the new 'users' table and apiKeys from the 'auth' schema file.
 import { users as usersTable, apiKeys as apiKeysTable } from '../schema/auth';
 
 import type * as schema from '../schema';
 import type { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
-// Define types for better type safety
 type DrizzleDB = PostgresJsDatabase<typeof schema>;
 export type User = InferSelectModel<typeof usersTable>;
 export type UserInsert = InferInsertModel<typeof usersTable>;
 
-/* istanbul ignore next */
-/**
- * Repository for the new 'users' table managed by better-auth.
- */
 export const createNewUsersRepo = (db: DrizzleDB = DB) => ({
   /**
    * Finds a user by their ID, optionally including their API keys.
@@ -65,6 +59,10 @@ export const createNewUsersRepo = (db: DrizzleDB = DB) => ({
 
     return updatedUser;
   },
+  /**
+   * Updates the user's request quota usage.
+   * @param id - The UUID of the user.
+   */
   updateQuota: async (id: string) => {
     await db
       .update(usersTable)

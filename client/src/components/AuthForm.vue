@@ -1,18 +1,22 @@
 <script setup lang="ts">
 import { useAuthForm } from '../composables/useAuthForm'
 
+import type { VForm } from 'vuetify/components'
 const props = defineProps<{
   mode: 'signin' | 'signup'
   initialEmail?: string
 }>()
 
-const emit = defineEmits<{ submitted: [] }>()
-
+const emit = defineEmits<{ submitted: []; toggleMode: [] }>()
+defineSlots<{
+  default: []
+}>()
 const {
   email,
   password,
   firstName,
   lastName,
+  rememberMe,
   isLoading,
   errorMsg,
   signIn,
@@ -22,30 +26,40 @@ const {
 
 if (props.initialEmail) email.value = props.initialEmail
 
+const showName = computed(() => props.mode === 'signup')
+const visible = ref(false)
+
+const formRef = ref<VForm | null>(null)
+const confirmPassword = ref('')
+const required = (label: string) => (v: unknown) =>
+  !!v || `${label} is required`
+const emailRule = (v: string) => /.+@.+\..+/.test(v) || 'Invalid e-mail address'
+const pwdRule = (v: string) => (v?.length ?? 0) >= 8 || '≥ 8 characters please'
+const confirmRule = (v: string) =>
+  v === password.value || 'Passwords do not match'
 const handle = async () => {
+  const { valid } = await formRef.value!.validate()
+  if (!valid) return
+
   try {
     props.mode === 'signup' ? await signUp() : await signIn()
     emit('submitted')
   } catch {
-    /* auth.errorMsg */
+    throw new Error('Authentication failed')
   }
 }
 
-const showName = computed(() => props.mode === 'signup')
+watch(
+  () => props.mode,
+  () => {
+    formRef.value?.resetValidation()
+    confirmPassword.value = ''
+  },
+)
 </script>
 
 <template>
-  <v-card
-    class="pa-6 text-center"
-    max-width="640"
-    width="100%"
-    elevation="10"
-    rounded="lg"
-  >
-    <v-card-title class="text-h5 pb-4">
-      {{ props.mode === 'signup' ? 'SignUp' : 'SignIn' }}
-    </v-card-title>
-
+  <v-card class="pa-6" max-width="640" width="100%" elevation="10" rounded="lg">
     <v-alert
       v-if="errorMsg"
       type="error"
@@ -55,70 +69,98 @@ const showName = computed(() => props.mode === 'signup')
       dismissible
     />
 
-    <v-text-field
-      v-model="email"
-      label="Email"
-      type="email"
-      variant="outlined"
-      :rules="[(v) => !!v || 'Email is required']"
-      :disabled="isLoading"
-    />
-    <v-text-field
-      v-model="password"
-      label="Password"
-      type="password"
-      variant="outlined"
-      :rules="[(v) => !!v || 'Password is required']"
-      :disabled="isLoading"
-    />
-    <!-- SignUp -->
-    <template v-if="showName">
+    <v-form ref="formRef" :disabled="isLoading" @submit.prevent="handle">
       <v-text-field
-        v-model="firstName"
-        label="First Name"
-        variant="outlined"
-        :rules="[(v) => !!v || 'First Name is required']"
-        :disabled="isLoading"
+        v-model="email"
+        label="Email"
+        type="email"
+        :rules="[required('Email'), emailRule]"
       />
       <v-text-field
-        v-model="lastName"
-        label="Last Name"
-        variant="outlined"
-        :rules="[(v) => !!v || 'Last Name is required']"
-        :disabled="isLoading"
+        v-model="password"
+        :type="visible ? 'text' : 'password'"
+        :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+        label="Password"
+        :rules="[required('Password'), pwdRule]"
+        @click:append-inner="visible = !visible"
       />
-    </template>
 
-    <v-btn
-      block
-      size="large"
-      elevation="2"
-      :loading="isLoading"
-      :disabled="isLoading"
-      @click="handle"
+      <v-text-field
+        v-if="showName"
+        v-model="confirmPassword"
+        :type="visible ? 'text' : 'password'"
+        :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
+        label="Confirm password"
+        :rules="[required('Confirm password'), confirmRule]"
+        @click:append-inner="visible = !visible"
+      />
+
+      <!-- Extra fields only on SignUp -->
+      <template v-if="showName">
+        <v-text-field
+          v-model="firstName"
+          label="First name"
+          :rules="[required('First name')]"
+        />
+        <v-text-field
+          v-model="lastName"
+          label="Last name"
+          :rules="[required('Last name')]"
+        />
+      </template>
+
+      <v-btn class="mt-4" type="submit" block size="large" :loading="isLoading">
+        {{ props.mode === 'signup' ? 'Create account' : 'Continue' }}
+      </v-btn>
+    </v-form>
+
+    <div
+      v-if="props.mode === 'signin'"
+      class="d-flex justify-space-between align-center mt-2"
     >
-      {{ props.mode === 'signup' ? 'Create account' : 'Continue' }}
-    </v-btn>
-    <v-btn
-      block
-      size="large"
-      :loading="isLoading"
-      :disabled="isLoading"
-      class="my-3"
-      @click="socialSignIn('google')"
-    >
-      <template #prepend><v-icon size="22">mdi-google</v-icon></template>
-      Continue with Google
-    </v-btn>
-    <v-btn
-      block
-      size="large"
-      :loading="isLoading"
-      :disabled="isLoading"
-      @click="socialSignIn('github')"
-    >
-      <template #prepend><v-icon size="22">mdi-github</v-icon></template>
-      Continue with GitHub
-    </v-btn>
+      <v-checkbox
+        v-model="rememberMe"
+        label="Remember me"
+        density="compact"
+        hide-details
+        class="ma-0 pa-0"
+        style="width: auto"
+      />
+      <v-btn variant="text" class="text-primary text-none" slim>
+        Forgot password?
+      </v-btn>
+    </div>
+
+    <div class="my-8">
+      <v-divider>
+        <template #default>
+          <div class="text-caption text-grey">Or continue with</div>
+        </template>
+      </v-divider>
+    </div>
+
+    <div class="d-flex align-center ga-4 mb-8 justify-center">
+      <v-btn
+        icon
+        variant="tonal"
+        color="red darken-1"
+        :loading="isLoading"
+        @click="socialSignIn('google')"
+      >
+        <v-icon>mdi-google</v-icon>
+      </v-btn>
+
+      <v-btn
+        icon
+        variant="tonal"
+        color="black"
+        :disabled="isLoading"
+        @click="socialSignIn('github')"
+      >
+        <v-icon>mdi-github</v-icon>
+      </v-btn>
+    </div>
+
+    <slot />
   </v-card>
 </template>

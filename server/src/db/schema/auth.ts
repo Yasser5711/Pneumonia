@@ -12,14 +12,11 @@ export const users = pgTable(
       .boolean('email_verified')
       .$defaultFn(() => false)
       .notNull(),
-    image: t
-      .text('image')
-      .$defaultFn(
-        () =>
-          `https://ui-avatars.com/api/?name=${sql`concat(firstName, "+", lastName)`}&background=random`,
-      ),
+    image: t.text('image'),
     requestsQuota: t.integer('requests_quota').notNull().default(10),
     requestsUsed: t.integer('requests_used').notNull().default(0),
+    lastLoginAt: t.timestamp('last_login_at'),
+    lastLoginIp: t.text('last_login_ip'),
     createdAt: t
       .timestamp('created_at')
       .$defaultFn(() => /* @__PURE__ */ new Date())

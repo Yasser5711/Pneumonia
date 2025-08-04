@@ -1,9 +1,12 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { apiKey, customSession } from 'better-auth/plugins';
+import { eq } from 'drizzle-orm';
+import { logger } from 'src/logger';
 
 import { db, schemas } from '../db';
 import { env } from '../env';
+
 export const auth = betterAuth({
   appName: 'Pneumonia',
   basePath: '/api/auth',
@@ -17,7 +20,7 @@ export const auth = betterAuth({
       apikeys: schemas.apiKeys,
     },
     usePlural: true,
-    debugLogs: true, // env.NODE_ENV === 'development' || env.NODE_ENV === 'test',
+    debugLogs: env.NODE_ENV === 'development' || env.NODE_ENV === 'test',
   }),
   user: {
     additionalFields: {
@@ -41,57 +44,77 @@ export const auth = betterAuth({
     github: {
       clientId: env.GITHUB_CLIENT_ID,
       clientSecret: env.GITHUB_CLIENT_SECRET,
-      redirectURI: `${env.FRONTEND_ORIGIN}/github-callback`,
+      mapProfileToUser(profile) {
+        return {
+          firstName: profile.name?.split(' ')[0] || '',
+          lastName: profile.name?.split(' ')[1] || '',
+          image: profile.avatar_url,
+        };
+      },
     },
     google: {
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
       mapProfileToUser: (profile) => ({
-        firstName: profile.given_name, // Google provides this
-        lastName: profile.family_name, // Google provides this
-        // // Fallback for name if you want
-        // name: profile.name,
+        firstName: profile.given_name,
+        lastName: profile.family_name,
+        image: profile.picture,
       }),
-      // redirectURI: `${env.FRONTEND_ORIGIN}/chat`,
+    },
+  },
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          if (!user.image) {
+            try {
+              await db
+                .update(schemas.users)
+                .set({
+                  image: `https://ui-avatars.com/api/?name=${user.name.replace(' ', '+')}&background=random`,
+                })
+                .where(eq(schemas.users.id, user.id));
+            } catch (error) {
+              logger().error('Failed to update image:', error);
+            }
+          }
+        },
+      },
+    },
+    session: {
+      create: {
+        after: async (session) => {
+          if (session.userId) {
+            try {
+              await db
+                .update(schemas.users)
+                .set({
+                  lastLoginAt: new Date(),
+                })
+                .where(eq(schemas.users.id, session.userId));
+            } catch (error) {
+              logger().error('Failed to update last login info:', error);
+            }
+          }
+        },
+      },
     },
   },
   advanced: {
     database: {
       generateId: false,
     },
-    // useSecureCookies: env.NODE_ENV === 'production', // ✅
-    // defaultCookieAttributes: {
-    //   sameSite: 'none', // ✅ cross‑origin
-    //   secure: env.NODE_ENV === 'production', // ✅
-    //   domain: undefined, // ✅ pas de .localhost
-    // },
-    // ipAddress: {
-    //   ipAddressHeaders: ['x-client-ip', 'x-forwarded-for'],
-    //   disableIpTracking: false,
-    // },
-    // useSecureCookies: env.NODE_ENV === 'production',
-    // disableCSRFCheck: false,
-    // cookies: {
-    //   session_token: {
-    //     name: 'custom_session_token',
-    //     attributes: {
-    //       httpOnly: true,
-    //       secure: env.NODE_ENV === 'production',
-    //       sameSite: 'none',
-    //     },
-    //   },
-    // },
-    // defaultCookieAttributes: {
-    //   httpOnly: true,
-    //   secure: env.NODE_ENV === 'production',
-    //   sameSite: 'none',
-    // },
+    useSecureCookies: env.NODE_ENV === 'production',
+    ipAddress: {
+      ipAddressHeaders: ['x-client-ip', 'x-forwarded-for'],
+      disableIpTracking: false,
+    },
   },
   plugins: [
     apiKey({
       apiKeyHeaders: ['x-api-key'],
       defaultKeyLength: 43,
-      disableKeyHashing: true, // For development only, do not use in production
+      disableKeyHashing: true,
       rateLimit: {
         enabled: false,
       },
@@ -102,9 +125,5 @@ export const auth = betterAuth({
       userId: session?.userId,
     })),
   ],
-  // rateLimit: {
-  //   enabled: false,
-  // },
-  // logger: logger,
 });
-export type auth = typeof auth;
+export type Auth = typeof auth;

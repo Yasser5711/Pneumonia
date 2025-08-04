@@ -14,7 +14,6 @@ export function useGlobalFileDragState() {
       window,
       'dragenter',
       (event: DragEvent) => {
-        // Vérifier si des fichiers sont glissés
         if (event.dataTransfer?.types.includes('Files')) {
           event.preventDefault()
           dragEnterCounter++

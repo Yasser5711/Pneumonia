@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
+import { LoggerNotInitializedError } from './errors';
 import { logger, setLogger } from './logger';
 
 beforeEach(() => {
@@ -9,7 +10,7 @@ describe('🧩 Logger utils', () => {
   it('throws if getLogger is called before setLogger', () => {
     expect(() => {
       logger();
-    }).toThrow('Logger not initialized');
+    }).toThrow(LoggerNotInitializedError);
   });
 
   it('returns the logger after initialization', () => {

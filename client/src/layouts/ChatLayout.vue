@@ -1,9 +1,8 @@
 <template>
   <BaseLayout>
-    <template #header>
-      <CanvasBackground />
+    <!-- <template #header>
       <AppHeader />
-    </template>
+    </template> -->
 
     <template #footer>
       <AppFooter />

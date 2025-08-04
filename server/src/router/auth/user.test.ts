@@ -19,21 +19,92 @@ beforeEach(() => {
     id: 'u-42',
     email: 'john@example.com',
   });
+  mockServices.newUserService.findById.mockResolvedValue({
+    id: 'fake-id',
+    name: 'fake-name',
+    email: 'fake-email@example.com',
+    createdAt: new Date(),
+    updatedAt: null,
+    firstName: 'fake-first-name',
+    lastName: 'fake-last-name',
+    emailVerified: true,
+    image: 'fake-image-url',
+    requestsQuota: 100,
+    requestsUsed: 50,
+    lastLoginAt: null,
+    lastLoginIp: null,
+    apiKeys: [
+      {
+        id: 'fake-key-id',
+        name: 'fake-key-name',
+        prefix: null,
+        start: null,
+        key: 'fake-key',
+        userId: 'fake-id',
+        refillInterval: 60,
+        refillAmount: 1,
+        metadata: null,
+        createdAt: new Date(),
+        updatedAt: null,
+        expiresAt: null,
+        lastRefillAt: null,
+        enabled: true,
+        rateLimitEnabled: true,
+        rateLimitTimeWindow: 60,
+        remaining: 50,
+        lastRequest: new Date(),
+        permissions: '',
+        rateLimitMax: 60,
+        requestCount: 0,
+      },
+    ],
+  });
+  mockServices.newUserService.updateProfile.mockResolvedValue({
+    id: 'fake-id',
+    name: 'fake-name',
+    email: 'fake-email@example.com',
+    createdAt: new Date(),
+    updatedAt: null,
+    firstName: 'fake-first-name',
+    lastName: 'fake-last-name',
+    emailVerified: true,
+    image: 'fake-image-url',
+    requestsQuota: 100,
+    requestsUsed: 50,
+    lastLoginAt: null,
+    lastLoginIp: null,
+  });
 });
 
 describe('userRouter', () => {
   it('me → return user info', async () => {
     const fakeMe = {
-      user: { id: 'u-42', email: 'john@example.com' },
-      // keys: [],
-      quota: { used: 10, total: 0 },
+      user: {
+        id: 'test-user-123',
+        name: 'John Doe',
+        email: 'john@example.com',
+        createdAt: new Date(),
+        updatedAt: null,
+        lastLoginAt: null,
+        lastLoginIp: null,
+        firstName: 'John',
+        lastName: 'Doe',
+        image: null,
+        apiKey: null,
+      },
+      quota: {
+        total: 0,
+        used: 0,
+      },
     };
-    mockServices.userService.getMe.mockResolvedValue(fakeMe);
+    mockServices.newUserService.getMe.mockResolvedValue(fakeMe);
 
-    const caller = createTestCaller({});
+    const caller = createTestCaller({
+      customSession: { isAuthenticated: true, userId: 'test-user-123' },
+    });
     const res = await caller.auth.user.me({});
     expect(res).toEqual(fakeMe);
-    expect(mockServices.userService.getMe).toHaveBeenCalledWith('u-42');
+    expect(mockServices.newUserService.getMe).toHaveBeenCalledWith('test-user-123');
   });
 
   it('logout → clears the cookie and returns success', async () => {
@@ -49,14 +120,19 @@ describe('userRouter', () => {
   });
 
   it('generateMyKey → creates a key for the current user', async () => {
-    mockServices.apiKeyService.generateKey.mockResolvedValue({ key: 'new-api-key' } as any);
+    mockServices.newApiKeyService.generateKey.mockResolvedValue({
+      key: 'new-api-key',
+      id: 'new-api-key-id',
+    });
 
-    const caller = createTestCaller({});
+    const caller = createTestCaller({
+      customSession: { isAuthenticated: true, userId: 'test-user-123' },
+    });
     const res = await caller.auth.user.generateMyKey({});
 
     expect(res).toEqual({ apiKey: 'new-api-key' });
-    expect(mockServices.apiKeyService.generateKey).toHaveBeenCalledWith(
-      expect.objectContaining({ userId: 'u-42' }),
+    expect(mockServices.newApiKeyService.generateKey).toHaveBeenCalledWith(
+      expect.objectContaining({ userId: 'test-user-123' }),
     );
   });
 });

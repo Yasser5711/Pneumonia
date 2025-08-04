@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 import { mockApiKeyRepo } from '../../../test/repositories';
-import * as apiKeyErrors from '../../errors/apiKey.errors';
+import * as apiKeyErrors from '../../errors';
 
 import { createApiKeyService } from './apiKey.service';
 

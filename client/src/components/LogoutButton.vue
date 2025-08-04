@@ -1,10 +1,14 @@
 <script setup lang="ts">
-import { useAuthForm } from '../composables/useAuthForm'
-const { logout } = useAuthForm()
+import { useSession } from '@/composables/useSession'
+const { logout } = useSession()
 </script>
 
 <template>
-  <v-btn icon title="Log out" @click="logout">
-    <v-icon icon="mdi-logout" />
-  </v-btn>
+  <v-btn
+    prepend-icon="mdi-logout"
+    title="Logout"
+    text="Logout"
+    color="error"
+    @click="logout"
+  />
 </template>

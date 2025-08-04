@@ -87,6 +87,7 @@
     "useId": true,
     "useImagePredictor": true,
     "useModel": true,
+    "usePixiBackground": true,
     "useRoute": true,
     "useRouter": true,
     "useSeoMeta": true,

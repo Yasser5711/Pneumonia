@@ -6,7 +6,6 @@ import { renderComposable } from '../tests/renderComposable'
 
 import { useTheme } from './useTheme'
 
-// Mock the theme store
 const cycleTheme = vi.fn()
 const mockThemeStore = {
   themeMode: ref<'light' | 'dark' | 'auto'>('auto'),

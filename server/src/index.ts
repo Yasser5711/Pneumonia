@@ -17,9 +17,9 @@ import { setLogger } from './logger';
 import { appRouter } from './router/_app';
 import { createContext, type CreateContextOptions } from './trpc';
 import { auth } from './utils/auth';
-import { fastifyAdapter } from './utils/fastify-adapter';
+
 const isDev = env.NODE_ENV === 'development';
-const isProd = env.NODE_ENV === 'production';
+
 const frontendUrl = new URL(env.FRONTEND_ORIGIN!);
 const hostnameParts = frontendUrl.hostname.split('.');
 const parentDomain = '.' + hostnameParts.slice(-2).join('.');
@@ -37,7 +37,7 @@ const fastify = Fastify({
           },
         },
       }
-    : true, // raw JSON logs in prod
+    : true,
   bodyLimit: 3 * 1024 * 1024, // 3 MB
 });
 setLogger(fastify.log);
@@ -58,10 +58,7 @@ async function main() {
         cb(new Error(`Origin ${origin} not allowed by CORS`), false);
       }
     },
-    // 2) **Crucial** → ajoute Access-Control-Allow-Credentials: true
     credentials: true,
-
-    // 3) Autorise pré-vols (OPTIONS) & en-têtes customs si besoin
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'x-api-key'],
 
@@ -89,7 +86,6 @@ async function main() {
       domain: parentDomain,
     },
   });
-  // TODO: Problem with customSessionClient not working with Fastify
   fastify.route({
     method: ['GET', 'POST'],
     url: '/api/auth/*',
@@ -172,7 +168,6 @@ async function main() {
     },
     onError(opts: any) {
       const { error, path } = opts;
-      // Log the full error to the server console in development
       // eslint-disable-next-line no-console
       console.error(`❌ tRPC Error on '${path}':`, error);
     },
@@ -182,7 +177,6 @@ async function main() {
         ...shape,
         data: {
           ...shape.data,
-          // Also include the error stack in the response during development
           stack: isDev ? error.stack : undefined,
         },
       };

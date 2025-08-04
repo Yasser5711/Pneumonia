@@ -1,5 +1,5 @@
 <template>
-  <RouterView />
+  <RouterViewTransition :route-key="$route.path" />
   <VueQueryDevtools />
 </template>
 <script setup>

@@ -79,6 +79,7 @@ declare global {
   const useImagePredictor: typeof import('./composables/useImagePredictor')['useImagePredictor']
   const useLink: (typeof import('vue-router'))['useLink']
   const useModel: typeof import('vue')['useModel']
+  const usePixiBackground: typeof import('./composables/usePixiBackground')['usePixiBackground']
   const useRoute: typeof import('vue-router/auto')['useRoute']
   const useRouter: typeof import('vue-router/auto')['useRouter']
   const useSeoMeta: typeof import('@unhead/vue')['useSeoMeta']
@@ -186,6 +187,7 @@ declare module 'vue' {
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useImagePredictor: UnwrapRef<typeof import('./composables/useImagePredictor')['useImagePredictor']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
+    readonly usePixiBackground: UnwrapRef<typeof import('./composables/usePixiBackground')['usePixiBackground']>
     readonly useRoute: UnwrapRef<typeof import('vue-router/auto')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router/auto')['useRouter']>
     readonly useSeoMeta: UnwrapRef<typeof import('@unhead/vue')['useSeoMeta']>

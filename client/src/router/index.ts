@@ -53,8 +53,11 @@ export function createAppRouter(baseUrl: string = import.meta.env.BASE_URL) {
       return { name: 'SignIn', query: { redirect: to.fullPath } }
     }
 
-    if (to.meta.guestOnly && auth.isAuthenticated) {
-      return { name: 'ChatPage' }
+    if (to.meta.guestOnly) {
+      const res = await auth.refresh()
+      if (res != null) {
+        return { name: 'ChatPage' }
+      }
     }
     return true
   })

@@ -1,61 +1,84 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { mockNewUserService } from 'test/services';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 import { createTestCaller } from '../../test/caller';
-import { mockApiKeyService, mockUserService } from '../../test/services';
-import { ApiKeyInvalidError, QuotaExceededError } from '../errors/apiKey.errors';
-vi.mock('../utils/session', () => ({
-  getSession: () => ({ sub: 'user-id' }),
-  setSession: vi.fn(),
-  clearSession: vi.fn(),
-}));
 beforeEach(() => {
-  mockUserService.findById.mockResolvedValue({
+  mockNewUserService.findById.mockResolvedValue({
     id: 'fake-id',
+    name: 'fake-name',
     email: 'fake-email@example.com',
+    createdAt: new Date(),
+    updatedAt: null,
+    firstName: 'fake-first-name',
+    lastName: 'fake-last-name',
+    emailVerified: true,
+    image: 'fake-image-url',
+    requestsQuota: 100,
+    requestsUsed: 50,
+    lastLoginAt: null,
+    lastLoginIp: null,
+    apiKeys: [
+      {
+        id: 'fake-key-id',
+        name: 'fake-key-name',
+        prefix: null,
+        start: null,
+        key: 'fake-key',
+        userId: 'fake-id',
+        refillInterval: 60,
+        refillAmount: 1,
+        metadata: null,
+        createdAt: new Date(),
+        updatedAt: null,
+        expiresAt: null,
+        lastRefillAt: null,
+        enabled: true,
+        rateLimitEnabled: true,
+        rateLimitTimeWindow: 60,
+        remaining: 50,
+        lastRequest: new Date(),
+        permissions: '',
+        rateLimitMax: 60,
+        requestCount: 0,
+      },
+    ],
   });
-  mockApiKeyService.validateKey.mockResolvedValue({
+  mockNewUserService.updateProfile.mockResolvedValue({
     id: 'fake-id',
-    name: 'user-fake-id-key',
-    keyPrefix: 'pref',
-    hashedKey: 'hash',
-    active: true,
-    freeRequestsUsed: 0,
-    freeRequestsQuota: 1,
-    updatedAt: new Date(),
-    expiresAt: null,
-    description: 'unit test key',
-    lastUsedAt: null,
-    lastUsedIp: null,
-    userId: 'fake-id',
+    name: 'fake-name',
+    email: 'fake-email@example.com',
+    createdAt: new Date(),
+    updatedAt: null,
+    firstName: 'fake-first-name',
+    lastName: 'fake-last-name',
+    emailVerified: true,
+    image: 'fake-image-url',
+    requestsQuota: 100,
+    requestsUsed: 50,
+    lastLoginAt: null,
+    lastLoginIp: null,
   });
-
-  mockApiKeyService.markKeyUsed.mockResolvedValue(undefined);
 });
 
 describe('helloWorldRouter', () => {
   it('returns default greeting when name omitted', async () => {
-    const caller = createTestCaller({});
+    const caller = createTestCaller({
+      customSession: { isAuthenticated: true, userId: 'test-user-123' },
+    });
     const result = await caller.helloWorldRouter({});
     expect(result).toEqual({ message: 'Hello, Guest!' });
   });
 
   it('returns personalized greeting when name provided', async () => {
-    const caller = createTestCaller({});
+    const caller = createTestCaller({
+      customSession: { isAuthenticated: true, userId: 'test-user-123' },
+    });
     const result = await caller.helloWorldRouter({ name: 'John' });
     expect(result).toEqual({ message: 'Hello, John!' });
   });
 
-  it('propagates API-key validation errors (invalid / expired)', async () => {
-    mockApiKeyService.validateKey.mockRejectedValueOnce(new ApiKeyInvalidError());
-
-    const caller = createTestCaller({});
-    await expect(caller.helloWorldRouter({})).rejects.toThrow('Invalid API key');
-  });
-
-  it('propagates QuotaExceededError as “Rate limit exceeded”', async () => {
-    mockApiKeyService.validateKey.mockRejectedValueOnce(new QuotaExceededError(1));
-
-    const caller = createTestCaller({});
-    await expect(caller.helloWorldRouter({})).rejects.toThrow('Rate limit exceeded');
+  it('returns Not authenticated error when session is not authenticated', async () => {
+    const caller = createTestCaller({ customSession: null });
+    await expect(caller.helloWorldRouter({ name: 'John' })).rejects.toThrow('Session not found');
   });
 });

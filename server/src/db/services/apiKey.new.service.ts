@@ -1,9 +1,22 @@
+import {
+  ApiKeyGenerationFailedError,
+  ApiKeyInvalidError,
+  ApiKeyQuotaExceededError,
+  ApiKeyQuotaNotSetError,
+  ApiKeyVerificationFailedError,
+  NoApiKeyFoundForUserError,
+} from '../../errors';
 import { auth } from '../../utils/auth';
 
 import type { Repositories } from '../repositories/index';
 export const createNewApiKeyService = (repo: Repositories['newApiKeysRepo']) => ({
   /**
    * Generate a new API key for a user using better-auth.
+   * @param userId - The UUID of the user.
+   * @param name - Optional name for the API key.
+   * @param expiresIn - Optional expiration time in seconds (default is 30 days).
+   * @returns The generated API key.
+   * @throws {ApiKeyGenerationFailedError} When API key generation fails
    */
   generateKey: async ({
     userId,
@@ -17,42 +30,51 @@ export const createNewApiKeyService = (repo: Repositories['newApiKeysRepo']) => 
     try {
       return await repo.create({ userId, name, expiresIn });
     } catch (error) {
-      throw new Error(`Failed to generate API key: ${(error as Error).message}`);
+      throw new ApiKeyGenerationFailedError((error as Error).message);
     }
   },
 
   /**
-   * Validate an API key. This is typically called by your tRPC middleware.
+   * Validate an API key.
+   * @param key - The API key to validate.
+   * @returns The validated API key object.
+   * @throws {ApiKeyVerificationFailedError} When API key verification fails
+   * @throws {ApiKeyInvalidError} When API key is invalid
+   * @throws {ApiKeyQuotaNotSetError} When API key quota is not set
+   * @throws {ApiKeyQuotaExceededError} When API key quota is exceeded
    */
   verifyKey: async (key: string) => {
     let res;
     try {
       res = await auth.api.verifyApiKey({ body: { key } });
     } catch (error) {
-      throw new Error(`Failed to verify API key: ${(error as Error).message}`);
+      throw new ApiKeyVerificationFailedError((error as Error).message);
     }
     if (!res || !res.key || !res.valid) {
-      throw new Error('Invalid API key');
+      throw new ApiKeyInvalidError();
     }
     const { requestsQuota, requestsUsed, userId } = await repo.getQuota(res.key.id);
 
     if (requestsQuota == null) {
-      throw new Error('API key quota not set');
+      throw new ApiKeyQuotaNotSetError();
     }
 
     if ((requestsUsed ?? 0) >= requestsQuota) {
-      throw new Error('API key quota exceeded');
+      throw new ApiKeyQuotaExceededError();
     }
 
     return { ...res, userId };
   },
   /**
    * Get my API key.
+   * @param userId - The UUID of the user.
+   * @returns The user's API key.
+   * @throws {NoApiKeyFoundForUserError} When no API key is found for the user
    */
   getMyKey: async (userId: string) => {
     const key = await repo.findByUserId({ userId });
-    if (!key) {
-      throw new Error('No API key found for this user');
+    if (!key || key.length === 0) {
+      throw new NoApiKeyFoundForUserError();
     }
     return key[0];
   },

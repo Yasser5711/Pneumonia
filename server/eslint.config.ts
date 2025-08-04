@@ -95,6 +95,8 @@ export default [
       'no-console': 'error', // could be info-only for logs
       'require-await': 'error',
       'no-useless-catch': 'error',
+      'no-throw-literal': 'error', // Enforce throwing Error objects
+
       // ✅ Security rules
       'security/detect-object-injection': 'off', // false positive prone — disable or audit manually
       'security/detect-unsafe-regex': 'warn',

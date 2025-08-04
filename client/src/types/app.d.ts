@@ -27,8 +27,8 @@ export type User =
       createdAt: Date
       email: string
       id: string
-      lastLogin: Date
-      lastUsedIp?: string
+      lastLoginAt?: Date
+      lastLoginIp?: string
       provider: 'github' | 'google'
       providerId: string
       updatedAt: Date

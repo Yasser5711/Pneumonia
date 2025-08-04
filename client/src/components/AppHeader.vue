@@ -12,8 +12,9 @@ function onLeftButtonClick() {
 <template>
   <v-app-bar
     app
-    scroll-behavior="elevate"
-    style="background-color: transparent; backdrop-filter: blur(10px)"
+    scroll-behavior="hide"
+    style="background-color: transparent"
+    elevation="0"
   >
     <v-btn
       icon

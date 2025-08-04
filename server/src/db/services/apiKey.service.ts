@@ -1,6 +1,7 @@
 import { randomBytes } from 'crypto';
 
-import * as apiKeyErrors from '../../errors/apiKey.errors';
+import { ApiKeyGenerationError } from '../../errors';
+import * as apiKeyErrors from '../../errors';
 import { logger } from '../../logger';
 import { compareApiKey, hashApiKey } from '../../utils/hash';
 
@@ -33,7 +34,7 @@ export const createApiKeyService = (apiKeysRepo: Repositories['apiKeysRepo']) =>
 
     if (!record) {
       logger().error('API key insert failed', { name, description });
-      throw new Error('API key generation failed');
+      throw new ApiKeyGenerationError();
     }
 
     return {

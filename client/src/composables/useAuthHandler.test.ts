@@ -99,7 +99,7 @@ describe('useGithubCallbackHandler', () => {
   })
   it('ignores when no code in query', () => {
     ;(useGithubCallback as Mock).mockReturnValue({
-      mutate: vi.fn(), // ne doit PAS être appelé
+      mutate: vi.fn(),
       isPending: r(false),
       isSuccess: r(false),
       isError: r(false),
@@ -110,7 +110,7 @@ describe('useGithubCallbackHandler', () => {
 
     // assertions
     expect(useGithubCallback().mutate).not.toHaveBeenCalled()
-    expect(handler.isPending.value).toBe(false) // etc.
+    expect(handler.isPending.value).toBe(false)
   })
 })
 
@@ -177,7 +177,7 @@ describe('useGoogleCallbackHandler', () => {
   })
   it('ignores when no code in query', () => {
     ;(useGoogleCallback as Mock).mockReturnValue({
-      mutate: vi.fn(), // ne doit PAS être appelé
+      mutate: vi.fn(),
       isPending: r(false),
       isSuccess: r(false),
       isError: r(false),

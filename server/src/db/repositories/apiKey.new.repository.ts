@@ -1,5 +1,6 @@
 import { eq, ne, type InferSelectModel, type InferInsertModel, and } from 'drizzle-orm';
 
+import { QuotaExceededNoExistingKeyError } from '../../errors';
 import { auth } from '../../utils/auth';
 import { db as DB } from '../index';
 import { apiKeys as apiKeysTable, users as usersTable } from '../schema/auth';
@@ -18,7 +19,10 @@ export type ApiKeyWithUserQuota = ApiKey & {
 };
 export const createNewApiKeysRepo = (db: DrizzleDB = DB) => ({
   /**
-   * List all API keys for a specific user (for management views).
+   * List all API keys for a specific user.
+   * @param userId - The UUID of the user.
+   * @param includeDisabled - Whether to include disabled API keys.
+   * @returns An array of API keys.
    */
   findByUserId: async ({
     userId,
@@ -38,6 +42,8 @@ export const createNewApiKeysRepo = (db: DrizzleDB = DB) => ({
   },
   /**
    * Update enabled for API keys
+   * @param userId - The UUID of the user.
+   * @returns An array of updated API keys.
    */
   disableMyKeys: async (userId: string) => {
     return await db
@@ -48,6 +54,8 @@ export const createNewApiKeysRepo = (db: DrizzleDB = DB) => ({
   },
   /**
    * Get Quota of an API key.
+   * @param keyId - The UUID of the API key.
+   * @returns An object containing the key ID, user ID, requests quota, and requests used.
    */
   getQuota: async (keyId: string) => {
     return await db
@@ -62,6 +70,14 @@ export const createNewApiKeysRepo = (db: DrizzleDB = DB) => ({
       .where(eq(apiKeysTable.id, keyId))
       .then((rows) => rows[0]);
   },
+  /**
+   * Create a new API key for a user.
+   * If the user's quota is exceeded, it will return the existing key.
+   * @param userId - The UUID of the user.
+   * @param name - Optional name for the API key.
+   * @param expiresIn - Optional expiration time in seconds (default is 30 days).
+   * @returns An object containing the API key.
+   */
   create: async ({
     userId,
     name,
@@ -72,6 +88,35 @@ export const createNewApiKeysRepo = (db: DrizzleDB = DB) => ({
     expiresIn?: number;
   }) => {
     return await db.transaction(async (tx) => {
+      const user = await tx
+        .select({
+          requestsQuota: usersTable.requestsQuota,
+          requestsUsed: usersTable.requestsUsed,
+        })
+        .from(usersTable)
+        .where(eq(usersTable.id, userId))
+        .then((rows) => rows[0]);
+
+      const isQuotaExceeded =
+        user?.requestsQuota !== undefined && user.requestsUsed >= user.requestsQuota;
+
+      if (isQuotaExceeded) {
+        const existingKey = await tx
+          .select({
+            key: apiKeysTable.key,
+            id: apiKeysTable.id,
+          })
+          .from(apiKeysTable)
+          .where(eq(apiKeysTable.userId, userId))
+          .then((rows) => rows[0]);
+
+        if (!existingKey) {
+          throw new QuotaExceededNoExistingKeyError(userId);
+        }
+
+        return existingKey;
+      }
+
       const { key, id: newId } = await auth.api.createApiKey({
         body: {
           userId,

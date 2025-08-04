@@ -7,9 +7,9 @@ export function useAuthForm() {
   const lastName = ref('')
   const isLoading = ref(false)
   const errorMsg = ref('')
+  const rememberMe = ref(false)
   const FRONTEND_URL =
     import.meta.env.VITE_FRONTEND_URL ?? window.location.origin
-  const router = useRouter()
   async function signIn() {
     isLoading.value = true
     errorMsg.value = ''
@@ -17,6 +17,8 @@ export function useAuthForm() {
       await authClient.signIn.email({
         email: email.value,
         password: password.value,
+        callbackURL: `${FRONTEND_URL}/chat`,
+        rememberMe: rememberMe.value,
       })
     } catch (e) {
       errorMsg.value = (e as Error).message ?? 'Unknown error'
@@ -36,6 +38,7 @@ export function useAuthForm() {
         firstName: firstName.value,
         lastName: lastName.value,
         name: `${firstName.value} ${lastName.value}`,
+        callbackURL: `${FRONTEND_URL}/chat`,
       })
     } catch (e) {
       errorMsg.value = (e as Error).message ?? 'Unknown error'
@@ -49,19 +52,13 @@ export function useAuthForm() {
     isLoading.value = true
     errorMsg.value = ''
     try {
-      await authClient.signOut({
-        fetchOptions: {
-          onSuccess: () => {
-            router.push({ name: 'SignIn' })
-          },
-        },
-      })
+      await authClient.signOut()
+      callback?.()
     } catch (e) {
       errorMsg.value = (e as Error).message ?? 'Unknown error'
       throw e
     } finally {
       isLoading.value = false
-      callback?.()
     }
   }
   async function socialSignIn(provider: 'google' | 'github') {
@@ -85,6 +82,7 @@ export function useAuthForm() {
     password,
     firstName,
     lastName,
+    rememberMe,
 
     isLoading,
     errorMsg,

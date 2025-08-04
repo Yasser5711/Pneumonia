@@ -5,7 +5,7 @@ import { setLogger } from '../src/logger';
 
 import type { FastifyBaseLogger } from 'fastify';
 
-const mockLogger = mockDeep<FastifyBaseLogger>();
+export const mockLogger = mockDeep<FastifyBaseLogger>();
 beforeAll(() => {
   setLogger(mockLogger);
   vi.mock('../src/env', () => ({
@@ -18,6 +18,7 @@ beforeAll(() => {
       GOOGLE_CLIENT_SECRET: 'test_google_client_secret',
       SESSION_SECRET: 'test_session_secret',
       ENABLE_LOCAL_AUTH: true,
+      BASE_URL: 'http://localhost:3000',
     },
   }));
 });

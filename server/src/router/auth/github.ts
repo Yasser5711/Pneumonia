@@ -2,11 +2,19 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import { env } from '../../env';
+import { GitHubRequestFailedError } from '../../errors';
 import { publicProcedure, router } from '../../middlewares';
 import { setSession } from '../../utils/session';
+
+/**
+ * Makes a request to GitHub API
+ * @param url - The GitHub API URL
+ * @param init - Fetch options
+ * @throws {GitHubRequestFailedError} When GitHub request fails
+ */
 async function githubRequest<T>(url: string, init: RequestInit = {}): Promise<T> {
   const r = await fetch(url, init);
-  if (!r.ok) throw new Error(`GitHub request failed: ${url}`);
+  if (!r.ok) throw new GitHubRequestFailedError(url);
   return (await r.json()) as T;
 }
 

@@ -20,6 +20,15 @@ const vuetify = createVuetify({
   // components: {
   //   VFileUpload,
   // },
+
+  defaults: {
+    VTextField: {
+      variant: 'underlined',
+    },
+    VBtn: {
+      rounded: 'xs',
+    },
+  },
   theme: {
     defaultTheme: 'dark',
     themes: {

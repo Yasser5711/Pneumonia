@@ -39,18 +39,19 @@ export function useSession() {
       }
     }
   })
-
+  function wipeLocalStorage() {
+    closeModal()
+    store.removeKeyFromLocalStorage('apiKey')
+    user.value = undefined
+    qc.invalidateQueries()
+  }
   async function logout() {
     try {
-      await authLogout(async () => {
-        closeModal()
-        store.removeKeyFromLocalStorage('apiKey')
-        user.value = undefined
-        await router.push({ name: 'SignIn' })
-        await qc.invalidateQueries()
-      })
+      await authLogout(wipeLocalStorage)
     } catch {
-      /* API down? on s’en fiche, on wipe local */
+      wipeLocalStorage()
+    } finally {
+      router.push({ name: 'SignIn' })
     }
   }
   const isLoggedIn = computed(() => !!user.value)

@@ -23,7 +23,7 @@ const merged = mergeConfig(baseConfig, {
       include: ['src/**/*.ts', 'test/**/*.ts'],
       exclude: [
         'src/env.ts',
-        'src/errors/**',
+        'src/errors.ts',
         '**/index.ts',
         'test/test.ts',
         'src/db/migrations/**',

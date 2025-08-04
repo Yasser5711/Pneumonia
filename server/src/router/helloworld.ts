@@ -22,9 +22,8 @@ export const helloWorldRouter = protectedProcedure
       message: z.string(),
     }),
   )
-  .query(({ input, ctx }) => {
+  .query(({ input }) => {
     const { name } = input;
-    console.log(`Hello World request received with name: ${ctx}`);
     return {
       message: `Hello, ${name || 'Guest'}!`,
     };

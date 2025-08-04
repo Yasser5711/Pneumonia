@@ -2,12 +2,19 @@ import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import { env } from '../../env';
+import { GoogleRequestFailedError } from '../../errors';
 import { publicProcedure, router } from '../../middlewares';
 import { setSession } from '../../utils/session';
 
+/**
+ * Makes a request to Google API
+ * @param url - The Google API URL
+ * @param init - Fetch options
+ * @throws {GoogleRequestFailedError} When Google request fails
+ */
 async function googleRequest<T>(url: string, init: RequestInit = {}): Promise<T> {
   const r = await fetch(url, init);
-  if (!r.ok) throw new Error(`Google request failed: ${url}`);
+  if (!r.ok) throw new GoogleRequestFailedError(url);
   return (await r.json()) as T;
 }
 

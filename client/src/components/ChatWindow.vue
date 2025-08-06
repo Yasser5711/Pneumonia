@@ -29,7 +29,7 @@ useHead({
         </div>
       </transition-group>
 
-      <div
+      <!-- <div
         v-if="chatStore.messages.length === 0"
         class="d-flex flex-column align-center justify-center"
         style="height: 100%; opacity: 0.4"
@@ -40,7 +40,7 @@ useHead({
           <span class="dot-bounce mr-1" style="animation-delay: 0.15s"></span>
           <span class="dot-bounce" style="animation-delay: 0.3s"></span>
         </div>
-      </div>
+      </div> -->
 
       <div
         v-if="chatStore.isTyping"

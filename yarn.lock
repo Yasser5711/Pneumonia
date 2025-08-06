@@ -2796,6 +2796,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@pixi/constants@npm:^7.4.3":
+  version: 7.4.3
+  resolution: "@pixi/constants@npm:7.4.3"
+  checksum: 10c0/974efa4e2c5c0ec22fb0268c3fe4b561427d20aa91234762238dee9711cb6382abc4500c8676a92bbf957868218e8fc918b9e676c52037c3603dd137dce5db8d
+  languageName: node
+  linkType: hard
+
 "@pkgjs/parseargs@npm:^0.11.0":
   version: 0.11.0
   resolution: "@pkgjs/parseargs@npm:0.11.0"
@@ -5325,6 +5332,7 @@ __metadata:
     "@eslint/js": "npm:^9.27.0"
     "@iconify/vue": "npm:^5.0.0"
     "@mdi/font": "npm:7.4.47"
+    "@pixi/constants": "npm:^7.4.3"
     "@tailwindcss/postcss": "npm:^4.1.7"
     "@tailwindcss/vite": "npm:^4.1.7"
     "@tanstack/eslint-plugin-query": "npm:^5.81.2"

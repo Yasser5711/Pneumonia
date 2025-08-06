@@ -45,7 +45,17 @@ const onUpdate = (value: boolean) => emit('update:modelValue', value)
     v-bind="bindProps"
     @update:model-value="onUpdate"
   >
-    <slot />
+    <template #default>
+      <v-btn
+        variant="text"
+        icon="mdi-close"
+        size="small"
+        class="modal-close"
+        aria-label="Close"
+        @click="onUpdate(false)"
+      />
+      <slot />
+    </template>
   </v-bottom-sheet>
 
   <!-- DESKTOP -->
@@ -59,4 +69,15 @@ const onUpdate = (value: boolean) => emit('update:modelValue', value)
   </v-dialog>
 </template>
 
-<script lang="ts"></script>
+<style scoped>
+.modal-root {
+  position: relative; /* anchor for absolute children */
+}
+
+.modal-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 1; /* in front of slot content */
+}
+</style>

@@ -2,7 +2,7 @@
   <v-app class="d-flex flex-column fill-height">
     <slot name="header" />
 
-    <ArtDots />
+    <PixiBackground />
     <!-- header facultatif -->
     <v-main
       class="d-flex flex-column flex-grow-1 overflow-hidden"
@@ -13,6 +13,7 @@
     <slot name="footer" />
     <!-- footer facultatif -->
     <ApiKeyModal />
+    <SettingsModal />
   </v-app>
 </template>
 

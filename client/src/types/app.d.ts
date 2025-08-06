@@ -1,10 +1,27 @@
 import { type RemovableRef } from 'vue'
-export type StorageKeys = 'theme' | 'clock' | 'apiKey'
+export type StorageKeys =
+  | 'theme'
+  | 'clock'
+  | 'apiKey'
+  | 'pixiBgCfg'
+  | 'pixiBgPresets'
 export type ClockState = {
   local: string
   showSeconds: boolean
   showDate: boolean
   options: Intl.DateTimeFormatOptions
+}
+export type Mode = 'idle' | 'repel' | 'gravity' | 'orbit'
+export interface PixiBgCfg {
+  mode: Mode
+  scale: number
+  spacing: number
+  length: number
+  repelForce: number
+  gravityForce: number
+  orbitRadius: number
+  mouseRadius: number
+  transition: number
 }
 export type ThemeState = {
   mode: 'light' | 'dark' | 'auto'
@@ -14,6 +31,8 @@ export type StorageMap = {
   theme: ThemeState
   clock: ClockState
   apiKey: string
+  pixiBgCfg: PixiBgCfg
+  pixiBgPresets: Record<string, PixiBgCfg>
 }
 export type StorageValue<K extends keyof StorageMap> = RemovableRef<
   StorageMap[K]

@@ -28,6 +28,9 @@ const vuetify = createVuetify({
     VBtn: {
       rounded: 'xs',
     },
+    VSlider: {
+      thumbLabel: true,
+    },
   },
   theme: {
     defaultTheme: 'dark',

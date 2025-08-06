@@ -145,6 +145,7 @@ watch(
         variant="tonal"
         color="red darken-1"
         :loading="isLoading"
+        :disabled="isLoading"
         @click="socialSignIn('google')"
       >
         <v-icon>mdi-google</v-icon>
@@ -154,6 +155,7 @@ watch(
         icon
         variant="tonal"
         color="black"
+        :loading="isLoading"
         :disabled="isLoading"
         @click="socialSignIn('github')"
       >

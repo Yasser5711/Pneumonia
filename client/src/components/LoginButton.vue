@@ -120,7 +120,6 @@ const handleSignIn = async (provider: 'google' | 'github' | 'email') => {
         block
         size="large"
         elevation="2"
-        variant="outlined"
         color="black"
         :loading="isLoading"
         :disabled="isLoading"

@@ -1,8 +1,8 @@
 <template>
   <BaseLayout>
-    <!-- <template #header>
+    <template #header>
       <AppHeader />
-    </template> -->
+    </template>
 
     <template #footer>
       <AppFooter />

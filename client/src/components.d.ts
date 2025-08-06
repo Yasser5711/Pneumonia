@@ -12,8 +12,6 @@ declare module 'vue' {
     ApiKeyModal: typeof import('./components/ApiKeyModal.vue')['default']
     AppFooter: typeof import('./components/AppFooter.vue')['default']
     AppHeader: typeof import('./components/AppHeader.vue')['default']
-    ArtDots: typeof import('./components/ArtDots.vue')['default']
-    AuthCard: typeof import('./components/AuthCard.vue')['default']
     AuthForm: typeof import('./components/AuthForm.vue')['default']
     CanvasBackground: typeof import('./components/CanvasBackground.vue')['default']
     ChatMessage: typeof import('./components/ChatMessage.vue')['default']
@@ -27,10 +25,12 @@ declare module 'vue' {
     LoginButton: typeof import('./components/LoginButton.vue')['default']
     LogoutButton: typeof import('./components/LogoutButton.vue')['default']
     MessageInput: typeof import('./components/MessageInput.vue')['default']
+    PixiBackground: typeof import('./components/PixiBackground.vue')['default']
     ProfileModal: typeof import('./components/ProfileModal.vue')['default']
     ResponsiveModal: typeof import('./components/ResponsiveModal.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ScrollToBottomButton: typeof import('./components/ScrollToBottomButton.vue')['default']
+    SettingsModal: typeof import('./components/SettingsModal.vue')['default']
   }
 }

@@ -35,6 +35,7 @@ describe('useAuthForm', () => {
         email: 'test@example.com',
         password: 'password123',
         callbackURL: expect.stringMatching(/\/chat$/),
+        rememberMe: false,
       })
       expect(form.isLoading.value).toBe(false)
       expect(form.errorMsg.value).toBe('')

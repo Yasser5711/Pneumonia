@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import { useApiKeyModal } from '@/components/useApiKeyModal'
-import { useTheme } from '@/composables/useTheme'
-
-const { themeMode, cycleTheme } = useTheme()
+import { useSettingsModal } from '@/components/useSettingsModal'
 const { openModal: openApiKeyModal } = useApiKeyModal()
-
+const { openModal: openSettingsModal } = useSettingsModal()
 function onLeftButtonClick() {
   openApiKeyModal()
+}
+function onRightButtonClick() {
+  openSettingsModal()
 }
 </script>
 <template>
@@ -17,13 +18,11 @@ function onLeftButtonClick() {
     elevation="0"
   >
     <v-btn
-      icon
+      icon="mdi-account-key"
       class="ma-0 pa-0"
       title="API Key Settings"
       @click="onLeftButtonClick"
-    >
-      <span class="text-h5">🔑</span>
-    </v-btn>
+    />
 
     <v-spacer />
 
@@ -33,17 +32,12 @@ function onLeftButtonClick() {
 
     <v-spacer />
 
-    <v-btn icon class="ma-0 pa-0" title="Cycle Theme" @click="cycleTheme">
-      <template v-if="themeMode.mode === 'light'">
-        <span class="text-h5">🌙</span>
-      </template>
-      <template v-else-if="themeMode.mode === 'dark'">
-        <span class="text-h5">☀️</span>
-      </template>
-      <template v-else>
-        <span class="text-h5">💻</span>
-      </template>
-    </v-btn>
+    <v-btn
+      icon="mdi-cog"
+      class="ma-0 pa-0"
+      title="Settings"
+      @click="onRightButtonClick"
+    />
   </v-app-bar>
 </template>
 

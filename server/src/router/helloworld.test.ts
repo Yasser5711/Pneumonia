@@ -1,7 +1,7 @@
-import { mockNewUserService } from 'test/services';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 import { createTestCaller } from '../../test/caller';
+import { mockNewUserService } from '../../test/services';
 beforeEach(() => {
   mockNewUserService.findById.mockResolvedValue({
     id: 'fake-id',
@@ -17,6 +17,7 @@ beforeEach(() => {
     requestsUsed: 50,
     lastLoginAt: null,
     lastLoginIp: null,
+    normalizedEmail: 'fake-email@example.com',
     apiKeys: [
       {
         id: 'fake-key-id',
@@ -57,6 +58,7 @@ beforeEach(() => {
     requestsUsed: 50,
     lastLoginAt: null,
     lastLoginIp: null,
+    normalizedEmail: 'fake-email@example.com',
   });
 });
 

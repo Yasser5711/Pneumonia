@@ -15,7 +15,9 @@ permissions:
   pull-requests: write
   deployments: write
   statuses: write
-
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   # db-migrate-detect:
   #   name: 🗄️ Detect DB Migrations

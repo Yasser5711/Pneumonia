@@ -11,7 +11,9 @@ on:
   #   - "yarn.lock"
 permissions:
   contents: write
-
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   create-release:
     runs-on: ubuntu-latest

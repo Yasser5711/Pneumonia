@@ -53,6 +53,7 @@ describe('findById', () => {
       requestsQuota: 10,
       requestsUsed: 5,
       apiKeys: [],
+      normalizedEmail: 'john.doe@example.com',
     };
 
     mockNewUserRepo.findById.mockResolvedValue(mockUser);
@@ -82,6 +83,7 @@ describe('findById', () => {
       requestsQuota: 10,
       requestsUsed: 5,
       apiKeys: [createMockApiKey()],
+      normalizedEmail: 'john.doe@example.com',
     };
 
     mockNewUserRepo.findById.mockResolvedValue(mockUserWithKeys);
@@ -125,6 +127,7 @@ describe('getMe', () => {
       requestsQuota: 15,
       requestsUsed: 8,
       apiKeys: [createMockApiKey({ key: 'pneumonia_existing123' })],
+      normalizedEmail: 'john.doe@example.com',
     };
 
     mockNewUserRepo.findById.mockResolvedValue(mockUser);
@@ -174,6 +177,7 @@ describe('getMe', () => {
       requestsQuota: 10,
       requestsUsed: 0,
       apiKeys: [],
+      normalizedEmail: 'jane.smith@example.com',
     };
 
     const mockGeneratedKey = {
@@ -226,6 +230,7 @@ describe('getMe', () => {
       requestsQuota: 20,
       requestsUsed: 3,
       apiKeys: [],
+      normalizedEmail: 'bob.johnson@example.com',
     };
 
     const mockGeneratedKey = {
@@ -271,6 +276,7 @@ describe('getMe', () => {
       requestsQuota: 5,
       requestsUsed: 2,
       apiKeys: [createMockApiKey({ key: 'pneumonia_nullimage' })],
+      normalizedEmail: 'test@example.com',
     };
 
     mockNewUserRepo.findById.mockResolvedValue(mockUser);
@@ -298,6 +304,7 @@ describe('updateProfile', () => {
       emailVerified: true,
       requestsQuota: 25,
       requestsUsed: 10,
+      normalizedEmail: 'updated@example.com',
     };
 
     const updates = {
@@ -333,6 +340,7 @@ describe('updateProfile', () => {
       emailVerified: true,
       requestsQuota: 10,
       requestsUsed: 5,
+      normalizedEmail: 'partial@example.com',
     };
 
     const updates = {
@@ -365,6 +373,7 @@ describe('updateProfile', () => {
       emailVerified: true,
       requestsQuota: 10,
       requestsUsed: 5,
+      normalizedEmail: 'login@example.com',
     };
 
     const updates = {

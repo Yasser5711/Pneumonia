@@ -14,7 +14,9 @@ permissions:
   pull-requests: write
   deployments: write
   statuses: write
-
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   deploy:
     runs-on: ubuntu-latest

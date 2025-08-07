@@ -5,7 +5,18 @@ import baseConfig from '../vitest.config';
 
 const merged = mergeConfig(baseConfig, {
   plugins: [tsconfigPaths()],
+  ssr: {
+    noExternal: ['better-auth-harmony', 'validator'],
+  },
+  server: {
+    deps: {
+      inline: ['better-auth-harmony', 'validator'],
+    },
+  },
   test: {
+    deps: {
+      inline: ['better-auth-harmony', 'validator'],
+    },
     environment: 'node',
     setupFiles: ['./test/setup.ts'],
     coverage: {

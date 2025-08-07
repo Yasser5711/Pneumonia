@@ -12,6 +12,7 @@ export const users = pgTable(
       .boolean('email_verified')
       .$defaultFn(() => false)
       .notNull(),
+    normalizedEmail: t.text('normalized_email').unique(),
     image: t.text('image'),
     requestsQuota: t.integer('requests_quota').notNull().default(10),
     requestsUsed: t.integer('requests_used').notNull().default(0),

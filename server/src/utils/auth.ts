@@ -1,6 +1,7 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { apiKey, customSession } from 'better-auth/plugins';
+import { apiKey, customSession, haveIBeenPwned } from 'better-auth/plugins';
+import { emailHarmony } from 'better-auth-harmony';
 import { eq } from 'drizzle-orm';
 import { logger } from 'src/logger';
 
@@ -80,6 +81,22 @@ export const auth = betterAuth({
           }
         },
       },
+      update: {
+        after: async (user) => {
+          if (!user.image) {
+            try {
+              await db
+                .update(schemas.users)
+                .set({
+                  image: `https://ui-avatars.com/api/?name=${user.name.replace(' ', '+')}&background=random`,
+                })
+                .where(eq(schemas.users.id, user.id));
+            } catch (error) {
+              logger().error('Failed to update image:', error);
+            }
+          }
+        },
+      },
     },
     session: {
       create: {
@@ -124,6 +141,10 @@ export const auth = betterAuth({
       isAuthenticated: !!session,
       userId: session?.userId,
     })),
+    haveIBeenPwned({
+      customPasswordCompromisedMessage: 'Please choose a more secure password.',
+    }),
+    emailHarmony({}),
   ],
 });
 export type Auth = typeof auth;

@@ -33,6 +33,7 @@ beforeEach(() => {
     requestsUsed: 50,
     lastLoginAt: null,
     lastLoginIp: null,
+    normalizedEmail: 'fake-email@example.com',
     apiKeys: [
       {
         id: 'fake-key-id',
@@ -73,6 +74,7 @@ beforeEach(() => {
     requestsUsed: 50,
     lastLoginAt: null,
     lastLoginIp: null,
+    normalizedEmail: 'fake-email@example.com',
   });
 });
 

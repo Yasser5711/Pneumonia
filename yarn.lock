@@ -4925,6 +4925,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"better-auth-harmony@npm:^1.2.5":
+  version: 1.2.5
+  resolution: "better-auth-harmony@npm:1.2.5"
+  dependencies:
+    libphonenumber-js: "npm:^1.12.8"
+    mailchecker: "npm:^6.0.17"
+    validator: "npm:^13.15.15"
+  peerDependencies:
+    better-auth: ^1.0.3
+  checksum: 10c0/61091cdcd462bf63801a3a200371873f477572f735c111063913b769656f3f8b07c27d0294e2ae13515db6cd0135ffcf1e7cebc88ea61e40aa5812ff3fd02a5c
+  languageName: node
+  linkType: hard
+
 "better-auth@npm:^1.2.12":
   version: 1.2.12
   resolution: "better-auth@npm:1.2.12"
@@ -9139,6 +9152,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"libphonenumber-js@npm:^1.12.8":
+  version: 1.12.10
+  resolution: "libphonenumber-js@npm:1.12.10"
+  checksum: 10c0/c348aee275c4161e289b14f2ffd0c00f2923dcd5b2cfd99415b2f5ea15fa0632adffb78c51373b3a2839416223b65452bee11cc5386d2352782e1b064aaaf0ce
+  languageName: node
+  linkType: hard
+
 "light-my-request@npm:^6.0.0":
   version: 6.6.0
   resolution: "light-my-request@npm:6.6.0"
@@ -9421,6 +9441,13 @@ __metadata:
     "@babel/types": "npm:^7.25.4"
     source-map-js: "npm:^1.2.0"
   checksum: 10c0/a6cacc0a848af84f03e3f5bda7b0de75e4d0aa9ddce5517fd23ed0f31b5ddd51b2d0ff0b7e09b51f7de0f4053c7a1107117edda6b0732dca3e9e39e6c5a68c64
+  languageName: node
+  linkType: hard
+
+"mailchecker@npm:^6.0.17":
+  version: 6.0.17
+  resolution: "mailchecker@npm:6.0.17"
+  checksum: 10c0/5bfecde428e2173c1c7e1249a4dd9b5b5df49b39e70b6d92d56a06595ce5840fc38b1e46e7133129a664eeff0882b580121d919212f773a10fd1d15820a3e99d
   languageName: node
   linkType: hard
 
@@ -12157,6 +12184,7 @@ __metadata:
     "@vitest/ui": "npm:^3.1.4"
     bcrypt: "npm:^6.0.0"
     better-auth: "npm:^1.2.12"
+    better-auth-harmony: "npm:^1.2.5"
     depcheck: "npm:^1.4.7"
     dotenv: "npm:^16.5.0"
     drizzle-kit: "npm:^0.31.1"
@@ -14052,6 +14080,13 @@ __metadata:
   dependencies:
     inherits: "npm:2.0.3"
   checksum: 10c0/d29f6893e406b63b088ce9924da03201df89b31490d4d011f1c07a386ea4b3dbe907464c274023c237da470258e1805d806c7e4009a5974cd6b1d474b675852a
+  languageName: node
+  linkType: hard
+
+"validator@npm:^13.15.15":
+  version: 13.15.15
+  resolution: "validator@npm:13.15.15"
+  checksum: 10c0/f5349d1fbb9cc36f9f6c5dab1880764ddad1d0d2b084e2a71e5964f7de1635d20e406611559df9a3db24828ce775cbee5e3b6dd52f0d555a61939ed7ea5990bd
   languageName: node
   linkType: hard
 

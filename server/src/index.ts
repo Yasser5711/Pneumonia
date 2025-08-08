@@ -16,10 +16,10 @@ import { env } from './env';
 import { setLogger } from './logger';
 import { appRouter } from './router/_app';
 import { createContext, type CreateContextOptions } from './trpc';
+import { auth } from './utils/auth';
+
 const isDev = env.NODE_ENV === 'development';
-const frontendUrl = new URL(env.FRONTEND_ORIGIN!);
-const hostnameParts = frontendUrl.hostname.split('.');
-const parentDomain = '.' + hostnameParts.slice(-2).join('.');
+
 const fastify = Fastify({
   trustProxy: true,
   logger: isDev
@@ -34,11 +34,34 @@ const fastify = Fastify({
           },
         },
       }
-    : true, // raw JSON logs in prod
+    : true,
   bodyLimit: 3 * 1024 * 1024, // 3 MB
 });
 setLogger(fastify.log);
 async function main() {
+  await fastify.register(cors, {
+    origin: (origin, cb) => {
+      const isPreview = origin?.includes('.netlify.app') && env.NODE_ENV === 'preview';
+      if (isDev || isPreview) {
+        cb(null, true);
+        return;
+      }
+      const allowedOrigin = env.FRONTEND_ORIGIN;
+
+      if (!origin || origin === allowedOrigin) {
+        cb(null, true);
+      } else {
+        fastify.log.warn(`❌ CORS blocked origin: ${origin}`);
+        cb(new Error(`Origin ${origin} not allowed by CORS`), false);
+      }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'x-api-key'],
+
+    maxAge: 86400,
+    exposedHeaders: ['Set-Cookie'],
+  });
   await fastify.register(helmet, {
     contentSecurityPolicy:
       isDev || env.NODE_ENV === 'preview'
@@ -56,10 +79,39 @@ async function main() {
     hook: 'onRequest',
     parseOptions: {
       sameSite: 'none',
-      secure: true,
-      domain: parentDomain,
+      secure: env.NODE_ENV !== 'development',
     },
   });
+
+  fastify.route({
+    method: ['GET', 'POST'],
+    url: '/api/auth/*',
+    async handler(request, reply) {
+      try {
+        const url = new URL(request.url, `http://${request.headers.host}`);
+        const headers = new Headers();
+        Object.entries(request.headers).forEach(([key, value]) => {
+          if (value) headers.append(key, value.toString());
+        });
+        const req = new Request(url.toString(), {
+          method: request.method,
+          headers,
+          body: request.body ? JSON.stringify(request.body) : undefined,
+        });
+        const response = await auth.handler(req);
+        reply.status(response.status);
+        response.headers.forEach((value, key) => reply.header(key, value));
+        reply.send(response.body ? await response.text() : null);
+      } catch (error) {
+        fastify.log.error('Authentication Error:', error);
+        reply.status(500).send({
+          error: 'Internal authentication error',
+          code: 'AUTH_FAILURE',
+        });
+      }
+    },
+  });
+
   await fastify.register(oauthPlugin, {
     name: 'githubOauth',
     scope: ['user:email'],
@@ -80,30 +132,7 @@ async function main() {
     startRedirectPath: '/auth/google',
     callbackUri: `${env.FRONTEND_ORIGIN}/google-callback`,
   });
-  await fastify.register(cors, {
-    origin: (origin, cb) => {
-      const isPreview = origin?.includes('.netlify.app') && env.NODE_ENV === 'preview';
-      if (isDev || isPreview) {
-        cb(null, true);
-        return;
-      }
-      const allowedOrigin = env.FRONTEND_ORIGIN;
 
-      if (!origin || origin === allowedOrigin) {
-        cb(null, true);
-      } else {
-        fastify.log.warn(`❌ CORS blocked origin: ${origin}`);
-        cb(new Error(`Origin ${origin} not allowed by CORS`), false);
-      }
-    },
-    // 2) **Crucial** → ajoute Access-Control-Allow-Credentials: true
-    credentials: true,
-
-    // 3) Autorise pré-vols (OPTIONS) & en-têtes customs si besoin
-    methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-API-KEY'],
-    exposedHeaders: ['Set-Cookie'],
-  });
   await fastify.register(rateLimit, {
     max: 10, // 🔥 Allow 3 requests
     timeWindow: '1 minute', // 🕒 per minute
@@ -136,7 +165,6 @@ async function main() {
     },
     onError(opts: any) {
       const { error, path } = opts;
-      // Log the full error to the server console in development
       // eslint-disable-next-line no-console
       console.error(`❌ tRPC Error on '${path}':`, error);
     },
@@ -146,7 +174,6 @@ async function main() {
         ...shape,
         data: {
           ...shape.data,
-          // Also include the error stack in the response during development
           stack: isDev ? error.stack : undefined,
         },
       };

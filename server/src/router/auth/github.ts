@@ -1,12 +1,20 @@
+import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
 import { env } from '../../env';
+import { GitHubRequestFailedError } from '../../errors';
 import { publicProcedure, router } from '../../middlewares';
 import { setSession } from '../../utils/session';
 
+/**
+ * Makes a request to GitHub API
+ * @param url - The GitHub API URL
+ * @param init - Fetch options
+ * @throws {GitHubRequestFailedError} When GitHub request fails
+ */
 async function githubRequest<T>(url: string, init: RequestInit = {}): Promise<T> {
   const r = await fetch(url, init);
-  if (!r.ok) throw new Error(`GitHub request failed: ${url}`);
+  if (!r.ok) throw new GitHubRequestFailedError(url);
   return (await r.json()) as T;
 }
 
@@ -60,6 +68,12 @@ export const githubRouter = router({
     .input(z.object({}))
     .output(z.object({ redirectUrl: z.string() }))
     .mutation(async ({ ctx }) => {
+      if (!env.ENABLE_LOCAL_AUTH) {
+        throw new TRPCError({
+          code: 'NOT_IMPLEMENTED',
+          message: 'GitHub authentication is currently disabled.',
+        });
+      }
       const redirectUrl = await ctx.fastify.githubOauth.generateAuthorizationUri(ctx.req, ctx.res);
       return { redirectUrl };
     }),
@@ -77,7 +91,12 @@ export const githubRouter = router({
     .output(z.object({ apiKey: z.string() }))
     .mutation(async ({ ctx, input }) => {
       // if (input.state !== ctx.session.oauthState) throw new Error('Invalid OAuth state');
-
+      if (!env.ENABLE_LOCAL_AUTH) {
+        throw new TRPCError({
+          code: 'NOT_IMPLEMENTED',
+          message: 'GitHub authentication is currently disabled.',
+        });
+      }
       const token = await exchangeCodeForToken(input.code);
       const profile = await fetchProfile(token);
       let email = profile.email;

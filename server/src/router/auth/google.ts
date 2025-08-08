@@ -1,11 +1,20 @@
+import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
+import { env } from '../../env';
+import { GoogleRequestFailedError } from '../../errors';
 import { publicProcedure, router } from '../../middlewares';
 import { setSession } from '../../utils/session';
 
+/**
+ * Makes a request to Google API
+ * @param url - The Google API URL
+ * @param init - Fetch options
+ * @throws {GoogleRequestFailedError} When Google request fails
+ */
 async function googleRequest<T>(url: string, init: RequestInit = {}): Promise<T> {
   const r = await fetch(url, init);
-  if (!r.ok) throw new Error(`Google request failed: ${url}`);
+  if (!r.ok) throw new GoogleRequestFailedError(url);
   return (await r.json()) as T;
 }
 
@@ -29,6 +38,12 @@ export const googleRouter = router({
     .input(z.object({}))
     .output(z.object({ redirectUrl: z.string() }))
     .mutation(async ({ ctx }) => {
+      if (!env.ENABLE_LOCAL_AUTH) {
+        throw new TRPCError({
+          code: 'NOT_IMPLEMENTED',
+          message: 'Google authentication is currently disabled.',
+        });
+      }
       const redirectUrl = await ctx.fastify.googleOauth.generateAuthorizationUri(ctx.req, ctx.res);
       return { redirectUrl };
     }),
@@ -44,6 +59,12 @@ export const googleRouter = router({
     .input(z.object({ code: z.string(), state: z.string() }))
     .output(z.object({ apiKey: z.string() }))
     .mutation(async ({ ctx, input }) => {
+      if (!env.ENABLE_LOCAL_AUTH) {
+        throw new TRPCError({
+          code: 'NOT_IMPLEMENTED',
+          message: 'Google authentication is currently disabled.',
+        });
+      }
       ctx.req.query = input;
       const token = await ctx.fastify.googleOauth.getAccessTokenFromAuthorizationCodeFlow(ctx.req);
       const profile = await fetchGoogleProfile(token.token.access_token);

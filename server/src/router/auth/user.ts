@@ -1,9 +1,11 @@
+import { TRPCError } from '@trpc/server';
 import { z } from 'zod';
 
-import { protectedUserProcedure, router } from '../../middlewares';
+import { env } from '../../env';
+import { protectedUserProcedure, protectedProcedure, router } from '../../middlewares';
 import { clearSession } from '../../utils/session';
 export const userRouter = router({
-  me: protectedUserProcedure
+  me: protectedProcedure
     .meta({
       openapi: {
         method: 'GET',
@@ -20,8 +22,9 @@ export const userRouter = router({
         quota: z.object({ used: z.number(), total: z.number() }),
       }),
     )
-    .query(({ ctx }) => {
-      return ctx.services.userService.getMe(ctx.user.id);
+    .query(async ({ ctx }) => {
+      const res = await ctx.services.newUserService.getMe(ctx.userId);
+      return res;
     }),
   logout: protectedUserProcedure
     .meta({
@@ -39,10 +42,16 @@ export const userRouter = router({
       }),
     )
     .mutation(({ ctx }) => {
+      if (!env.ENABLE_LOCAL_AUTH) {
+        throw new TRPCError({
+          code: 'NOT_IMPLEMENTED',
+          message: 'Router is currently disabled.',
+        });
+      }
       clearSession(ctx.res);
       return { success: true };
     }),
-  generateMyKey: protectedUserProcedure
+  generateMyKey: protectedProcedure
     .meta({
       openapi: {
         method: 'POST',
@@ -54,8 +63,8 @@ export const userRouter = router({
     .input(z.object({}))
     .output(z.object({ apiKey: z.string() }))
     .mutation(async ({ ctx }) => {
-      const { key } = await ctx.services.apiKeyService.generateKey({
-        userId: ctx.user.id,
+      const { key } = await ctx.services.newApiKeyService.generateKey({
+        userId: ctx.userId,
       });
       return { apiKey: key };
     }),

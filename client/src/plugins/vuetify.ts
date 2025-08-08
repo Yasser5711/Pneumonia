@@ -20,12 +20,27 @@ const vuetify = createVuetify({
   // components: {
   //   VFileUpload,
   // },
+
+  defaults: {
+    VTextField: {
+      variant: 'underlined',
+    },
+    VBtn: {
+      rounded: 'xs',
+    },
+    VSlider: {
+      thumbLabel: true,
+    },
+    VSelect: {
+      variant: 'underlined',
+    },
+  },
   theme: {
     defaultTheme: 'dark',
     themes: {
       light: {
         colors: {
-          background: '#FFFFFF',
+          background: '#f2f2f2',
         },
       }, // use Vuetify defaults
       dark: {}, // use Vuetify defaults

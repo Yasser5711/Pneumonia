@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { createTestCaller } from '../../../test/caller';
 import { mockServices } from '../../../test/services';
-
+import { env } from '../../env';
 vi.mock('../../utils/session', () => {
   const clearSession = vi.fn();
   return {
@@ -14,26 +14,99 @@ vi.mock('../../utils/session', () => {
 
 beforeEach(() => {
   vi.clearAllMocks();
-
+  env.ENABLE_LOCAL_AUTH = true;
   mockServices.userService.findById.mockResolvedValue({
     id: 'u-42',
     email: 'john@example.com',
+  });
+  mockServices.newUserService.findById.mockResolvedValue({
+    id: 'fake-id',
+    name: 'fake-name',
+    email: 'fake-email@example.com',
+    createdAt: new Date(),
+    updatedAt: null,
+    firstName: 'fake-first-name',
+    lastName: 'fake-last-name',
+    emailVerified: true,
+    image: 'fake-image-url',
+    requestsQuota: 100,
+    requestsUsed: 50,
+    lastLoginAt: null,
+    lastLoginIp: null,
+    normalizedEmail: 'fake-email@example.com',
+    apiKeys: [
+      {
+        id: 'fake-key-id',
+        name: 'fake-key-name',
+        prefix: null,
+        start: null,
+        key: 'fake-key',
+        userId: 'fake-id',
+        refillInterval: 60,
+        refillAmount: 1,
+        metadata: null,
+        createdAt: new Date(),
+        updatedAt: null,
+        expiresAt: null,
+        lastRefillAt: null,
+        enabled: true,
+        rateLimitEnabled: true,
+        rateLimitTimeWindow: 60,
+        remaining: 50,
+        lastRequest: new Date(),
+        permissions: '',
+        rateLimitMax: 60,
+        requestCount: 0,
+      },
+    ],
+  });
+  mockServices.newUserService.updateProfile.mockResolvedValue({
+    id: 'fake-id',
+    name: 'fake-name',
+    email: 'fake-email@example.com',
+    createdAt: new Date(),
+    updatedAt: null,
+    firstName: 'fake-first-name',
+    lastName: 'fake-last-name',
+    emailVerified: true,
+    image: 'fake-image-url',
+    requestsQuota: 100,
+    requestsUsed: 50,
+    lastLoginAt: null,
+    lastLoginIp: null,
+    normalizedEmail: 'fake-email@example.com',
   });
 });
 
 describe('userRouter', () => {
   it('me → return user info', async () => {
     const fakeMe = {
-      user: { id: 'u-42', email: 'john@example.com' },
-      // keys: [],
-      quota: { used: 10, total: 0 },
+      user: {
+        id: 'test-user-123',
+        name: 'John Doe',
+        email: 'john@example.com',
+        createdAt: new Date(),
+        updatedAt: null,
+        lastLoginAt: null,
+        lastLoginIp: null,
+        firstName: 'John',
+        lastName: 'Doe',
+        image: null,
+        apiKey: null,
+      },
+      quota: {
+        total: 0,
+        used: 0,
+      },
     };
-    mockServices.userService.getMe.mockResolvedValue(fakeMe);
+    mockServices.newUserService.getMe.mockResolvedValue(fakeMe);
 
-    const caller = createTestCaller({});
+    const caller = createTestCaller({
+      customSession: { isAuthenticated: true, userId: 'test-user-123' },
+    });
     const res = await caller.auth.user.me({});
     expect(res).toEqual(fakeMe);
-    expect(mockServices.userService.getMe).toHaveBeenCalledWith('u-42');
+    expect(mockServices.newUserService.getMe).toHaveBeenCalledWith('test-user-123');
   });
 
   it('logout → clears the cookie and returns success', async () => {
@@ -42,16 +115,26 @@ describe('userRouter', () => {
 
     expect(result).toEqual({ success: true });
   });
+  it('logout → throws if local auth is disabled', async () => {
+    env.ENABLE_LOCAL_AUTH = false;
+    const caller = createTestCaller({});
+    await expect(caller.auth.user.logout({})).rejects.toThrow('Router is currently disabled.');
+  });
 
   it('generateMyKey → creates a key for the current user', async () => {
-    mockServices.apiKeyService.generateKey.mockResolvedValue({ key: 'new-api-key' } as any);
+    mockServices.newApiKeyService.generateKey.mockResolvedValue({
+      key: 'new-api-key',
+      id: 'new-api-key-id',
+    });
 
-    const caller = createTestCaller({});
+    const caller = createTestCaller({
+      customSession: { isAuthenticated: true, userId: 'test-user-123' },
+    });
     const res = await caller.auth.user.generateMyKey({});
 
     expect(res).toEqual({ apiKey: 'new-api-key' });
-    expect(mockServices.apiKeyService.generateKey).toHaveBeenCalledWith(
-      expect.objectContaining({ userId: 'u-42' }),
+    expect(mockServices.newApiKeyService.generateKey).toHaveBeenCalledWith(
+      expect.objectContaining({ userId: 'test-user-123' }),
     );
   });
 });

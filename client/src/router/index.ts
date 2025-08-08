@@ -9,52 +9,55 @@ import { setupLayouts } from 'virtual:generated-layouts'
 import { createRouter, createWebHistory } from 'vue-router/auto'
 import { routes } from 'vue-router/auto-routes'
 
+// import { authClient } from '../lib/auth'
+import { useAuthStore } from '../stores/auth'
+
 import type { RouteLocationNormalized } from 'vue-router'
 export function createAppRouter(baseUrl: string = import.meta.env.BASE_URL) {
   const router = createRouter({
     history: createWebHistory(baseUrl),
     routes: setupLayouts([
       ...routes,
-      // {
-      //   path: '/',
-      //   component: () => import('@/pages/IndexPage.vue'),
-      // },
       {
         path: '/:pathMatch(.*)*',
-        redirect: '/chat',
+        name: 'NotFound',
+        component: () => import('../pages/404.vue'),
+        meta: {
+          title: '404 - Page Not Found',
+          icon: '/icons/404.png',
+          description: 'The page you are looking for does not exist',
+          layout: 'default',
+        },
       },
     ]),
   })
-  // router.beforeEach(async (to: RouteLocationNormalized) => {
-  //   const layoutName = (to.meta.layout as string) || 'DefaultLayout'
-  //   const layout = await import(`../layouts/${layoutName}.vue`)
-  //   to.matched[0].components = {
-  //     default: to.matched[0].components!.default,
-  //     layout: layout.default,
-  //   }
-  // })
   router.beforeEach(async (to, _from) => {
-    // if (!to.meta.requiresAuth) return true
-
-    // const store = useStorageStore()
-    // const apiKey = store.getKeyFromLocalStorage('apiKey', '').value
-
-    // if (apiKey) return true
-    // return { name: 'IndexPage', query: { redirect: to.fullPath } }
-
-    // const { refreshMe, user } = useSession()
-    // if (!user.value) await refreshMe()
-
-    // return user.value ? true : { name: 'IndexPage' }
-    const store = useStorageStore()
-    const apiKey = store.getKeyFromLocalStorage('apiKey', '').value
-
-    if (to.meta.requiresAuth && !apiKey) {
-      return { name: 'IndexPage', query: { redirect: to.fullPath } }
+    if (to.matched.some((r) => r.meta.disabled)) {
+      return { name: 'NotFound', replace: true }
+    }
+    const auth = useAuthStore()
+    if (auth.sessionRef.isPending) {
+      await new Promise((resolve) => {
+        const unwatch = watch(
+          () => auth.sessionRef.isPending,
+          (pending) => {
+            if (!pending) {
+              unwatch()
+              resolve(null)
+            }
+          },
+        )
+      })
+    }
+    if (to.meta.requiresAuth && !auth.isAuthenticated) {
+      return { name: 'SignIn', query: { redirect: to.fullPath } }
     }
 
-    if (to.meta.guestOnly && apiKey) {
-      return { name: 'ChatPage' } // ou path: '/chat'
+    if (to.meta.guestOnly) {
+      const res = await auth.refresh()
+      if (res != null) {
+        return { name: 'ChatPage' }
+      }
     }
     return true
   })
@@ -111,6 +114,8 @@ export function createAppRouter(baseUrl: string = import.meta.env.BASE_URL) {
   router.isReady().then(() => {
     localStorage.removeItem('vuetify:dynamic-reload')
   })
+
+  // router.removeRoute('IndexPage')
   return router
 }
 

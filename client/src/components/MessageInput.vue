@@ -31,13 +31,9 @@ const messageInput = ref('')
 const fileInput = ref<HTMLInputElement | null>(null)
 const pendingImageFile = ref<File | null>(null)
 const processedImageData = ref<FileUploadResult | null>(null)
-// dragOver local n'est plus nécessaire pour le style principal du v-sheet,
-// mais peut être utile si vous avez des logiques spécifiques lorsque la souris passe EXACTEMENT sur le v-sheet.
-// Pour cet objectif, nous allons le supprimer pour simplifier et utiliser directement isDraggingFileOverWindow.
-// const dragOver = ref(false)
+
 const isSendingInternally = ref(false)
 
-// --- Gestion de la sélection et du traitement initial du fichier ---
 const processNewFile = async (file: File) => {
   if (!isValidImage(file)) {
     if (fileInput.value) fileInput.value.value = ''
@@ -68,7 +64,7 @@ watch(pendingImageFile, (newFile, oldFile) => {
 
 const handlePaste = (e: ClipboardEvent) => {
   if (isActionDisabledForNewFile.value && !isDraggingFileOverWindow.value)
-    return // Modifié pour permettre le paste si global drag
+    return
   const items = e.clipboardData?.items
   if (!items) return
 
@@ -185,8 +181,6 @@ const triggerFileInput = () => {
 }
 
 onMounted(() => {
-  // Les écouteurs globaux de drag/drop sont gérés par useGlobalFileDragState
-  // L'écouteur de paste reste local
   document.addEventListener('paste', handlePaste)
 })
 
@@ -237,7 +231,7 @@ const textFieldPlaceholder = computed(() => {
   if (pendingImageFile.value && processedImageData.value)
     return `Image "${pendingImageFile.value.name}" prête. Ajoutez un message ou envoyez.`
   if (isDraggingFileOverWindow.value && !isActionDisabledForNewFile.value)
-    return "Déposez l'image ici !" // Nouveau placeholder quand on drag globalement
+    return "Déposez l'image ici !"
   if (assistantIsProcessing.value)
     return "L'assistant est en train de répondre..."
   return 'Écrivez un message ou déposez une image...'

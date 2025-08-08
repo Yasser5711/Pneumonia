@@ -48,3 +48,40 @@
     transform: translateY(-20px);
   }
 }
+
+/* Fond glassmorphism */
+
+/* .glass-card {
+  background-color: rgba(255, 255, 255, 0.1); 
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+  transition: background-color 0.3s ease;
+} */
+
+/* Thème dark : on override dynamiquement */
+
+/* :deep(.v-theme--dark) .glass-card {
+  background-color: rgba(30, 30, 30, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+} */
+
+/* .glass-bg {
+  background: linear-gradient(
+    135deg,
+    rgba(245, 245, 245, 0.6),
+    rgba(200, 200, 255, 0.3)
+  );
+} */
+
+/* Dark mode background override */
+
+/* :deep(.v-theme--dark) .glass-bg {
+  background: linear-gradient(
+    135deg,
+    rgba(20, 20, 30, 0.8),
+    rgba(40, 40, 60, 0.4)
+  );
+} */

@@ -38,6 +38,10 @@
     "prettier",
     "ms",
     "@types/ms",
-    "zod-openapi"
+    "zod-openapi",
+    "drizzle-seed",
+    "superjson",
+    "better-auth-harmony",
+    "better-auth"
   ]
 }

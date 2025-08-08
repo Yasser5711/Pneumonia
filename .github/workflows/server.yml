@@ -10,7 +10,9 @@ permissions:
   pull-requests: write
   deployments: write
   statuses: write
-
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   lint:
     name: 🧼 Lint Code
@@ -18,6 +20,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - uses: ./.github/actions/setup-yarn
         with:
@@ -33,6 +37,8 @@ jobs:
     needs: lint
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - uses: ./.github/actions/setup-yarn
         with:
@@ -48,6 +54,8 @@ jobs:
     needs: lint
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - uses: ./.github/actions/setup-yarn
         with:
@@ -76,6 +84,8 @@ jobs:
     needs: lint
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - uses: ./.github/actions/setup-yarn
         with:
@@ -90,6 +100,8 @@ jobs:
     needs: [lint, typecheck, knip, depcheck]
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       - uses: ./.github/actions/setup-yarn
         with:
           working-directory: server

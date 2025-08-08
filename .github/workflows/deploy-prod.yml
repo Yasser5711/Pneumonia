@@ -7,7 +7,9 @@ permissions:
   pull-requests: write
   deployments: write
   statuses: write
-
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   check-monorepo:
     name: ✅ Check Monorepo (Lint + Tests)
@@ -77,13 +79,23 @@ jobs:
           GOOGLE_CLIENT_SECRET='test_google_client_secret'
           SESSION_SECRET='test_session_secret'
           EOF
-      - name: 🧬 Run DB Migrations
+      - name: ⏳ Migrate with retry (max 5 attempts)
         working-directory: server
-        run: |
-          yarn db:push
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL_PROD }}
           NODE_ENV: preview
+        run: |
+          max_retries=5
+          count=0
+          until yarn drizzle-kit migrate; do
+            count=$((count + 1))
+            if [ "$count" -ge "$max_retries" ]; then
+              echo "❌ Failed after $max_retries attempts."
+              exit 1
+            fi
+            echo "⚠️ Migration failed (attempt #$count), retrying in 5 seconds..."
+            sleep 5
+          done
   deploy-server:
     name: 🚀 Deploy Backend to Render (Production)
     runs-on: ubuntu-latest

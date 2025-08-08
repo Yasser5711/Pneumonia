@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-import { protectedProcedureAPI } from '../middlewares/index';
+import { protectedProcedure } from '../middlewares/index';
 
-export const helloWorldRouter = protectedProcedureAPI
+export const helloWorldRouter = protectedProcedure
   .meta({
     openapi: {
       method: 'GET',

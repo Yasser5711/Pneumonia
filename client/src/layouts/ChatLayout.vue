@@ -1,7 +1,6 @@
 <template>
   <BaseLayout>
     <template #header>
-      <CanvasBackground />
       <AppHeader />
     </template>
 

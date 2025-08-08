@@ -4,7 +4,9 @@ on:
   pull_request:
     paths:
       - "client/**"
-
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
   pull-requests: write
@@ -18,6 +20,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - uses: ./.github/actions/setup-yarn
         with:
@@ -33,6 +37,8 @@ jobs:
     needs: lint
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - uses: ./.github/actions/setup-yarn
         with:
@@ -48,6 +54,8 @@ jobs:
     needs: typecheck
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - uses: ./.github/actions/setup-yarn
         with:
@@ -63,6 +71,8 @@ jobs:
     needs: build
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - uses: ./.github/actions/setup-yarn
         with:
@@ -78,6 +88,8 @@ jobs:
     needs: lint
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - uses: ./.github/actions/setup-yarn
         with:
@@ -97,6 +109,8 @@ jobs:
     needs: lint
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - uses: ./.github/actions/setup-yarn
         with:
@@ -112,6 +126,8 @@ jobs:
     needs: [lint, typecheck, knip, depcheck]
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - uses: ./.github/actions/setup-yarn
         with:

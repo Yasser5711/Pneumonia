@@ -10,7 +10,7 @@ import { useProfileModal } from './useProfileModal'
 const { isProfileOpen, closeModal } = useProfileModal()
 const { user } = useSession()
 
-const avatarUrl = computed(() => user.value?.avatarUrl)
+const avatarUrl = computed(() => user.value?.image)
 
 const quotaPct = computed(() => {
   const q = user.value?.quota
@@ -23,11 +23,11 @@ const createdAt = computed(() =>
     : '—',
 )
 const lastLogin = computed(() =>
-  user.value?.lastLogin
-    ? useDateFormat(user.value.lastLogin, 'YYYY-MM-DD HH:mm').value
+  user.value?.lastLoginAt
+    ? useDateFormat(user.value?.lastLoginAt, 'YYYY-MM-DD HH:mm').value
     : '—',
 )
-const lastUsedIp = computed(() => user.value?.lastUsedIp || '—')
+const lastUsedIp = computed(() => user.value?.lastLoginIp || '—')
 
 useHead({
   title: () => (isProfileOpen.value ? 'Mon Profil' : undefined),

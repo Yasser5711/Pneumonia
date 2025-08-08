@@ -58,6 +58,8 @@ declare global {
   const unref: typeof import('vue')['unref']
   const useAppStore: typeof import('./stores/app')['useAppStore']
   const useAttrs: typeof import('vue')['useAttrs']
+  const useAuthForm: typeof import('./composables/useAuthForm')['useAuthForm']
+  const useAuthStore: typeof import('./stores/auth')['useAuthStore']
   const useCanvasAnimation: typeof import('./composables/useCanvasAnimation')['useCanvasAnimation']
   const useChatScroll: typeof import('./composables/useChatScroll')['useChatScroll']
   const useChatStore: typeof import('./stores/chatStore')['useChatStore']
@@ -77,6 +79,12 @@ declare global {
   const useImagePredictor: typeof import('./composables/useImagePredictor')['useImagePredictor']
   const useLink: (typeof import('vue-router'))['useLink']
   const useModel: typeof import('vue')['useModel']
+  const usePixiBackground: typeof import('./composables/usePixiBackground')['usePixiBackground']
+  const usePixiBgConfig: typeof import('./composables/usePixiBgConfig')['usePixiBgConfig']
+  const usePixiBgStore: typeof import('./stores/pixiBgStore')['usePixiBgStore']
+  const usePixiHeartbeat: typeof import('./composables/usePixiHeartbeat')['usePixiHeartbeat']
+  const usePixiPulse: typeof import('./composables/usePixiPulse')['usePixiPulse']
+  const usePixiTextures: typeof import('./composables/usePixiTextures')['usePixiTextures']
   const useRoute: typeof import('vue-router/auto')['useRoute']
   const useRouter: typeof import('vue-router/auto')['useRouter']
   const useSeoMeta: typeof import('@unhead/vue')['useSeoMeta']
@@ -106,6 +114,9 @@ declare global {
   // @ts-ignore
   export type { PredictionResult } from './composables/useImagePredictor'
   import('./composables/useImagePredictor')
+  // @ts-ignore
+  export type { MedShape } from './composables/usePixiTextures'
+  import('./composables/usePixiTextures')
   // @ts-ignore
   export type { ThemeMode } from './stores/themeStore'
   import('./stores/themeStore')
@@ -166,6 +177,8 @@ declare module 'vue' {
     readonly unref: UnwrapRef<typeof import('vue')['unref']>
     readonly useAppStore: UnwrapRef<typeof import('./stores/app')['useAppStore']>
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
+    readonly useAuthForm: UnwrapRef<typeof import('./composables/useAuthForm')['useAuthForm']>
+    readonly useAuthStore: UnwrapRef<typeof import('./stores/auth')['useAuthStore']>
     readonly useCanvasAnimation: UnwrapRef<typeof import('./composables/useCanvasAnimation')['useCanvasAnimation']>
     readonly useChatScroll: UnwrapRef<typeof import('./composables/useChatScroll')['useChatScroll']>
     readonly useChatStore: UnwrapRef<typeof import('./stores/chatStore')['useChatStore']>
@@ -182,6 +195,12 @@ declare module 'vue' {
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useImagePredictor: UnwrapRef<typeof import('./composables/useImagePredictor')['useImagePredictor']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
+    readonly usePixiBackground: UnwrapRef<typeof import('./composables/usePixiBackground')['usePixiBackground']>
+    readonly usePixiBgConfig: UnwrapRef<typeof import('./composables/usePixiBgConfig')['usePixiBgConfig']>
+    readonly usePixiBgStore: UnwrapRef<typeof import('./stores/pixiBgStore')['usePixiBgStore']>
+    readonly usePixiHeartbeat: UnwrapRef<typeof import('./composables/usePixiHeartbeat')['usePixiHeartbeat']>
+    readonly usePixiPulse: UnwrapRef<typeof import('./composables/usePixiPulse')['usePixiPulse']>
+    readonly usePixiTextures: UnwrapRef<typeof import('./composables/usePixiTextures')['usePixiTextures']>
     readonly useRoute: UnwrapRef<typeof import('vue-router/auto')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router/auto')['useRouter']>
     readonly useSeoMeta: UnwrapRef<typeof import('@unhead/vue')['useSeoMeta']>

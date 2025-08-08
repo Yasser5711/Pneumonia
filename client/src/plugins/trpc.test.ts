@@ -40,6 +40,7 @@ describe('createTRPCPlugin', () => {
 
     expect(httpBatchLink).toHaveBeenCalledWith({
       url: 'https://api.example.com/trpc',
+      transformer: expect.any(Function),
       headers: expect.any(Function),
       fetch: expect.any(Function),
     })

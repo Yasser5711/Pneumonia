@@ -6,8 +6,9 @@
 definePage({
   path: '/',
   name: 'IndexPage',
+  redirect: '/chat',
   meta: {
-    guestOnly: true,
+    disabled: true,
     title: 'Index',
     icon: '/icons/index.png',
     description: 'Home page',

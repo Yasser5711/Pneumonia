@@ -4,16 +4,19 @@ import { useQueryClient } from '@tanstack/vue-query'
 import { describe, it, expect, beforeEach, vi, type Mock } from 'vitest'
 import { useRouter } from 'vue-router'
 
-import { useApiKeyModal } from '@/components/useApiKeyModal'
-import { useSession } from '@/composables/useSession'
-import { useMeQuery, useLogout as useLogoutMutation } from '@/queries/useAuth'
-import { useStorageStore } from '@/stores/storageStore'
-import { renderComposable } from '@/tests/renderComposable'
+import { useApiKeyModal } from '../components/useApiKeyModal'
+import { useSession } from '../composables/useSession'
+import { useMeQuery } from '../queries/useAuth'
+import { useStorageStore } from '../stores/storageStore'
+import { renderComposable } from '../tests/renderComposable'
 
-vi.mock('@/queries/useAuth')
-vi.mock('@/components/useApiKeyModal')
+vi.mock('../queries/useAuth')
+vi.mock('../components/useApiKeyModal')
 vi.mock('@tanstack/vue-query')
-vi.mock('@/stores/storageStore', () => {
+vi.mock('../stores/auth', () => ({
+  useAuthStore: () => ({ isAuthenticated: true }),
+}))
+vi.mock('../stores/storageStore', () => {
   const setKeyInLocalStorage = vi.fn()
   const getKeyFromLocalStorage = vi
     .fn()
@@ -23,59 +26,69 @@ vi.mock('@/stores/storageStore', () => {
     useStorageStore: vi.fn(() => ({
       setKeyInLocalStorage,
       getKeyFromLocalStorage,
+      removeKeyFromLocalStorage: vi.fn(),
     })),
   }
 })
+const logoutSpy = vi.fn()
+vi.mock('@/composables/useAuthForm', () => ({
+  useAuthForm: () => ({
+    logout: logoutSpy,
+  }),
+}))
 describe('useSession composable', () => {
   let refetchSpy: ReturnType<typeof vi.fn>
-  let mutateAsyncSpy: ReturnType<typeof vi.fn>
   let closeModalSpy: ReturnType<typeof vi.fn>
   let removeKeySpy: ReturnType<typeof vi.fn>
+  let invalidateSpy: ReturnType<typeof vi.fn>
   let router: ReturnType<typeof useRouter>
 
   beforeEach(() => {
     vi.resetAllMocks()
 
-    // mock modal
-    closeModalSpy = vi.fn()
-    ;(useApiKeyModal as Mock).mockReturnValue({
-      closeModal: closeModalSpy,
-    })
+    refetchSpy = vi.fn().mockResolvedValue({ data: null, error: null })
+    ;(useMeQuery as Mock).mockReturnValue({ refetch: refetchSpy })
 
-    // mock store
+    logoutSpy.mockImplementation((callback?: () => void) => {
+      if (callback) {
+        callback()
+      }
+      return Promise.resolve()
+    })
+    closeModalSpy = vi.fn()
+    ;(useApiKeyModal as Mock).mockReturnValue({ closeModal: closeModalSpy })
+
     removeKeySpy = vi.fn()
-    const getKeyMock = vi.fn()
+    const getKeyMock = vi.fn().mockReturnValue(ref('tok'))
+    const setKeyMock = vi.fn()
+
     ;(useStorageStore as unknown as Mock).mockReturnValue({
       getKeyFromLocalStorage: getKeyMock,
+      setKeyInLocalStorage: setKeyMock,
       removeKeyFromLocalStorage: removeKeySpy,
     })
 
-    // mock queries
-    refetchSpy = vi.fn().mockResolvedValue({ data: null, error: null })
-    ;(useMeQuery as Mock).mockReturnValue({ refetch: refetchSpy })
-    mutateAsyncSpy = vi.fn()
-    ;(useLogoutMutation as Mock).mockReturnValue({
-      mutateAsync: mutateAsyncSpy,
+    invalidateSpy = vi.fn()
+    ;(useQueryClient as Mock).mockReturnValue({
+      invalidateQueries: invalidateSpy,
     })
 
-    // router and queryClient stubs from setupTest.ts
     router = useRouter()
+    vi.spyOn(router, 'push').mockImplementation(() => Promise.resolve())
   })
 
   it('initializes with no user when apiKey is empty', async () => {
     ;(useStorageStore as unknown as Mock).mockReturnValue({
       getKeyFromLocalStorage: () => ref(''),
       removeKeyFromLocalStorage: removeKeySpy,
+      setKeyInLocalStorage: vi.fn(),
     })
 
     const [{ user, isLoggedIn, apiKey, refreshMe }] = renderComposable(() =>
       useSession(),
     )
 
-    // API key should be empty
     expect(apiKey.value).toBe('')
-    // no fetch called
-    expect(refetchSpy).not.toHaveBeenCalled()
     expect(user.value).toBeUndefined()
     expect(isLoggedIn.value).toBe(false)
     expect(refreshMe).toBe(refetchSpy)
@@ -83,10 +96,6 @@ describe('useSession composable', () => {
 
   it('fetches user when apiKey is set and handles success', async () => {
     const fakeUser = { id: 1, name: 'Alice' }
-    ;(useStorageStore as unknown as Mock).mockReturnValue({
-      getKeyFromLocalStorage: () => ref('tok'),
-      removeKeyFromLocalStorage: removeKeySpy,
-    })
     refetchSpy.mockResolvedValue({
       data: { user: fakeUser, quota: 42 },
       error: null,
@@ -94,7 +103,6 @@ describe('useSession composable', () => {
 
     const [{ user, isLoggedIn }] = renderComposable(() => useSession())
 
-    // wait for watchEffect and async refetch
     await nextTick()
     await nextTick()
 
@@ -104,10 +112,6 @@ describe('useSession composable', () => {
   })
 
   it('handles fetch error by clearing user', async () => {
-    ;(useStorageStore as unknown as Mock).mockReturnValue({
-      getKeyFromLocalStorage: () => ref('tok'),
-      removeKeyFromLocalStorage: removeKeySpy,
-    })
     refetchSpy.mockResolvedValue({ data: undefined, error: new Error() })
 
     const [{ user, isLoggedIn }] = renderComposable(() => useSession())
@@ -121,53 +125,32 @@ describe('useSession composable', () => {
   })
 
   it('logout calls removeKey, closes modal, navigates and invalidates queries', async () => {
-    ;(useStorageStore as unknown as Mock).mockReturnValue({
-      getKeyFromLocalStorage: () => ref('tok'),
-      removeKeyFromLocalStorage: removeKeySpy,
-    })
-    const invalidateSpy = vi.fn()
-    ;(useQueryClient as Mock).mockReturnValue({
-      invalidateQueries: invalidateSpy,
-    })
-    // simulate a user so logout always runs
-    refetchSpy.mockResolvedValue({
-      data: { user: { id: 5 }, quota: 1 },
-      error: null,
-    })
-    mutateAsyncSpy.mockResolvedValue(undefined)
-
     const [{ logout }] = renderComposable(() => useSession())
+
     await nextTick()
     await nextTick()
 
     await logout()
 
-    expect(mutateAsyncSpy).toHaveBeenCalled()
+    expect(logoutSpy).toHaveBeenCalled()
     expect(closeModalSpy).toHaveBeenCalled()
     expect(removeKeySpy).toHaveBeenCalledWith('apiKey')
-    expect(router.push).toHaveBeenCalledWith({ name: 'IndexPage' })
     expect(invalidateSpy).toHaveBeenCalled()
+    expect(router.push).toHaveBeenCalledWith({ name: 'SignIn' })
   })
 
   it('logout swallows errors from remoteLogout and still proceeds', async () => {
-    mutateAsyncSpy.mockRejectedValue(new Error('failed'))
-    ;(useStorageStore as unknown as Mock).mockReturnValue({
-      getKeyFromLocalStorage: () => ref('tok'),
-      removeKeyFromLocalStorage: removeKeySpy,
-    })
-    const invalidateSpy = vi.fn()
-    ;(useQueryClient as Mock).mockReturnValue({
-      invalidateQueries: invalidateSpy,
-    })
+    logoutSpy.mockImplementationOnce(() => Promise.reject(new Error('fail')))
 
     const [{ logout }] = renderComposable(() => useSession())
     await nextTick()
     await nextTick()
 
     await logout()
+
     expect(closeModalSpy).toHaveBeenCalled()
-    expect(removeKeySpy).toHaveBeenCalledWith('apiKey')
-    expect(router.push).toHaveBeenCalled()
+    expect(removeKeySpy).toHaveBeenCalled()
     expect(invalidateSpy).toHaveBeenCalled()
+    expect(router.push).toHaveBeenCalled()
   })
 })

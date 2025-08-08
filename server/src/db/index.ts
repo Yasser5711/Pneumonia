@@ -4,7 +4,7 @@ import postgres from 'postgres';
 import { env } from '../env';
 
 import * as schema from './schema';
-
+export * as schemas from './schema';
 const ssl =
   env.NODE_ENV === 'production' || env.NODE_ENV === 'preview'
     ? { rejectUnauthorized: false }

@@ -395,7 +395,7 @@ describe('useMeQuery', () => {
         createdAt: new Date('2023-01-01T00:00:00Z'),
         lastLogin: new Date('2023-01-01T00:00:00Z'),
         updatedAt: new Date('2023-01-01T00:00:00Z'),
-        avatarUrl: null,
+        image: null,
       },
       quota: { total: 10, used: 2 },
     })

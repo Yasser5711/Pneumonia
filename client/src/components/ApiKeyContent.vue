@@ -10,7 +10,7 @@ import { useProfileModal } from './useProfileModal'
 const copied = ref(false)
 const { closeModal, isOpen } = useApiKeyModal()
 const store = useStorageStore()
-const { isLoggedIn, refreshMe, logout, user } = useSession()
+const { isLoggedIn, refreshMe, user } = useSession()
 const { openModal: openProfileModal } = useProfileModal()
 const { generateKey, isPending: isGenerating } = useGenerateKeyHandler()
 const { copy: copyToClipboard, isSupported } = useClipboard()
@@ -80,7 +80,8 @@ watch(isOpen, (open) => {
           >🔄 Generate new key</v-btn
         >
         <v-spacer />
-        <v-btn color="error" variant="plain" @click="logout">🚪 Logout</v-btn>
+        <LogoutButton />
+
         <v-btn
           text="Profile"
           prepend-icon="mdi-account-circle"

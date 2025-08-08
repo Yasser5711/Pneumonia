@@ -4,6 +4,9 @@ import { db as DB } from '../index';
 import { apiKeysTable, usersTable } from '../schema';
 
 type UserInsert = InferInsertModel<typeof usersTable>;
+/**
+ * @deprecated
+ */
 /* istanbul ignore next */
 export const createUsersRepo = (db: any = DB) => ({
   findById: async (id: string) => {

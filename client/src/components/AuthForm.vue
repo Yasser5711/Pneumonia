@@ -75,6 +75,7 @@ watch(
         label="Email"
         type="email"
         :rules="[required('Email'), emailRule]"
+        autocomplete="email"
       />
       <v-text-field
         v-model="password"
@@ -82,6 +83,9 @@ watch(
         :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
         label="Password"
         :rules="[required('Password'), pwdRule]"
+        :autocomplete="
+          props.mode === 'signin' ? 'current-password' : 'new-password'
+        "
         @click:append-inner="visible = !visible"
       />
 
@@ -91,6 +95,7 @@ watch(
         :type="visible ? 'text' : 'password'"
         :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
         label="Confirm password"
+        autocomplete="new-password"
         :rules="[required('Confirm password'), confirmRule]"
         @click:append-inner="visible = !visible"
       />
@@ -100,11 +105,13 @@ watch(
         <v-text-field
           v-model="firstName"
           label="First name"
+          autocomplete="given-name"
           :rules="[required('First name')]"
         />
         <v-text-field
           v-model="lastName"
           label="Last name"
+          autocomplete="family-name"
           :rules="[required('Last name')]"
         />
       </template>

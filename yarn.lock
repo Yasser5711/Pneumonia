@@ -2401,7 +2401,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/hashes@npm:^1.6.1":
+"@noble/hashes@npm:^1.8.0":
   version: 1.8.0
   resolution: "@noble/hashes@npm:1.8.0"
   checksum: 10c0/06a0b52c81a6fa7f04d67762e08b2c476a00285858150caeaaff4037356dd5e119f45b2a530f638b77a5eeca013168ec1b655db41bae3236cb2e9d511484fc77
@@ -3501,22 +3501,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@trpc/client@npm:^11.4.3":
-  version: 11.4.3
-  resolution: "@trpc/client@npm:11.4.3"
+"@trpc/client@npm:^11.4.4":
+  version: 11.4.4
+  resolution: "@trpc/client@npm:11.4.4"
   peerDependencies:
-    "@trpc/server": 11.4.3
+    "@trpc/server": 11.4.4
     typescript: ">=5.7.2"
-  checksum: 10c0/7ce11fc99f9238a2dad4755f320516f9afb4bce3f1b38508b076a88dfa2d8f340f2576b8b8a9a3fc06bb7073638d8cc29154bcc061a208c2a3a6b17b718cefd2
+  checksum: 10c0/718aeb8b5d01af95958c87d03d5746d58e5a204dc6cc30700135ec9a6f2096f0b7031065d2ffd52fe76d08badce846772390147d19e143725459e78c5d00eb27
   languageName: node
   linkType: hard
 
-"@trpc/server@npm:^11.4.3":
-  version: 11.4.3
-  resolution: "@trpc/server@npm:11.4.3"
+"@trpc/server@npm:^11.4.4":
+  version: 11.4.4
+  resolution: "@trpc/server@npm:11.4.4"
   peerDependencies:
     typescript: ">=5.7.2"
-  checksum: 10c0/3d3fd2a52cb36de5a02c3454d66ac5c739ba53442546aa9a06c79e277951a31827f21b9c135f551c98a197d28f1d6c87aba590dc08c98c15b8ba7a4b9a7653d2
+  checksum: 10c0/94fefaa3538a9c4fe9995dea2563b32d43e7af51014c55ce041282cf008fe3925aa46607c49a68ebe4899cc884a12e96a9f2650c4e744e8aad6d87d09d1ccbba
   languageName: node
   linkType: hard
 
@@ -4340,20 +4340,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/core@npm:^13.0.0":
-  version: 13.5.0
-  resolution: "@vueuse/core@npm:13.5.0"
-  dependencies:
-    "@types/web-bluetooth": "npm:^0.0.21"
-    "@vueuse/metadata": "npm:13.5.0"
-    "@vueuse/shared": "npm:13.5.0"
-  peerDependencies:
-    vue: ^3.5.0
-  checksum: 10c0/82382a8cffd75fced2a07cf06d0bb774d2f56e1b7fac5a017493588f9a7d80457b214c25c4addbc7bbd425214a1f3b1137621d740d0506ea276c4fc7f189f92a
-  languageName: node
-  linkType: hard
-
-"@vueuse/core@npm:^13.6.0":
+"@vueuse/core@npm:^13.0.0, @vueuse/core@npm:^13.6.0":
   version: 13.6.0
   resolution: "@vueuse/core@npm:13.6.0"
   dependencies:
@@ -4363,13 +4350,6 @@ __metadata:
   peerDependencies:
     vue: ^3.5.0
   checksum: 10c0/c9f7b4c95b7bbca5c0b168fb1f238a4db5a0d7b3e7dc89b5f35dc4812c5a8efa9b441af7f5a79b20829942e06e66e7298c3d10809c9ea104500317556b791e75
-  languageName: node
-  linkType: hard
-
-"@vueuse/metadata@npm:13.5.0":
-  version: 13.5.0
-  resolution: "@vueuse/metadata@npm:13.5.0"
-  checksum: 10c0/0f5adbe460db9c8ead754b981a28f6adeda4208820a75c61cabd99fa6f6cc785eb263bc634374b82f439bd88bfd94ea8e8c83766c9a46f9a87469d1afb062d37
   languageName: node
   linkType: hard
 
@@ -4400,16 +4380,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vueuse/shared@npm:13.5.0, @vueuse/shared@npm:^13.0.0":
-  version: 13.5.0
-  resolution: "@vueuse/shared@npm:13.5.0"
-  peerDependencies:
-    vue: ^3.5.0
-  checksum: 10c0/6d6e67a929636ae66fa090729e319713610f22b3ffe6f7bdb459bcde170d2f111b5b11a12412814139a4cfb08d8f3f0d47ba70fcd0a21e806f6108109606e275
-  languageName: node
-  linkType: hard
-
-"@vueuse/shared@npm:13.6.0":
+"@vueuse/shared@npm:13.6.0, @vueuse/shared@npm:^13.0.0":
   version: 13.6.0
   resolution: "@vueuse/shared@npm:13.6.0"
   peerDependencies:
@@ -4938,35 +4909,43 @@ __metadata:
   languageName: node
   linkType: hard
 
-"better-auth@npm:^1.2.12":
-  version: 1.2.12
-  resolution: "better-auth@npm:1.2.12"
+"better-auth@npm:^1.3.4":
+  version: 1.3.4
+  resolution: "better-auth@npm:1.3.4"
   dependencies:
     "@better-auth/utils": "npm:0.2.5"
     "@better-fetch/fetch": "npm:^1.1.18"
     "@noble/ciphers": "npm:^0.6.0"
-    "@noble/hashes": "npm:^1.6.1"
+    "@noble/hashes": "npm:^1.8.0"
     "@simplewebauthn/browser": "npm:^13.0.0"
     "@simplewebauthn/server": "npm:^13.0.0"
-    better-call: "npm:^1.0.8"
+    better-call: "npm:^1.0.12"
     defu: "npm:^6.1.4"
-    jose: "npm:^6.0.11"
-    kysely: "npm:^0.28.2"
+    jose: "npm:^5.9.6"
+    kysely: "npm:^0.28.1"
     nanostores: "npm:^0.11.3"
-    zod: "npm:^3.24.1"
-  checksum: 10c0/b3b3535bbdd436fd4e275e17710ae7967d762e8a814e4cb05c9e57054b14c61ae75dedaeb6e25dfcf8cacdccc0036d4de2d79dbd2e3108cbe1fcb4d70ce24aa1
+    zod: "npm:^4.0.5"
+  peerDependencies:
+    react: ^18.0.0 || ^19.0.0
+    react-dom: ^18.0.0 || ^19.0.0
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 10c0/70083439396a788eac3048dd577e0cf11d62298aeb6cfa64d53894e459b0d945c85a02819ce414f557afa390669e225c54a2c03f0c0ccfc6f755c09f16e26abf
   languageName: node
   linkType: hard
 
-"better-call@npm:^1.0.8":
-  version: 1.0.12
-  resolution: "better-call@npm:1.0.12"
+"better-call@npm:^1.0.12":
+  version: 1.0.13
+  resolution: "better-call@npm:1.0.13"
   dependencies:
     "@better-fetch/fetch": "npm:^1.1.4"
     rou3: "npm:^0.5.1"
     set-cookie-parser: "npm:^2.7.1"
     uncrypto: "npm:^0.1.3"
-  checksum: 10c0/bb1c95c719055d73c29135055fca845bb9149c88ca1a5aefeaf4a8b588a6f6e0a57059e9fe77a5b03cc8f3316cec6d728e41a67c32ccb6a0c88228e890de2c16
+  checksum: 10c0/025533ae800f7861273f50d0ada7d67eadf00a443cad9c0d2d2778eaad0769ef6f1c5963cebd679b2caba6b7405cca9388bb6f0c2ead40dffd33eb3686e74269
   languageName: node
   linkType: hard
 
@@ -5353,7 +5332,7 @@ __metadata:
     "@tanstack/vue-query-devtools": "npm:^5.83.0"
     "@testing-library/jest-dom": "npm:^6.6.3"
     "@testing-library/vue": "npm:^8.1.0"
-    "@trpc/client": "npm:^11.4.3"
+    "@trpc/client": "npm:^11.4.4"
     "@tsconfig/node22": "npm:^22.0.2"
     "@tweakpane/core": "npm:^2.0.5"
     "@types/node": "npm:^22.15.21"
@@ -5367,7 +5346,7 @@ __metadata:
     "@vueuse/core": "npm:^13.6.0"
     "@vueuse/motion": "npm:^3.0.3"
     autoprefixer: "npm:^10.4.21"
-    better-auth: "npm:^1.2.12"
+    better-auth: "npm:^1.3.4"
     core-js: "npm:^3.42.0"
     depcheck: "npm:^1.4.7"
     eslint: "npm:^9.27.0"
@@ -8782,10 +8761,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jose@npm:^6.0.11":
-  version: 6.0.11
-  resolution: "jose@npm:6.0.11"
-  checksum: 10c0/d290be4532174e7a53730b7fb84c74327531172bd403b196c592b312b73eedb7489949837bfe831fdbd280799bfc5ba778bc807495a73eda08ae6c49414f405a
+"jose@npm:^5.9.6":
+  version: 5.10.0
+  resolution: "jose@npm:5.10.0"
+  checksum: 10c0/e20d9fc58d7e402f2e5f04e824b8897d5579aae60e64cb88ebdea1395311c24537bf4892f7de413fab1acf11e922797fb1b42269bc8fc65089a3749265ccb7b0
   languageName: node
   linkType: hard
 
@@ -9121,10 +9100,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"kysely@npm:^0.28.2":
-  version: 0.28.2
-  resolution: "kysely@npm:0.28.2"
-  checksum: 10c0/66eccd19e6476a10f3b004835c4a966516968003075aa0c217db48ecd0f9679a2efa812f797063540cdb4e3e81fbf5afe876e1f7a08a1550e1fd99acc2a6dbb9
+"kysely@npm:^0.28.1":
+  version: 0.28.4
+  resolution: "kysely@npm:0.28.4"
+  checksum: 10c0/d4e77eb6f4d9f598b47ea63ff0169b898623c9e9cd2f521428cdd4040e6cec32151f5047949c9b85fa304fe8f228fb1cc4d9dc05d6bfb5a05e53da7337d0fc73
   languageName: node
   linkType: hard
 
@@ -12172,7 +12151,7 @@ __metadata:
     "@fastify/rate-limit": "npm:^10.3.0"
     "@fastify/websocket": "npm:^11.1.0"
     "@scalar/fastify-api-reference": "npm:^1.29.3"
-    "@trpc/server": "npm:^11.4.3"
+    "@trpc/server": "npm:^11.4.4"
     "@types/bcrypt": "npm:^5.0.2"
     "@types/eslint-plugin-security": "npm:^3"
     "@types/ms": "npm:^2"
@@ -12183,7 +12162,7 @@ __metadata:
     "@vitest/coverage-v8": "npm:3.2.4"
     "@vitest/ui": "npm:^3.1.4"
     bcrypt: "npm:^6.0.0"
-    better-auth: "npm:^1.2.12"
+    better-auth: "npm:^1.3.4"
     better-auth-harmony: "npm:^1.2.5"
     depcheck: "npm:^1.4.7"
     dotenv: "npm:^16.5.0"
@@ -12205,7 +12184,7 @@ __metadata:
     postgres: "npm:^3.4.7"
     prettier: "npm:^3.5.3"
     superjson: "npm:^2.2.2"
-    trpc-to-openapi: "npm:^2.3.2"
+    trpc-to-openapi: "npm:^3.0.0"
     trpc-ui: "npm:^1.0.15"
     ts-prune: "npm:^0.10.3"
     tsconfig-paths: "npm:^4.2.0"
@@ -12214,8 +12193,8 @@ __metadata:
     vite-tsconfig-paths: "npm:^5.1.4"
     vitest: "npm:^3.2.4"
     vitest-mock-extended: "npm:^3.1.0"
-    zod: "npm:^3.25.67"
-    zod-openapi: "npm:^4.2.4"
+    zod: "npm:^4.0.15"
+    zod-openapi: "npm:^5.3.0"
   languageName: unknown
   linkType: soft
 
@@ -13324,9 +13303,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"trpc-to-openapi@npm:^2.3.2":
-  version: 2.3.2
-  resolution: "trpc-to-openapi@npm:2.3.2"
+"trpc-to-openapi@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "trpc-to-openapi@npm:3.0.0"
   dependencies:
     "@rollup/rollup-linux-x64-gnu": "npm:4.6.1"
     co-body: "npm:6.2.0"
@@ -13334,12 +13313,12 @@ __metadata:
     openapi3-ts: "npm:4.4.0"
   peerDependencies:
     "@trpc/server": ^11.1.0
-    zod: ^3.23.8
-    zod-openapi: 4.2.4
+    zod: ^4.0.0
+    zod-openapi: ^5.0.1
   dependenciesMeta:
     "@rollup/rollup-linux-x64-gnu":
       optional: true
-  checksum: 10c0/7bc414ef9095cf551c3b9ae108105542c5306432abbdca2f3f1a9d31bc27e1bfde5d7915f1e41a12fb331f18f7542be66fcd6b41365db370bacb3559a79bb8ee
+  checksum: 10c0/6131793d172f54ac3c3c54eb56d6592cad41c2295e901248d78b6336456781cbdb3a3e488eee6a8da7ca51b702736156016b189a8b8a9ea79d2f9ba3e011c045
   languageName: node
   linkType: hard
 
@@ -15060,12 +15039,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod-openapi@npm:^4.2.4":
-  version: 4.2.4
-  resolution: "zod-openapi@npm:4.2.4"
+"zod-openapi@npm:^5.3.0":
+  version: 5.3.0
+  resolution: "zod-openapi@npm:5.3.0"
   peerDependencies:
-    zod: ^3.21.4
-  checksum: 10c0/6c7f70ae57270cfb1afdcae6dd34ae77d1f2c0e229d0e7f223f86ffc108defbfe69f6aaaa5ec304f7032133d10ccfa507d937a4ef3b40d51cf9c7d897fc1e368
+    zod: ^3.25.74 || ^4.0.0
+  checksum: 10c0/bf9f47ca18f70f29244551ed2e126d91eeded500edb1dfe41fbee4065d270b33a7437cb259f427bb1f79b7dbc876a5870611b5a98388a1a759cd852a651c87ee
   languageName: node
   linkType: hard
 
@@ -15094,10 +15073,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.22.4, zod@npm:^3.24.1, zod@npm:^3.25.67":
+"zod@npm:^3.22.4":
   version: 3.25.76
   resolution: "zod@npm:3.25.76"
   checksum: 10c0/5718ec35e3c40b600316c5b4c5e4976f7fee68151bc8f8d90ec18a469be9571f072e1bbaace10f1e85cf8892ea12d90821b200e980ab46916a6166a4260a983c
+  languageName: node
+  linkType: hard
+
+"zod@npm:^4.0.15, zod@npm:^4.0.5":
+  version: 4.0.15
+  resolution: "zod@npm:4.0.15"
+  checksum: 10c0/c4d5b0c6668fe32fb6040d713d75dbf65e2e46cb68c77755b7b66426e8583d5dacf49a44f90beb6b12aa1aa2545cc0d3c186e368711021e11dd3c1f0addb9100
   languageName: node
   linkType: hard
 

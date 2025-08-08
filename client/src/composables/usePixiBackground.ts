@@ -27,7 +27,7 @@ export function usePixiBackground() {
   /* Theme ------------------------------------------------------------------ */
   const { isDark } = useTheme()
   const tint = computed(() => (isDark.value ? 0xcccccc : 0x444444))
-  const bgStyle = computed(() => (isDark.value ? '#000000' : '#ffffff'))
+  // const bgStyle = computed(() => (isDark.value ? '#000000' : '#ffffff'))
 
   /* Mouse Interaction ------------------------------------------------------ */
   const mouseRaw = useMouse()
@@ -90,7 +90,7 @@ export function usePixiBackground() {
     /* Canvas Init ---------------------------------------------------------- */
     app = new Application()
     await app.init({
-      background: bgStyle.value,
+      background: '#000000',
       backgroundAlpha: 0,
       antialias: true,
       resolution: window.devicePixelRatio,

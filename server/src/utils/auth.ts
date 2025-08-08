@@ -130,10 +130,36 @@ export const auth = betterAuth({
     database: {
       generateId: false,
     },
-    useSecureCookies: env.NODE_ENV === 'production',
+    useSecureCookies: env.NODE_ENV !== 'development',
     ipAddress: {
       ipAddressHeaders: ['x-client-ip', 'x-forwarded-for'],
       disableIpTracking: false,
+    },
+    cookies: {
+      session_token: {
+        attributes: {
+          path: '/',
+          httpOnly: true,
+          sameSite: 'none',
+          secure: true,
+        },
+      },
+      session_data: {
+        attributes: {
+          path: '/',
+          httpOnly: true,
+          sameSite: 'none',
+          secure: true,
+        },
+      },
+      dont_remember: {
+        attributes: {
+          path: '/',
+          httpOnly: true,
+          sameSite: 'none',
+          secure: true,
+        },
+      },
     },
   },
   plugins: [

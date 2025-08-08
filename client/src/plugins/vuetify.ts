@@ -31,6 +31,9 @@ const vuetify = createVuetify({
     VSlider: {
       thumbLabel: true,
     },
+    VSelect: {
+      variant: 'underlined',
+    },
   },
   theme: {
     defaultTheme: 'dark',

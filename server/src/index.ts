@@ -20,9 +20,6 @@ import { auth } from './utils/auth';
 
 const isDev = env.NODE_ENV === 'development';
 
-const frontendUrl = new URL(env.FRONTEND_ORIGIN!);
-const hostnameParts = frontendUrl.hostname.split('.');
-const parentDomain = '.' + hostnameParts.slice(-2).join('.');
 const fastify = Fastify({
   trustProxy: true,
   logger: isDev
@@ -82,10 +79,10 @@ async function main() {
     hook: 'onRequest',
     parseOptions: {
       sameSite: 'none',
-      secure: true,
-      domain: parentDomain,
+      secure: env.NODE_ENV !== 'development',
     },
   });
+
   fastify.route({
     method: ['GET', 'POST'],
     url: '/api/auth/*',

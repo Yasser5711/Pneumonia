@@ -27,7 +27,7 @@ export const sessionMiddleware = t.middleware(async ({ ctx, next }) => {
   return next({ ctx: { ...ctx, user } });
 });
 
-export const isAuthed = t.middleware(({ ctx, next }) => {
+export const isAuthed = t.middleware(async ({ ctx, next }) => {
   if (!ctx.session) {
     throw new TRPCError({ code: 'UNAUTHORIZED', cause: new SessionNotFoundError() });
   }
@@ -37,12 +37,12 @@ export const isAuthed = t.middleware(({ ctx, next }) => {
     throw new TRPCError({ code: 'UNAUTHORIZED', cause: new SessionInvalidUserIdError() });
   }
 
-  const user = ctx.services.newUserService.findById({ id: userId });
+  const user = await ctx.services.newUserService.findById({ id: userId });
   if (!user) {
     throw new TRPCError({ code: 'UNAUTHORIZED', cause: new SessionUserNotFoundError() });
   }
 
-  ctx.services.newUserService.updateProfile(userId, { lastLoginIp: ctx.req.ip });
+  await ctx.services.newUserService.updateProfile(userId, { lastLoginIp: ctx.req.ip });
 
   return next({
     ctx: { ...ctx, userId, user },

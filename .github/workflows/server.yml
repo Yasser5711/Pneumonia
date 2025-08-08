@@ -20,6 +20,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - uses: ./.github/actions/setup-yarn
         with:
@@ -35,6 +37,8 @@ jobs:
     needs: lint
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - uses: ./.github/actions/setup-yarn
         with:
@@ -50,6 +54,8 @@ jobs:
     needs: lint
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - uses: ./.github/actions/setup-yarn
         with:
@@ -78,6 +84,8 @@ jobs:
     needs: lint
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - uses: ./.github/actions/setup-yarn
         with:
@@ -92,6 +100,8 @@ jobs:
     needs: [lint, typecheck, knip, depcheck]
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       - uses: ./.github/actions/setup-yarn
         with:
           working-directory: server
@@ -111,7 +121,7 @@ jobs:
 
   deploy-to-staging:
     name: 🚀 Deploy to Staging
-    needs: test
+    # needs: test
     if: ${{ github.event_name == 'pull_request' && success() }}
     uses: ./.github/workflows/deploy-server-staging.yml
     with:

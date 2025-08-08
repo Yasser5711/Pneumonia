@@ -3,11 +3,10 @@ import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { apiKey, customSession, haveIBeenPwned } from 'better-auth/plugins';
 import { emailHarmony } from 'better-auth-harmony';
 import { eq } from 'drizzle-orm';
-import { logger } from 'src/logger';
 
 import { db, schemas } from '../db';
 import { env } from '../env';
-
+import { logger } from '../logger';
 export const auth = betterAuth({
   appName: 'Pneumonia',
   basePath: '/api/auth',
@@ -37,7 +36,16 @@ export const auth = betterAuth({
       maxAge: 5 * 60,
     },
   },
-  trustedOrigins: [env.FRONTEND_ORIGIN],
+  trustedOrigins: (request) => {
+    const origins = [env.FRONTEND_ORIGIN];
+
+    const incoming = request.headers.get('origin') || request.headers.get('referer');
+    if (incoming && /^https:\/\/deploy-preview-\d+--penumoniacnn\.netlify\.app$/.test(incoming)) {
+      origins.push(incoming);
+    }
+
+    return origins;
+  },
   emailAndPassword: {
     enabled: true,
   },
@@ -46,9 +54,10 @@ export const auth = betterAuth({
       clientId: env.GITHUB_CLIENT_ID,
       clientSecret: env.GITHUB_CLIENT_SECRET,
       mapProfileToUser(profile) {
+        const nameParts = (profile.name || '').trim().split(/\s+/);
         return {
-          firstName: profile.name?.split(' ')[0] || '',
-          lastName: profile.name?.split(' ')[1] || '',
+          firstName: nameParts[0] || '',
+          lastName: nameParts.length > 1 ? nameParts.slice(1).join(' ') : '',
           image: profile.avatar_url,
         };
       },
@@ -72,7 +81,7 @@ export const auth = betterAuth({
               await db
                 .update(schemas.users)
                 .set({
-                  image: `https://ui-avatars.com/api/?name=${user.name.replace(' ', '+')}&background=random`,
+                  image: `https://ui-avatars.com/api/?name=${user.name.replace(/ /g, '+')}&background=random`,
                 })
                 .where(eq(schemas.users.id, user.id));
             } catch (error) {
@@ -88,7 +97,7 @@ export const auth = betterAuth({
               await db
                 .update(schemas.users)
                 .set({
-                  image: `https://ui-avatars.com/api/?name=${user.name.replace(' ', '+')}&background=random`,
+                  image: `https://ui-avatars.com/api/?name=${user.name.replace(/ /g, '+')}&background=random`,
                 })
                 .where(eq(schemas.users.id, user.id));
             } catch (error) {

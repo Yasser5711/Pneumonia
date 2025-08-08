@@ -4,7 +4,9 @@ export const users = pgTable(
   'users',
   (t) => ({
     id: t.uuid('id').defaultRandom().primaryKey(),
-    name: t.text('name').generatedAlwaysAs(sql`concat(first_name, ' ', last_name)`),
+    name: t
+      .text('name')
+      .generatedAlwaysAs(sql`concat(coalesce(first_name, ''), ' ', coalesce(last_name, ''))`),
     firstName: t.text('first_name').notNull(),
     lastName: t.text('last_name').notNull(),
     email: t.text('email').notNull().unique(),

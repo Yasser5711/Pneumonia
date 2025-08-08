@@ -23,6 +23,7 @@ declare module 'vue' {
     ImageModal: typeof import('./components/ImageModal.vue')['default']
     ImagePreview: typeof import('./components/ImagePreview.vue')['default']
     LoginButton: typeof import('./components/LoginButton.vue')['default']
+    Logo: typeof import('./components/Logo.vue')['default']
     LogoutButton: typeof import('./components/LogoutButton.vue')['default']
     MessageInput: typeof import('./components/MessageInput.vue')['default']
     PixiBackground: typeof import('./components/PixiBackground.vue')['default']

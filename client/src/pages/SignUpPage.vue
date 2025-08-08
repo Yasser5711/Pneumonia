@@ -28,12 +28,7 @@ function toggleMode() {
     <v-row no-gutters class="fill-height align-center justify-center">
       <v-col cols="12" sm="8" md="6" lg="4">
         <v-responsive max-width="420" class="pa-4 mx-auto">
-          <v-img
-            src="https://vuetifyjs.b-cdn.net/docs/images/logos/v.svg"
-            contain
-            width="60"
-            class="mx-auto mb-4"
-          />
+          <Logo class="mx-auto mb-4" style="width: 70%" />
 
           <h1 class="text-h4 font-weight-bold mb-2 text-center">
             Create your account

@@ -38,6 +38,9 @@ function stopExplosions() {
       transition: 'scroll-y-transition',
       scrollable: true,
     }"
+    :mobile="{
+      closable: true,
+    }"
   >
     <v-card class="mx-auto" max-width="480" title="Paramètres d’affichage">
       <v-card-text>

@@ -69,7 +69,7 @@ async function main() {
             directives: {
               ...helmet.contentSecurityPolicy.getDefaultDirectives(),
               'script-src': ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-              // 'connect-src': ["'self'", 'http://localhost:*'],
+              'connect-src': ["'self'", env.BASE_URL],
             },
           }
         : true,

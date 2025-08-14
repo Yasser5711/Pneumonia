@@ -1,6 +1,11 @@
 import type { AppRouter } from '@server/router/_app'
 import type { TRPCClient } from '@trpc/client'
-
+type PulseInput = {
+  mode?: 'presence' | 'beats'
+  bpm?: number
+  presenceIntervalMs?: number
+  jitterMs?: number
+}
 export const MOCK_TRPC: Partial<TRPCClient<AppRouter>> = {
   predictPneumonia: {
     mutate: (data: { imageBase64: string }) => {
@@ -103,5 +108,30 @@ export const MOCK_TRPC: Partial<TRPCClient<AppRouter>> = {
         },
       },
     },
+  },
+  healthRouter: {
+    checkPulse: {
+      query: () => {
+        return Promise.resolve({ message: 'ok' })
+      },
+    },
+    pulse: {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      subscribe: (_input: PulseInput, opts: any) => {
+        // Send one fake presence event
+        opts?.onData?.({
+          type: 'presence',
+          ts: Date.now(),
+          message: 'mock server alive',
+        })
+        // Send one fake beat event
+        opts?.onData?.({ type: 'beat', ts: Date.now() })
+        // Immediately complete
+        opts?.onComplete?.()
+        // Return unsubscribe function
+        return () => {}
+      },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any,
   },
 }

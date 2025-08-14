@@ -14,9 +14,6 @@ const merged = mergeConfig(baseConfig, {
     },
   },
   test: {
-    deps: {
-      inline: ['better-auth-harmony', 'validator'],
-    },
     environment: 'node',
     setupFiles: ['./test/setup.ts'],
     coverage: {

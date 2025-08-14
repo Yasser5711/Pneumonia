@@ -29,10 +29,10 @@ export function registerPlugins(app: App) {
   app
     .use(pinia)
     .use(vuetify)
-    .use(router)
     .use(motion)
     .use(createTRPCPlugin({ url: `${import.meta.env.VITE_API_URL}/trpc` }))
     // .use(authClient)
+    .use(router)
     .use(head)
     .use(VueRouterTransition, router)
 }

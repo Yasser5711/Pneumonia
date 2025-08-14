@@ -1,9 +1,9 @@
 import type { App } from 'vue'
 
-import { httpBatchLink } from '@trpc/client'
+import { httpBatchLink, httpSubscriptionLink } from '@trpc/client'
 import { describe, expect, it, vi, type Mock } from 'vitest'
 
-import { createTRPCPlugin } from './trpc'
+import { createTRPCPlugin, getTRPCClient } from './trpc'
 
 vi.mock('@trpc/client', async (importOriginal) => {
   const actual = await importOriginal<typeof import('@trpc/client')>()
@@ -11,6 +11,7 @@ vi.mock('@trpc/client', async (importOriginal) => {
     ...actual,
     createTRPCClient: vi.fn().mockReturnValue('mockedClient'),
     httpBatchLink: vi.fn().mockReturnValue(() => {}),
+    httpSubscriptionLink: vi.fn().mockReturnValue(() => {}),
   }
 })
 
@@ -48,5 +49,20 @@ describe('createTRPCPlugin', () => {
     const config = (httpBatchLink as Mock).mock.calls[0][0]
     const headers = config.headers()
     expect(headers).toEqual({ 'x-api-key': 'test-api-key' })
+  })
+  it('wires SSE: uses httpSubscriptionLink for subscription ops', () => {
+    const app = { config: { globalProperties: {} } }
+    const plugin = createTRPCPlugin({ url: 'https://api.example.com/trpc' })
+    plugin.install(app as unknown as App)
+
+    expect(httpSubscriptionLink).toHaveBeenCalledWith({
+      url: 'https://api.example.com/trpc',
+      transformer: expect.any(Function),
+    })
+  })
+  it('getTRPCClient throws before plugin install', () => {
+    expect(() => getTRPCClient()).toThrowError(
+      'tRPC client not initialized yet',
+    )
   })
 })

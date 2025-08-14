@@ -1,7 +1,7 @@
 import { router } from '../middlewares/index';
 
 import * as auth from './auth';
-import { checkPulseRouter } from './checkPulse';
+import { healthRouter } from './checkPulse';
 import { helloWorldRouter } from './helloworld';
 import { predictRouter } from './predicts';
 
@@ -9,7 +9,7 @@ import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 export const appRouter = router({
   predictPneumonia: predictRouter,
   helloWorldRouter: helloWorldRouter,
-  checkPulseRouter: checkPulseRouter,
+  healthRouter: healthRouter,
   auth: {
     github: auth.githubRouter,
     google: auth.googleRouter,

@@ -14,7 +14,7 @@ const props = defineProps<{
    * props forwarded to <v-bottom-sheet> when on mobile
    * e.g. { persistent: true, scrollable: true }
    */
-  mobile?: Record<string, unknown>
+  mobile?: Record<string, unknown> & { closable: boolean }
   /** breakpoint at which we switch, default = sm */
   switchAt?: Exclude<DisplayBreakpoint, 'lgAndUp' | 'mdAndDown'>
 }>()
@@ -47,6 +47,7 @@ const onUpdate = (value: boolean) => emit('update:modelValue', value)
   >
     <template #default>
       <v-btn
+        v-if="props.mobile?.closable"
         variant="text"
         icon="mdi-close"
         size="small"

@@ -53,6 +53,10 @@ export const t = initTRPC
   .meta<OpenApiMeta>()
   .context<Context>()
   .create({
+    sse: {
+      ping: { enabled: true, intervalMs: 15000 },
+      client: { reconnectAfterInactivityMs: 20000 },
+    },
     transformer: SuperJSON,
     errorFormatter: ({ shape, error }) => ({
       ...shape,

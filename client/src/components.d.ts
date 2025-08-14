@@ -32,6 +32,8 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     ScrollToBottomButton: typeof import('./components/ScrollToBottomButton.vue')['default']
+    ServerPulseFab: typeof import('./components/ServerPulseFab.vue')['default']
+    ServerWakeModal: typeof import('./components/ServerWakeModal.vue')['default']
     SettingsModal: typeof import('./components/SettingsModal.vue')['default']
   }
 }

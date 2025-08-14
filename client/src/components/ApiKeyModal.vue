@@ -11,6 +11,7 @@ useHead({
   <ResponsiveModal
     v-model="isOpen"
     :desktop="{ maxWidth: 700, transition: 'scroll-y-transition' }"
+    :mobile="{ closable: true }"
   >
     <ApiKeyContent />
   </ResponsiveModal>

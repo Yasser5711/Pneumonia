@@ -9,7 +9,8 @@ import { setupLayouts } from 'virtual:generated-layouts'
 import { createRouter, createWebHistory } from 'vue-router/auto'
 import { routes } from 'vue-router/auto-routes'
 
-// import { authClient } from '../lib/auth'
+import { useServerPulse } from '@/composables/useServerPulse'
+
 import { useAuthStore } from '../stores/auth'
 
 import type { RouteLocationNormalized } from 'vue-router'
@@ -35,6 +36,14 @@ export function createAppRouter(baseUrl: string = import.meta.env.BASE_URL) {
     if (to.matched.some((r) => r.meta.disabled)) {
       return { name: 'NotFound', replace: true }
     }
+    const { start, status, close } = useServerPulse()
+    const ok = await start({ showModal: true })
+    if (!ok && status.value === 'down') {
+      return true
+    } else {
+      close()
+    }
+
     const auth = useAuthStore()
     if (auth.sessionRef.isPending) {
       await new Promise((resolve) => {

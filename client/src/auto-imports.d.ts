@@ -68,8 +68,8 @@ declare global {
   const useCssVars: typeof import('vue')['useCssVars']
   const useFileUpload: typeof import('./composables/useFileUpload')['useFileUpload']
   const useGenerateKeyHandler: typeof import('./composables/useAuthHandler')['useGenerateKeyHandler']
-  const useGitHubCallback: typeof import('./composables/useGitHubCallback')['useGitHubCallback']
-  const useGitHubLogin: typeof import('./composables/useGitHubLogin')['useGitHubLogin']
+  const useGitHubCallback: (typeof import('./composables/useGitHubCallback'))['useGitHubCallback']
+  const useGitHubLogin: (typeof import('./composables/useGitHubLogin'))['useGitHubLogin']
   const useGithubCallbackHandler: typeof import('./composables/useAuthHandler')['useGithubCallbackHandler']
   const useGlobalFileDragState: typeof import('./composables/useGlobalFileDragState')['useGlobalFileDragState']
   const useGoogleCallbackHandler: typeof import('./composables/useAuthHandler')['useGoogleCallbackHandler']
@@ -79,6 +79,7 @@ declare global {
   const useImagePredictor: typeof import('./composables/useImagePredictor')['useImagePredictor']
   const useLink: (typeof import('vue-router'))['useLink']
   const useModel: typeof import('vue')['useModel']
+  const useOximeterStore: typeof import('./stores/oximeterStore')['useOximeterStore']
   const usePixiBackground: typeof import('./composables/usePixiBackground')['usePixiBackground']
   const usePixiBgConfig: typeof import('./composables/usePixiBgConfig')['usePixiBgConfig']
   const usePixiBgStore: typeof import('./stores/pixiBgStore')['usePixiBgStore']
@@ -90,6 +91,8 @@ declare global {
   const useSeoMeta: typeof import('@unhead/vue')['useSeoMeta']
   const useServerHead: typeof import('@unhead/vue')['useServerHead']
   const useServerHeadSafe: typeof import('@unhead/vue')['useServerHeadSafe']
+  const useServerPulse: typeof import('./composables/useServerPulse')['useServerPulse']
+  const useServerPulseStore: (typeof import('./stores/oximeterStore'))['useServerPulseStore']
   const useServerSeoMeta: typeof import('@unhead/vue')['useServerSeoMeta']
   const useSession: typeof import('./composables/useSession')['useSession']
   const useSlots: typeof import('vue')['useSlots']
@@ -120,103 +123,4 @@ declare global {
   // @ts-ignore
   export type { ThemeMode } from './stores/themeStore'
   import('./stores/themeStore')
-}
-
-// for vue template auto import
-import { UnwrapRef } from 'vue'
-declare module 'vue' {
-  interface GlobalComponents {}
-  interface ComponentCustomProperties {
-    readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
-    readonly computed: UnwrapRef<typeof import('vue')['computed']>
-    readonly createApp: UnwrapRef<typeof import('vue')['createApp']>
-    readonly customRef: UnwrapRef<typeof import('vue')['customRef']>
-    readonly defineAsyncComponent: UnwrapRef<typeof import('vue')['defineAsyncComponent']>
-    readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
-    readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
-    readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
-    readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
-    readonly h: UnwrapRef<typeof import('vue')['h']>
-    readonly inject: UnwrapRef<typeof import('vue')['inject']>
-    readonly injectHead: UnwrapRef<typeof import('@unhead/vue')['injectHead']>
-    readonly isProxy: UnwrapRef<typeof import('vue')['isProxy']>
-    readonly isReactive: UnwrapRef<typeof import('vue')['isReactive']>
-    readonly isReadonly: UnwrapRef<typeof import('vue')['isReadonly']>
-    readonly isRef: UnwrapRef<typeof import('vue')['isRef']>
-    readonly markRaw: UnwrapRef<typeof import('vue')['markRaw']>
-    readonly nextTick: UnwrapRef<typeof import('vue')['nextTick']>
-    readonly onActivated: UnwrapRef<typeof import('vue')['onActivated']>
-    readonly onBeforeMount: UnwrapRef<typeof import('vue')['onBeforeMount']>
-    readonly onBeforeUnmount: UnwrapRef<typeof import('vue')['onBeforeUnmount']>
-    readonly onBeforeUpdate: UnwrapRef<typeof import('vue')['onBeforeUpdate']>
-    readonly onDeactivated: UnwrapRef<typeof import('vue')['onDeactivated']>
-    readonly onErrorCaptured: UnwrapRef<typeof import('vue')['onErrorCaptured']>
-    readonly onMounted: UnwrapRef<typeof import('vue')['onMounted']>
-    readonly onRenderTracked: UnwrapRef<typeof import('vue')['onRenderTracked']>
-    readonly onRenderTriggered: UnwrapRef<typeof import('vue')['onRenderTriggered']>
-    readonly onScopeDispose: UnwrapRef<typeof import('vue')['onScopeDispose']>
-    readonly onServerPrefetch: UnwrapRef<typeof import('vue')['onServerPrefetch']>
-    readonly onUnmounted: UnwrapRef<typeof import('vue')['onUnmounted']>
-    readonly onUpdated: UnwrapRef<typeof import('vue')['onUpdated']>
-    readonly onWatcherCleanup: UnwrapRef<typeof import('vue')['onWatcherCleanup']>
-    readonly provide: UnwrapRef<typeof import('vue')['provide']>
-    readonly queryClient: UnwrapRef<typeof import('@/plugins/tanstack')['queryClient']>
-    readonly reactive: UnwrapRef<typeof import('vue')['reactive']>
-    readonly readonly: UnwrapRef<typeof import('vue')['readonly']>
-    readonly ref: UnwrapRef<typeof import('vue')['ref']>
-    readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
-    readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
-    readonly shallowReadonly: UnwrapRef<typeof import('vue')['shallowReadonly']>
-    readonly shallowRef: UnwrapRef<typeof import('vue')['shallowRef']>
-    readonly stores: UnwrapRef<typeof import('./stores/index')['default']>
-    readonly toRaw: UnwrapRef<typeof import('vue')['toRaw']>
-    readonly toRef: UnwrapRef<typeof import('vue')['toRef']>
-    readonly toRefs: UnwrapRef<typeof import('vue')['toRefs']>
-    readonly toValue: UnwrapRef<typeof import('vue')['toValue']>
-    readonly triggerRef: UnwrapRef<typeof import('vue')['triggerRef']>
-    readonly unref: UnwrapRef<typeof import('vue')['unref']>
-    readonly useAppStore: UnwrapRef<typeof import('./stores/app')['useAppStore']>
-    readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
-    readonly useAuthForm: UnwrapRef<typeof import('./composables/useAuthForm')['useAuthForm']>
-    readonly useAuthStore: UnwrapRef<typeof import('./stores/auth')['useAuthStore']>
-    readonly useCanvasAnimation: UnwrapRef<typeof import('./composables/useCanvasAnimation')['useCanvasAnimation']>
-    readonly useChatScroll: UnwrapRef<typeof import('./composables/useChatScroll')['useChatScroll']>
-    readonly useChatStore: UnwrapRef<typeof import('./stores/chatStore')['useChatStore']>
-    readonly useClock: UnwrapRef<typeof import('./composables/useClock')['useClock']>
-    readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
-    readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
-    readonly useFileUpload: UnwrapRef<typeof import('./composables/useFileUpload')['useFileUpload']>
-    readonly useGenerateKeyHandler: UnwrapRef<typeof import('./composables/useAuthHandler')['useGenerateKeyHandler']>
-    readonly useGithubCallbackHandler: UnwrapRef<typeof import('./composables/useAuthHandler')['useGithubCallbackHandler']>
-    readonly useGlobalFileDragState: UnwrapRef<typeof import('./composables/useGlobalFileDragState')['useGlobalFileDragState']>
-    readonly useGoogleCallbackHandler: UnwrapRef<typeof import('./composables/useAuthHandler')['useGoogleCallbackHandler']>
-    readonly useHead: UnwrapRef<typeof import('@unhead/vue')['useHead']>
-    readonly useHeadSafe: UnwrapRef<typeof import('@unhead/vue')['useHeadSafe']>
-    readonly useId: UnwrapRef<typeof import('vue')['useId']>
-    readonly useImagePredictor: UnwrapRef<typeof import('./composables/useImagePredictor')['useImagePredictor']>
-    readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
-    readonly usePixiBackground: UnwrapRef<typeof import('./composables/usePixiBackground')['usePixiBackground']>
-    readonly usePixiBgConfig: UnwrapRef<typeof import('./composables/usePixiBgConfig')['usePixiBgConfig']>
-    readonly usePixiBgStore: UnwrapRef<typeof import('./stores/pixiBgStore')['usePixiBgStore']>
-    readonly usePixiHeartbeat: UnwrapRef<typeof import('./composables/usePixiHeartbeat')['usePixiHeartbeat']>
-    readonly usePixiPulse: UnwrapRef<typeof import('./composables/usePixiPulse')['usePixiPulse']>
-    readonly usePixiTextures: UnwrapRef<typeof import('./composables/usePixiTextures')['usePixiTextures']>
-    readonly useRoute: UnwrapRef<typeof import('vue-router/auto')['useRoute']>
-    readonly useRouter: UnwrapRef<typeof import('vue-router/auto')['useRouter']>
-    readonly useSeoMeta: UnwrapRef<typeof import('@unhead/vue')['useSeoMeta']>
-    readonly useServerHead: UnwrapRef<typeof import('@unhead/vue')['useServerHead']>
-    readonly useServerHeadSafe: UnwrapRef<typeof import('@unhead/vue')['useServerHeadSafe']>
-    readonly useServerSeoMeta: UnwrapRef<typeof import('@unhead/vue')['useServerSeoMeta']>
-    readonly useSession: UnwrapRef<typeof import('./composables/useSession')['useSession']>
-    readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
-    readonly useStorageStore: UnwrapRef<typeof import('./stores/storageStore')['useStorageStore']>
-    readonly useTRPC: UnwrapRef<typeof import('./composables/useTRPC')['useTRPC']>
-    readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
-    readonly useTheme: UnwrapRef<typeof import('./composables/useTheme')['useTheme']>
-    readonly useThemeStore: UnwrapRef<typeof import('./stores/themeStore')['useThemeStore']>
-    readonly watch: UnwrapRef<typeof import('vue')['watch']>
-    readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>
-    readonly watchPostEffect: UnwrapRef<typeof import('vue')['watchPostEffect']>
-    readonly watchSyncEffect: UnwrapRef<typeof import('vue')['watchSyncEffect']>
-  }
 }

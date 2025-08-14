@@ -38,6 +38,7 @@ useHead({
   <ResponsiveModal
     v-model="isProfileOpen"
     :desktop="{ maxWidth: 460, scrollable: true, class: 'rounded-lg' }"
+    :mobile="{ closable: true }"
   >
     <v-card v-if="user" elevation="2" title="Your profile">
       <v-card-text>

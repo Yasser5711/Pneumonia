@@ -7,6 +7,9 @@ permissions:
   pull-requests: write
   deployments: write
   statuses: write
+
+env:
+  TURBO_TELEMETRY_DISABLED: "1"
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -21,6 +24,9 @@ jobs:
 
       - name: 🧰 Setup Yarn
         uses: ./.github/actions/setup-yarn
+
+      - name: 🛠️ Setup Turbo
+        uses: ./.github/actions/setup-turbo
       - name: create env file
         working-directory: server
         run: |

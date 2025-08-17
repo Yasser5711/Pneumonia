@@ -54,5 +54,6 @@
     "editor.defaultFormatter": "stylelint.vscode-stylelint"
   },
   "stylelint.validate": ["css", "scss"],
-  "stylelint.packageManager": "yarn"
+  "stylelint.packageManager": "yarn",
+  "typescript.tsdk": "node_modules\\typescript\\lib"
 }

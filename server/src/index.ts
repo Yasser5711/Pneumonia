@@ -103,7 +103,7 @@ async function main() {
         response.headers.forEach((value, key) => reply.header(key, value));
         reply.send(response.body ? await response.text() : null);
       } catch (error) {
-        fastify.log.error('Authentication Error:', error);
+        fastify.log.error(`Authentication Error:', ${error}`);
         reply.status(500).send({
           error: 'Internal authentication error',
           code: 'AUTH_FAILURE',
@@ -281,7 +281,7 @@ async function main() {
     }
   }
 
-  fastify.get('/', () => ({ status: '🚀 Server is running' }));
+  fastify.get('/', () => ({ status: '🚀 Server is running with bunn' }));
 
   await fastify.listen({ port: 3000, host: '0.0.0.0' });
   // eslint-disable-next-line no-console

@@ -33,7 +33,7 @@ export const createApiKeyService = (apiKeysRepo: Repositories['apiKeysRepo']) =>
     });
 
     if (!record) {
-      logger().error('API key insert failed', { name, description });
+      logger().error(`API key insert failed, { name: ${name}, description: ${description} }`);
       throw new ApiKeyGenerationError();
     }
 

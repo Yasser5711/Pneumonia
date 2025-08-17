@@ -85,7 +85,7 @@ export const auth = betterAuth({
                 })
                 .where(eq(schemas.users.id, user.id));
             } catch (error) {
-              logger().error('Failed to update image:', error);
+              logger().error(`Failed to update image:, ${error}`);
             }
           }
         },
@@ -101,7 +101,7 @@ export const auth = betterAuth({
                 })
                 .where(eq(schemas.users.id, user.id));
             } catch (error) {
-              logger().error('Failed to update image:', error);
+              logger().error(`Failed to update image:, ${error}`);
             }
           }
         },
@@ -119,13 +119,14 @@ export const auth = betterAuth({
                 })
                 .where(eq(schemas.users.id, session.userId));
             } catch (error) {
-              logger().error('Failed to update last login info:', error);
+              logger().error(`Failed to update last login info:, ${error}`);
             }
           }
         },
       },
     },
   },
+
   advanced: {
     database: {
       generateId: false,
@@ -179,7 +180,7 @@ export const auth = betterAuth({
     haveIBeenPwned({
       customPasswordCompromisedMessage: 'Please choose a more secure password.',
     }),
-    emailHarmony({}),
+    emailHarmony(),
   ],
 });
 export type Auth = typeof auth;

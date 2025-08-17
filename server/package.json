@@ -1,22 +1,21 @@
 {
   "name": "server",
   "version": "4.0.0",
-  "packageManager": "yarn@4.3.1",
+  "packageManager": "yarn@4.9.2",
   "scripts": {
     "generate:openapi:dev": "tsx scripts/generateOpenApi.ts",
     "generate:openapi": "NODE_ENV=production tsx scripts/generateOpenApi.ts",
     "create:api-key": "tsx scripts/createApiKey.ts",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
-    "db:migrate": "tsx scripts/dbMigrate.ts",
+    "db:migrate": "drizzle-kit migrate",
     "db:studio": "drizzle-kit studio",
     "db:reset": "tsx scripts/dbReset.ts",
     "db:seed": "tsx scripts/dbSeed.ts",
     "db:introspect": "drizzle-kit introspect",
     "deactivate:expired": "tsx scripts/desactivateExpired.ts",
-    "dev": "wireit",
-    "server:dev": "nodemon --watch src -e ts,js --exec \"tsx src/index.ts\" --legacy-watch",
-    "server:start": "tsx -r tsconfig-paths/register src/index.ts",
+    "dev": "nodemon --watch src -e ts,js --exec \"tsx src/index.ts\" --legacy-watch",
+    "start": "tsx -r tsconfig-paths/register src/index.ts",
     "test:predict": "tsx test/test.ts",
     "build": "echo '📦 Building server types...' && tsc --build tsconfig.build.json --verbose",
     "check:lint": "eslint . --ext .ts && prettier --check \"src/**/*.{ts,js,json,md,yml,yaml}\" && echo 🚨✅ Lint check passed!",
@@ -31,12 +30,6 @@
     "test:ui": "vitest --ui",
     "check:test": "vitest run  && echo 🧪✅ Tests passed! || (echo '❌ Fix the above issues before committing 💡' && exit 1)",
     "check:all": "yarn check:lint && yarn check:types && yarn check:knip && yarn check:dep  && echo 🧰✨ All checks passed! || (echo '❌ Fix the above issues before committing 💡' && exit 1)"
-  },
-  "wireit": {
-    "dev": {
-      "command": "concurrently --names \"server\" --prefix-colors \"cyan\" \"nodemon --watch src -e ts,js --exec tsx src/index.ts --legacy-watch",
-      "service": true
-    }
   },
   "type": "module",
   "types": "types/src/index.d.ts",

@@ -23,14 +23,18 @@
         <div
           class="overflow-hidden rounded-lg"
           :style="{
-            background: isDark ? '#0b0f16' : '#0c1422',
-            border: '1px solid rgba(255,255,255,.08)',
+            background: isDark ? '#0b0f16' : '#f5f7fb',
+            border: isDark
+              ? '1px solid rgba(255,255,255,.08)'
+              : '1px solid rgba(0,0,0,.08)',
           }"
         >
           <!-- top bar -->
           <div
             class="d-flex justify-space-between align-center px-4 py-2"
-            style="background: rgb(255 255 255 / 3%)"
+            :style="{
+              background: isDark ? 'rgb(255 255 255 / 3%)' : 'rgb(0 0 0 / 5%)',
+            }"
           >
             <div class="d-flex align-center gap-3">
               <v-chip :color="chipColor" variant="elevated" label>
@@ -41,7 +45,7 @@
             <div class="d-flex align-center gap-4">
               <div class="d-flex align-center gap-2">
                 <v-icon size="18" :color="hrColor">mdi-heart-pulse</v-icon>
-                <span class="text-caption" style="opacity: 0.8">HR</span>
+                <span class="text-caption">HR</span>
                 <span class="text-button font-mono" :style="{ color: hrColor }">
                   {{ status === 'idle' ? '—' : bpm }}
                 </span>
@@ -247,9 +251,7 @@ function drawWave() {
   ctx.clearRect(0, 0, w, h)
 
   // grid
-  ctx.strokeStyle = isDark.value
-    ? 'rgba(255,255,255,.06)'
-    : 'rgba(255,255,255,.08)'
+  ctx.strokeStyle = isDark.value ? 'rgba(255,255,255,.06)' : 'rgba(0,0,0,.08)'
   ctx.lineWidth = 1
   const step = 20 * dpr
   for (let x = 0; x < w; x += step) {

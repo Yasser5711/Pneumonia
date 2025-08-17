@@ -21,7 +21,7 @@ runs:
       shell: bash
       run: |
         corepack enable
-        corepack prepare yarn@4.7.0 --activate
+        corepack prepare $(jq -r '.packageManager' package.json) --activate
 
     - name: 🔧 Setup Node.js
       uses: actions/setup-node@v4

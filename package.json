@@ -1,53 +1,52 @@
 {
   "name": "pneumoniacnn",
   "private": true,
-  "packageManager": "yarn@4.3.1",
+  "packageManager": "yarn@4.9.2",
   "type": "module",
   "workspaces": [
     "client",
     "server"
   ],
   "scripts": {
-    "build": "yarn workspace server build && yarn workspace client build",
-    "extract:front": "yarn workspace client extract:front",
-    "extract:back": "yarn workspace server extract:back",
-    "dev:front": "yarn workspace client dev",
-    "dev:back": "yarn workspace server dev",
-    "back:check:all": "yarn workspace server check:all",
-    "front:check:all": "yarn workspace client check:all",
-    "check:all": "yarn workspaces foreach -A run check:all",
-    "check:test": "yarn workspaces foreach -A run check:test",
-    "dev": "wireit",
+    "build": "turbo run build",
+    "extract:front": "turbo -F client extract:front",
+    "extract:back": "turbo -F server extract:back",
+    "dev:front": "turbo run client#dev",
+    "dev:back": "turbo -F server dev",
+    "back:check:all": "turbo -F server check:all",
+    "front:check:all": "turbo -F client check:all",
+    "check:all": "turbo run check:all",
+    "check:test": "turbo run check:test",
     "changeset": "changeset",
     "changeset:version": "changeset version",
     "changeset:publish": "changeset publish",
     "delete:node_modules": "echo 'npx npkill'",
-    "clean:cache": "echo 'yarn cache clean'"
-  },
-  "wireit": {
-    "dev": {
-      "dependencies": [
-        "./server:dev",
-        "./client:dev"
-      ]
-    }
+    "clean:cache": "echo 'yarn cache clean'",
+    "dev": "turbo run dev",
+    "db:push": "turbo -F server db:push",
+    "db:studio": "turbo -F server db:studio",
+    "db:generate": "turbo -F server db:generate",
+    "db:migrate": "turbo -F server db:migrate"
   },
   "dependencies": {
     "node-fetch": "^3.3.2"
   },
   "devDependencies": {
-    "@changesets/cli": "^2.29.4",
+    "@changesets/cli": "^2.29.6",
     "@testing-library/vue": "^8.1.0",
-    "@typescript-eslint/eslint-plugin": "^8.32.1",
+    "@typescript-eslint/eslint-plugin": "^8.39.1",
     "@vitest/ui": "^3.2.4",
-    "concurrently": "^9.1.2",
+    "concurrently": "^9.2.0",
     "jsdom": "^26.1.0",
     "postcss-html": "^1.8.0",
-    "stylelint": "^16.19.1",
+    "stylelint": "^16.23.1",
     "stylelint-config-html": "^1.1.0",
-    "stylelint-config-recommended-vue": "^1.6.0",
-    "stylelint-config-standard": "^38.0.0",
-    "vitest": "^3.2.4",
-    "wireit": "^0.14.12"
+    "stylelint-config-recommended-vue": "^1.6.1",
+    "stylelint-config-standard": "^39.0.0",
+    "turbo": "^2.5.6",
+    "vitest": "^3.2.4"
+  },
+  "resolutions": {
+    "vite": "6.3.5"
   }
 }

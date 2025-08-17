@@ -36,4 +36,4 @@ COPY . .
 
 WORKDIR /app/client
 EXPOSE 4000
-CMD ["yarn", "client:dev"]
+CMD ["yarn", "dev"]

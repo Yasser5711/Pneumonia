@@ -13,6 +13,9 @@ permissions:
   deployments: write
   statuses: write
 
+env:
+  TURBO_CACHE: ${{ (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork) && 'local:,remote:r' || 'local:,remote:rw' }}
+  TURBO_TELEMETRY_DISABLED: "1"
 jobs:
   lint:
     name: 🧼 Lint Code + CSS
@@ -24,16 +27,17 @@ jobs:
           fetch-depth: 1
 
       - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-turbo
         with:
-          working-directory: client
-
+          token: ${{ secrets.TURBO_TOKEN }}
+          team: ${{ secrets.TURBO_TEAM }}
       - name: 🧼 Run ESLint, Prettier, Stylelint
-        working-directory: client
-        run: yarn check:lint
+        run: yarn turbo run client#check:lint --cache="${{env.TURBO_CACHE}}"
 
   typecheck:
     name: 🧠 Type Check
     runs-on: ubuntu-latest
+
     needs: lint
     steps:
       - uses: actions/checkout@v4
@@ -41,16 +45,18 @@ jobs:
           fetch-depth: 1
 
       - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-turbo
         with:
-          working-directory: client
-
+          token: ${{ secrets.TURBO_TOKEN }}
+          team: ${{ secrets.TURBO_TEAM }}
       - name: 🧠 Run Type Check
-        working-directory: client
-        run: yarn check:types
+        run: yarn turbo run client#check:types --cache="${{env.TURBO_CACHE}}"
 
   build:
     name: 🏗️ Build Project
+
     runs-on: ubuntu-latest
+
     needs: typecheck
     steps:
       - uses: actions/checkout@v4
@@ -58,16 +64,18 @@ jobs:
           fetch-depth: 1
 
       - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-turbo
         with:
-          working-directory: client
-
+          token: ${{ secrets.TURBO_TOKEN }}
+          team: ${{ secrets.TURBO_TEAM }}
       - name: 🏗️ Build Frontend
-        working-directory: client
-        run: yarn check:build
+        run: yarn turbo run client#check:build --cache="${{env.TURBO_CACHE}}"
 
   pwa:
     name: ⚙️ PWA Check
+
     runs-on: ubuntu-latest
+
     needs: build
     steps:
       - uses: actions/checkout@v4
@@ -75,16 +83,18 @@ jobs:
           fetch-depth: 1
 
       - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-turbo
         with:
-          working-directory: client
-
+          token: ${{ secrets.TURBO_TOKEN }}
+          team: ${{ secrets.TURBO_TEAM }}
       - name: ⚙️ Run PWA Build Check
-        working-directory: client
-        run: yarn check:pwa
+        run: yarn turbo run client#check:pwa --cache="${{env.TURBO_CACHE}}"
 
   knip:
     name: ✂️ Unused Code (Knip + ts-prune)
+
     runs-on: ubuntu-latest
+
     needs: lint
     steps:
       - uses: actions/checkout@v4
@@ -92,20 +102,21 @@ jobs:
           fetch-depth: 1
 
       - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-turbo
         with:
-          working-directory: client
-
+          token: ${{ secrets.TURBO_TOKEN }}
+          team: ${{ secrets.TURBO_TEAM }}
       - name: ✂️ Run Knip
-        working-directory: client
-        run: yarn check:knip
+        run: yarn turbo run client#check:knip --cache="${{env.TURBO_CACHE}}"
 
       - name: 🌿 Run ts-prune
-        working-directory: client
-        run: yarn check:prune
+        run: yarn turbo run client#check:prune --cache="${{env.TURBO_CACHE}}"
 
   depcheck:
     name: 📦 Dependency Check
+
     runs-on: ubuntu-latest
+
     needs: lint
     steps:
       - uses: actions/checkout@v4
@@ -113,16 +124,17 @@ jobs:
           fetch-depth: 1
 
       - uses: ./.github/actions/setup-yarn
+      - uses: ./.github/actions/setup-turbo
         with:
-          working-directory: client
-
+          token: ${{ secrets.TURBO_TOKEN }}
+          team: ${{ secrets.TURBO_TEAM }}
       - name: 📦 Run depcheck
-        working-directory: client
-        run: yarn check:dep
+        run: yarn turbo run client#check:dep --cache="${{env.TURBO_CACHE}}"
 
   test:
     name: 🧪 Run Tests
     runs-on: ubuntu-latest
+
     needs: [lint, typecheck, knip, depcheck]
     steps:
       - uses: actions/checkout@v4
@@ -130,12 +142,9 @@ jobs:
           fetch-depth: 1
 
       - uses: ./.github/actions/setup-yarn
-        with:
-          working-directory: client
 
       - name: 🧪 Run Vitest + Coverage
-        working-directory: client
-        run: yarn check:test
+        run: yarn turbo run client#check:test
 
       # - name: 📊 ReportGenerator
       #   uses: danielpalme/ReportGenerator-GitHub-Action@5.4.5

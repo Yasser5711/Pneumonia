@@ -17,4 +17,4 @@ COPY package.json yarn.lock .yarnrc.yml ./
 COPY server ./server
 WORKDIR /app/server
 EXPOSE 3000
-CMD [ "sh", "-c", "yarn db:seed && yarn server:start" ]
+CMD [ "sh", "-c", "yarn db:seed && yarn start" ]

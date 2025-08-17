@@ -15,7 +15,11 @@ permissions:
   pull-requests: write
   deployments: write
   statuses: write
-
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+  TURBO_CACHE: ${{ (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork) && 'local:,remote:r' || 'local:,remote:rw' }}
+  TURBO_TELEMETRY_DISABLED: "1"
 jobs:
   # db-migrate-detect:
   #   name: 🗄️ Detect DB Migrations
@@ -43,8 +47,6 @@ jobs:
         with:
           path: .
       - uses: ./.github/actions/setup-yarn
-        with:
-          working-directory: server
 
       - name: create env file
         working-directory: server

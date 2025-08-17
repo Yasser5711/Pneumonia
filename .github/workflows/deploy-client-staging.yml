@@ -14,15 +14,19 @@ permissions:
   pull-requests: write
   deployments: write
   statuses: write
-
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+  TURBO_CACHE: ${{ (github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork) && 'local:,remote:r' || 'local:,remote:rw' }}
+  TURBO_TELEMETRY_DISABLED: "1"
 jobs:
   deploy:
     runs-on: ubuntu-latest
     environment:
       name: ${{ inputs.environment }}
-    defaults:
-      run:
-        working-directory: client
+    # defaults:
+    #   run:
+    #     working-directory: client
 
     steps:
       - name: Checkout Code
@@ -32,15 +36,13 @@ jobs:
 
       - name: Setup Yarn
         uses: ./.github/actions/setup-yarn
-        with:
-          working-directory: client
 
       - name: Install Dependencies
         run: yarn install
-        env:
-          VITE_API_URL: ${{ secrets.VITE_API_URL_STAG }}
+        # env:
+        #   VITE_API_URL: ${{ secrets.VITE_API_URL_STAG }}
       - name: Build Client
-        run: yarn build
+        run: yarn turbo run client#build --cache="${{env.TURBO_CACHE}}"
         env:
           VITE_API_URL: ${{ secrets.VITE_API_URL_STAG }}
 

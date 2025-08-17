@@ -1,0 +1,77 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalEnv": ["NODE_ENV"],
+  "ui": "tui",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build", "check:types", "check:lint"],
+      "outputs": ["dist/**", "types/**", "*.tsbuildinfo"],
+      "cache": true
+    },
+    "check:build": {
+      "dependsOn": ["^check:build"],
+      "outputs": [],
+      "cache": true
+    },
+    "check:pwa": {
+      "dependsOn": ["^check:pwa"],
+      "outputs": [],
+      "cache": true
+    },
+    "check:types": {
+      "dependsOn": ["^check:types"],
+      "outputs": [],
+      "cache": true
+    },
+    "check:lint": {
+      "dependsOn": ["^check:lint"],
+      "outputs": [],
+      "cache": true
+    },
+    "check:knip": {
+      "dependsOn": ["^check:knip"],
+      "outputs": [],
+      "cache": true
+    },
+    "check:prune": {
+      "dependsOn": ["^check:prune"],
+      "outputs": [],
+      "cache": true
+    },
+    "check:dep": {
+      "dependsOn": ["^check:dep"],
+      "outputs": [],
+      "cache": true
+    },
+    "check:test": {
+      "dependsOn": ["^check:test"],
+      "cache": true
+    },
+    "check:all": {
+      "dependsOn": ["check:lint", "check:types", "check:test", "^check:all"],
+      "outputs": [],
+      "cache": true
+    },
+
+    "dev": {
+      "persistent": true,
+      "cache": false
+    },
+    "db:push": {
+      "cache": false,
+      "persistent": true
+    },
+    "db:studio": {
+      "cache": false,
+      "persistent": true
+    },
+    "db:migrate": {
+      "cache": false,
+      "persistent": true
+    },
+    "db:generate": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}

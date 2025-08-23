@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { useFileUploadModal } from './useFileUploadModal'
+import { useI18n } from 'vue-i18n'
 
+import { useFileUploadModal } from './useFileUploadModal'
 const { isFileUploadModalOpen, closeModal } = useFileUploadModal()
 const files = ref<File>()
-
+const { t } = useI18n()
 const emit = defineEmits<{
   (e: 'file-selected', file: File): void
 }>()
@@ -21,7 +22,7 @@ watch(files, (newFiles) => {
     <v-card>
       <v-file-upload
         v-model="files"
-        label="Choisir un fichier"
+        :label="t('FileInput.label')"
         density="comfortable"
         variant="comfortable"
         :multiple="false"

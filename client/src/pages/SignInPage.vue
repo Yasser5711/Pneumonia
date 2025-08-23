@@ -1,14 +1,16 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 const router = useRouter()
 
+const { t } = useI18n()
 definePage({
   path: '/signin',
   name: 'SignIn',
   meta: {
     guestOnly: true,
-    title: 'Sign In',
+    title: t('signin.title'),
     icon: '/icons/account.png',
-    description: 'Sign In page',
+    description: t('signin.description'),
     layout: 'default',
     transitions: {
       enter: 'slide-up',
@@ -34,10 +36,10 @@ function toggleMode() {
           <Logo class="mx-auto mb-4" style="width: 70%" />
 
           <h1 class="text-h4 font-weight-bold mb-2 text-center">
-            Welcome back!
+            {{ t('signin.welcomeBack') }}
           </h1>
           <p class="text-h6 font-weight-regular mb-8 text-center">
-            Log into your account
+            {{ t('signin.logIntoYourAccount') }}
           </p>
 
           <AuthForm
@@ -46,14 +48,14 @@ function toggleMode() {
             @toggle-mode="toggleMode"
           >
             <div class="mt-4 text-center">
-              <span>Don't have an account?</span>
+              <span>{{ t('signin.noAccount') }}</span>
               <v-btn
                 variant="text"
                 class="text-primary text-none"
                 slim
                 @click="toggleMode"
               >
-                Sign up
+                {{ t('signin.signUp') }}
               </v-btn>
             </div>
           </AuthForm>

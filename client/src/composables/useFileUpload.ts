@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 
+import { useI18n } from 'vue-i18n'
 export interface FileUploadResult {
   base64Data: string
   file: File
@@ -9,11 +10,12 @@ export function useFileUpload() {
   const progress = ref(0)
   const isReading = ref(false)
   const error = ref<string | null>(null)
+  const { t } = useI18n()
 
   const processFile = (fileToProcess: File): Promise<FileUploadResult> => {
     return new Promise((resolve, reject) => {
       if (!fileToProcess) {
-        const errorMessage = 'Aucun fichier fourni pour le traitement.'
+        const errorMessage = t('fileUpload.noFileProvided')
         error.value = errorMessage
         reject(new Error(errorMessage))
         return
@@ -47,7 +49,7 @@ export function useFileUpload() {
       reader.onerror = () => {
         isReading.value = false
         progress.value = 0
-        const errorMessage = `Erreur FileReader pour : ${fileToProcess.name}. Erreur: ${reader.error?.message}`
+        const errorMessage = `${t('fileUpload.readError', { fileName: fileToProcess.name, error: reader.error?.message })}`
         console.error(errorMessage, reader.error)
         error.value = errorMessage
         reject(new Error(errorMessage))

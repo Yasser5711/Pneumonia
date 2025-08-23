@@ -10,17 +10,24 @@
 import '@mdi/font/css/materialdesignicons.css'
 import { watch } from 'vue'
 
+import { useI18n } from 'vue-i18n'
+import { createVuetify } from 'vuetify'
+import { createVueI18nAdapter } from 'vuetify/locale/adapters/vue-i18n'
+
+import { i18n } from './i18n'
+
 // import { VFileUpload } from 'vuetify/labs/VFileUpload'
 import 'vuetify/styles'
 // Composables
-import { createVuetify } from 'vuetify'
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 const vuetify = createVuetify({
   // components: {
   //   VFileUpload,
   // },
-
+  locale: {
+    adapter: createVueI18nAdapter({ i18n, useI18n }),
+  },
   defaults: {
     VTextField: {
       variant: 'underlined',
@@ -56,7 +63,7 @@ export default {
     watch(
       () => themeStore.resolvedTheme,
       (val) => {
-        vuetify.theme.global.name.value = val
+        vuetify.theme.change(val)
       },
       { immediate: true },
     )

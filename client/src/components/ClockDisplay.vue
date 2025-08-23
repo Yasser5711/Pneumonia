@@ -1,15 +1,17 @@
 <script setup lang="ts">
-import { useClock } from '../composables/useClock'
+import { useI18n } from 'vue-i18n'
 
+import { useClock } from '../composables/useClock'
+const { t } = useI18n()
 const { timeParts, fullDate, toggleFormat } = useClock()
 </script>
 
 <template>
   <div
     class="digital-clock font-monospace text-center"
-    :title="`Date: ${fullDate}`"
+    :title="t('ClockDisplay.title', { date: fullDate })"
     role="button"
-    aria-label="Toggle time format"
+    :aria-label="t('ClockDisplay.toggleFormat')"
     @click="toggleFormat"
   >
     <span v-for="(part, index) in timeParts" :key="index" class="time-part">

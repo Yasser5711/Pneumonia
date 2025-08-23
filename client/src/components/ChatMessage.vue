@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 
 import { CheckCheckIcon, CheckIcon } from 'lucide-vue-next'
+import { useI18n } from 'vue-i18n'
 
 import HoverImage from './HoverImage.vue'
 import ImageModal from './ImageModal.vue'
@@ -11,10 +12,9 @@ import type { Message } from '../types/chat'
 const props = defineProps<{
   message: Message
 }>()
-
+const { t, locale } = useI18n()
 const showImageModal = ref(false)
 const isUserSender = computed(() => props.message.sender === 'user')
-
 const statusIcon = computed(() => {
   if (!isUserSender.value) return null
   switch (props.message.status) {
@@ -29,7 +29,7 @@ const statusIcon = computed(() => {
 })
 
 const formattedTime = computed(() => {
-  return new Intl.DateTimeFormat('en', {
+  return new Intl.DateTimeFormat(locale.value, {
     hour: '2-digit',
     minute: '2-digit',
   }).format(props.message.timestamp)
@@ -88,11 +88,13 @@ const formattedTime = computed(() => {
         </template>
         <template v-else-if="message.type === 'prediction'">
           <p class="text-sm leading-relaxed break-words sm:text-base">
-            🩺 J'ai analysé l'image "{{ message.originalImageName }}". Le
-            résultat indique **{{ message.prediction.class }}** avec une
-            probabilité de **{{
-              (message.prediction.probability * 100).toFixed(2)
-            }}%**.
+            {{
+              t('ChatMessage.result', {
+                originalImageName: message.originalImageName,
+                class: message.prediction.class,
+                probability: (message.prediction.probability * 100).toFixed(2),
+              })
+            }}
           </p>
 
           <div
@@ -102,7 +104,7 @@ const formattedTime = computed(() => {
           >
             <HoverImage
               :src="message.heatmapUrl"
-              alt="Heatmap de la prédiction"
+              :alt="t('ChatMessage.heatmapAlt')"
               class="h-full w-full"
             />
           </div>
@@ -136,7 +138,9 @@ const formattedTime = computed(() => {
       "
       v-model="showImageModal"
       :src="message.type === 'image' ? message.url : (message.heatmapUrl ?? '')"
-      :alt="message.type === 'image' ? message.alt : 'Heatmap de la prédiction'"
+      :alt="
+        message.type === 'image' ? message.alt : t('ChatMessage.heatmapAlt')
+      "
     />
   </div>
 </template>

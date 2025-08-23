@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 defineProps<{
   onClick: () => void
   show: boolean
@@ -10,8 +12,8 @@ defineProps<{
     <button
       v-if="show"
       type="button"
-      title="Scroll to bottom"
-      aria-label="Scroll to bottom"
+      :title="t('ScrollToBottomButton.title')"
+      :aria-label="t('ScrollToBottomButton.title')"
       class="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+5.5rem)] left-1/2 z-40 flex h-10 w-10 items-center justify-center rounded-full shadow-xl transition-all duration-150 ease-out hover:scale-105 active:scale-95 sm:bottom-[calc(env(safe-area-inset-bottom,0px)+6rem)] sm:h-11 sm:w-11"
       :class="[
         'border border-slate-300/70 bg-white/80 backdrop-blur-md dark:border-slate-600/70 dark:bg-slate-700/80',

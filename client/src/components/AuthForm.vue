@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
 import { useAuthForm } from '../composables/useAuthForm'
 
 import type { VForm } from 'vuetify/components'
@@ -6,7 +8,7 @@ const props = defineProps<{
   mode: 'signin' | 'signup'
   initialEmail?: string
 }>()
-
+const { t } = useI18n()
 const emit = defineEmits<{ submitted: []; toggleMode: [] }>()
 defineSlots<{
   default: []
@@ -33,10 +35,12 @@ const formRef = ref<VForm | null>(null)
 const confirmPassword = ref('')
 const required = (label: string) => (v: unknown) =>
   !!v || `${label} is required`
-const emailRule = (v: string) => /.+@.+\..+/.test(v) || 'Invalid e-mail address'
-const pwdRule = (v: string) => (v?.length ?? 0) >= 8 || '≥ 8 characters please'
+const emailRule = (v: string) =>
+  /.+@.+\..+/.test(v) || t('AuthForm.invalidEmail')
+const pwdRule = (v: string) =>
+  (v?.length ?? 0) >= 8 || t('AuthForm.weakPassword')
 const confirmRule = (v: string) =>
-  v === password.value || 'Passwords do not match'
+  v === password.value || t('AuthForm.passwordsDoNotMatch')
 const handle = async () => {
   const { valid } = await formRef.value!.validate()
   if (!valid) return
@@ -72,7 +76,7 @@ watch(
     <v-form ref="formRef" :disabled="isLoading" @submit.prevent="handle">
       <v-text-field
         v-model="email"
-        label="Email"
+        :label="t('AuthForm.email')"
         type="email"
         :rules="[required('Email'), emailRule]"
         autocomplete="email"
@@ -81,8 +85,8 @@ watch(
         v-model="password"
         :type="visible ? 'text' : 'password'"
         :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
-        label="Password"
-        :rules="[required('Password'), pwdRule]"
+        :label="t('AuthForm.password')"
+        :rules="[required(t('AuthForm.password')), pwdRule]"
         :autocomplete="
           props.mode === 'signin' ? 'current-password' : 'new-password'
         "
@@ -94,9 +98,9 @@ watch(
         v-model="confirmPassword"
         :type="visible ? 'text' : 'password'"
         :append-inner-icon="visible ? 'mdi-eye-off' : 'mdi-eye'"
-        label="Confirm password"
+        :label="t('AuthForm.confirmPassword')"
         autocomplete="new-password"
-        :rules="[required('Confirm password'), confirmRule]"
+        :rules="[required(t('AuthForm.confirmPassword')), confirmRule]"
         @click:append-inner="visible = !visible"
       />
 
@@ -104,20 +108,24 @@ watch(
       <template v-if="showName">
         <v-text-field
           v-model="firstName"
-          label="First name"
+          :label="t('AuthForm.firstName')"
           autocomplete="given-name"
-          :rules="[required('First name')]"
+          :rules="[required(t('AuthForm.firstName'))]"
         />
         <v-text-field
           v-model="lastName"
-          label="Last name"
+          :label="t('AuthForm.lastName')"
           autocomplete="family-name"
-          :rules="[required('Last name')]"
+          :rules="[required(t('AuthForm.lastName'))]"
         />
       </template>
 
       <v-btn class="mt-4" type="submit" block size="large" :loading="isLoading">
-        {{ props.mode === 'signup' ? 'Create account' : 'Continue' }}
+        {{
+          props.mode === 'signup'
+            ? t('AuthForm.createAccount')
+            : t('AuthForm.continue')
+        }}
       </v-btn>
     </v-form>
 
@@ -127,21 +135,23 @@ watch(
     >
       <v-checkbox
         v-model="rememberMe"
-        label="Remember me"
+        :label="t('AuthForm.rememberMe')"
         density="compact"
         hide-details
         class="ma-0 pa-0"
         style="width: auto"
       />
       <v-btn variant="text" class="text-primary text-none" slim>
-        Forgot password?
+        {{ t('AuthForm.forgotPassword') }}
       </v-btn>
     </div>
 
     <div class="my-8">
       <v-divider>
         <template #default>
-          <div class="text-caption text-grey">Or continue with</div>
+          <div class="text-caption text-grey">
+            {{ t('AuthForm.orContinueWith') }}
+          </div>
         </template>
       </v-divider>
     </div>

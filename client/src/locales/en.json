@@ -1,0 +1,209 @@
+{
+  "404": {
+    "description": "The page you are looking for does not exist",
+    "title": "404 - Page Not Found"
+  },
+  "ApiKeyContent": {
+    "button": {
+      "generate": "🔄 Generate a new key",
+      "profile": "Profile"
+    },
+    "card": {
+      "enterApiKey": "Enter your API key",
+      "yourApiKey": "Your API key"
+    },
+    "field": {
+      "apiKey": {
+        "label": "API key"
+      },
+      "quota": "Quota: {used} / {total}"
+    }
+  },
+  "ApiKeyModal": {
+    "title": "My API key"
+  },
+  "AuthForm": {
+    "confirmPassword": "Confirm password",
+    "continue": "Continue",
+    "createAccount": "Create an account",
+    "email": "Email",
+    "firstName": "First name",
+    "forgotPassword": "Forgot your password?",
+    "invalidEmail": "Invalid email address",
+    "lastName": "Last name",
+    "orContinueWith": "Or continue with",
+    "password": "Password",
+    "passwordsDoNotMatch": "Passwords don’t match",
+    "rememberMe": "Remember me",
+    "weakPassword": "At least 8 characters"
+  },
+  "ChatMessage": {
+    "heatmapAlt": "Heatmap visualization of the analysis",
+    "result": "🩺 I analyzed the image \"{originalImageName}\". The result indicates **{class}** with a probability of **{probability}%**."
+  },
+  "ChatWindow": {
+    "messageCount": "Chat - {count} messages",
+    "noMessages": "Waiting to start a conversation",
+    "typing": "Assistant is typing..."
+  },
+  "ClockDisplay": {
+    "title": "Clock",
+    "toggleFormat": "Toggle time format"
+  },
+  "FileInput": {
+    "label": "Upload file"
+  },
+  "HoverImage": {
+    "alt": "Chat image content",
+    "unavailable": "Image unavailable"
+  },
+  "ImagePreview": {
+    "error": "Preview N/A",
+    "remove": "Remove image"
+  },
+  "LoginButton": {
+    "email": "Email",
+    "emailRequired": "Email is Required",
+    "error": "An unknown error occurred.",
+    "firstName": "First Name",
+    "firstNameRequired": "First Name is required",
+    "github": "Continue with GitHub",
+    "google": "Continue with Google",
+    "lastName": "Last Name",
+    "lastNameRequired": "Last Name is required",
+    "password": "Password",
+    "passwordRequired": "Password is required",
+    "title": "Sign Up or Sign In"
+  },
+  "LogoutButton": {
+    "text": "Logout",
+    "title": "Logout"
+  },
+  "MessageInput": {
+    "PredictionErr": "Prediction failed",
+    "assistantTyping": "Assistant is typing...",
+    "btn": {
+      "sendMessage": "Send message",
+      "uploadImage": "Upload image"
+    },
+    "dropImageHere": "Drop image here",
+    "errorProcessingFile": "Error processing file",
+    "fileTooLarge": "File too large",
+    "heatmapAlt": "Heatmap visualization",
+    "imageReady": "Image ready",
+    "invalidFileType": "Invalid file type",
+    "noPrediction": "No prediction available",
+    "result": "Result",
+    "uploadingImage": "Uploading image...",
+    "writeMessage": "Write a message..."
+  },
+  "ProfileModal": {
+    "close": "Close",
+    "title": "Profile"
+  },
+  "ScrollToBottomButton": {
+    "title": "Scroll to bottom"
+  },
+  "ServerPulseFab": {
+    "tooltip": "Open server monitor"
+  },
+  "ServerWakeModal": {
+    "btn": {
+      "checking": "Checking…",
+      "close": "Close",
+      "continue": "Continue",
+      "retry": "Retry"
+    },
+    "checking": "Checking /api/check-pulse…",
+    "down": "Server seems down.",
+    "live": "LIVE",
+    "message": "Waiting for server response",
+    "success": "Server is up and running",
+    "titleText": {
+      "checking": "Warming the server…",
+      "down": "Server unreachable",
+      "idle": "Idle",
+      "up": "Server ready"
+    }
+  },
+  "SettingsModal": {
+    "pixi": {
+      "close": {
+        "title": "Close"
+      },
+      "gravityForce": {
+        "label": "Gravity force"
+      },
+      "length": {
+        "label": "Length"
+      },
+      "mode": {
+        "gravity": "Gravity",
+        "idle": "Idle",
+        "label": "Mode",
+        "orbit": "Orbit",
+        "repel": "Repel"
+      },
+      "mouseRadius": {
+        "label": "Mouse radius"
+      },
+      "orbitRadius": {
+        "label": "Orbit radius"
+      },
+      "randomize": {
+        "title": "Randomize"
+      },
+      "repelForce": {
+        "label": "Repel force"
+      },
+      "reset": {
+        "title": "Reset"
+      },
+      "scale": {
+        "label": "Scale"
+      },
+      "spacing": {
+        "label": "Spacing"
+      },
+      "start": {
+        "title": "Start Show"
+      },
+      "stop": {
+        "title": "Stop Show"
+      },
+      "transition": {
+        "label": "Transition"
+      }
+    },
+    "theme": {
+      "auto": "Auto",
+      "dark": "Dark",
+      "label": "Theme",
+      "light": "Light"
+    },
+    "title": "Settings"
+  },
+  "app": {
+    "title": "My app"
+  },
+  "fileUpload": {
+    "noFileProvided": "No file provided",
+    "readError": "Error reading file"
+  },
+  "signin": {
+    "description": "Sign In page",
+    "logIntoYourAccount": "Log into your account",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up",
+    "title": "Sign In",
+    "welcomeBack": "Welcome back!"
+  },
+  "signup": {
+    "alreadyHaveAccount": "Already have an account?",
+    "createAccount": "Create your account",
+    "description": "Sign Up page",
+    "signIn": "Sign in",
+    "signUpToGetStarted": "Sign up to get started",
+    "title": "Sign Up"
+  }
+}

@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { onMounted } from 'vue'
 
+import { useI18n } from 'vue-i18n'
+
 import { useChatScroll } from '@/composables/useChatScroll'
 import { useChatStore } from '@/stores/chatStore'
-
 const chatStore = useChatStore()
 const { showScrollButton, scrollToBottom } = useChatScroll()
+const { t } = useI18n()
 
 onMounted(() => {
   scrollToBottom(false)
@@ -13,10 +15,12 @@ onMounted(() => {
 useHead({
   title: () =>
     chatStore.isTyping
-      ? 'Assistant is typing...'
+      ? t('ChatWindow.typing')
       : chatStore.messages.length === 0
-        ? 'Waiting to start a conversation'
-        : `Chat - ${chatStore.userMessages.length} messages`,
+        ? t('ChatWindow.noMessages')
+        : t('ChatWindow.messageCount', {
+            count: chatStore.userMessages.length,
+          }),
 })
 </script>
 
@@ -52,7 +56,7 @@ useHead({
           <span class="dot-bounce mr-1" style="animation-delay: 0.15s"></span>
           <span class="dot-bounce" style="animation-delay: 0.3s"></span>
         </div>
-        <span>Assistant is typing</span>
+        <span>{{ t('ChatWindow.typing') }}</span>
       </div>
     </div>
 

@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-
+import { useI18n } from 'vue-i18n'
 import { VForm } from 'vuetify/components'
 
 import { useSettingsModal } from '@/components/useSettingsModal'
@@ -10,7 +9,7 @@ import { useTheme } from '@/composables/useTheme'
 const { isSettingsOpen, closeModal } = useSettingsModal()
 const { themeMode } = useTheme()
 const { cfg, reset, randomize } = usePixiBgConfig()
-
+const { t } = useI18n()
 const form = ref<VForm | null>(null)
 const isExploding = ref(false)
 const intervalId = ref<ReturnType<typeof setInterval> | null>(null)
@@ -42,7 +41,7 @@ function stopExplosions() {
       closable: true,
     }"
   >
-    <v-card class="mx-auto" max-width="480" title="Paramètres d’affichage">
+    <v-card class="mx-auto" max-width="480" :title="t('SettingsModal.title')">
       <v-card-text>
         <!-- ---- Thème ---- -->
         <v-row dense>
@@ -52,22 +51,22 @@ function stopExplosions() {
               :item-props="true"
               :items="[
                 {
-                  title: 'Auto',
+                  title: t('SettingsModal.theme.auto'),
                   value: 'auto',
                   'prepend-icon': 'mdi-monitor-dashboard',
                 },
                 {
-                  title: 'Clair',
+                  title: t('SettingsModal.theme.light'),
                   value: 'light',
                   'prepend-icon': 'mdi-white-balance-sunny',
                 },
                 {
-                  title: 'Sombre',
+                  title: t('SettingsModal.theme.dark'),
                   value: 'dark',
                   'prepend-icon': 'mdi-moon-waning-crescent',
                 },
               ]"
-              label="Thème"
+              :label="t('SettingsModal.theme.label')"
               density="comfortable"
               hide-details
             />
@@ -80,12 +79,15 @@ function stopExplosions() {
               <v-select
                 v-model="cfg.mode"
                 :items="[
-                  { title: 'Idle', value: 'idle' },
-                  { title: 'Repel', value: 'repel' },
-                  { title: 'Gravity', value: 'gravity' },
-                  { title: 'Orbit', value: 'orbit' },
+                  { title: t('SettingsModal.pixi.mode.idle'), value: 'idle' },
+                  { title: t('SettingsModal.pixi.mode.repel'), value: 'repel' },
+                  {
+                    title: t('SettingsModal.pixi.mode.gravity'),
+                    value: 'gravity',
+                  },
+                  { title: t('SettingsModal.pixi.mode.orbit'), value: 'orbit' },
                 ]"
-                label="Mode d’interaction"
+                :label="t('SettingsModal.pixi.mode.label')"
                 density="comfortable"
                 hide-details
               />
@@ -96,7 +98,7 @@ function stopExplosions() {
                 :min="50"
                 :max="1000"
                 :step="50"
-                label="Échelle du bruit"
+                :label="t('SettingsModal.pixi.scale.label')"
                 hide-details
               />
             </v-col>
@@ -106,7 +108,7 @@ function stopExplosions() {
                 :min="5"
                 :max="50"
                 step="1"
-                label="Espacement"
+                :label="t('SettingsModal.pixi.spacing.label')"
                 hide-details
               />
             </v-col>
@@ -116,7 +118,7 @@ function stopExplosions() {
                 :min="1"
                 :max="20"
                 step="1"
-                label="Longueur des lignes"
+                :label="t('SettingsModal.pixi.length.label')"
                 hide-details
               />
             </v-col>
@@ -126,18 +128,17 @@ function stopExplosions() {
                 :min="0"
                 :max="0.3"
                 step="0.01"
-                label="Fluidité (transition)"
+                :label="t('SettingsModal.pixi.transition.label')"
                 hide-details
               />
             </v-col>
-            <!-- Forces regroupées sur deux colonnes -->
             <v-col cols="6">
               <v-slider
                 v-model="cfg.repelForce"
                 :min="10"
                 :max="100"
                 step="1"
-                label="Repel"
+                :label="t('SettingsModal.pixi.repelForce.label')"
                 hide-details
               />
             </v-col>
@@ -147,7 +148,7 @@ function stopExplosions() {
                 :min="10"
                 :max="100"
                 step="1"
-                label="Gravity"
+                :label="t('SettingsModal.pixi.gravityForce.label')"
                 hide-details
               />
             </v-col>
@@ -157,7 +158,7 @@ function stopExplosions() {
                 :min="10"
                 :max="100"
                 step="1"
-                label="Rayon Orbit"
+                :label="t('SettingsModal.pixi.orbitRadius.label')"
                 hide-details
               />
             </v-col>
@@ -167,7 +168,7 @@ function stopExplosions() {
                 :min="20"
                 :max="300"
                 step="5"
-                label="Rayon Souris"
+                :label="t('SettingsModal.pixi.mouseRadius.label')"
                 hide-details
               />
             </v-col>
@@ -177,10 +178,10 @@ function stopExplosions() {
         <v-btn
           color="secondary"
           prepend-icon="mdi-shuffle-variant"
+          :title="t('SettingsModal.pixi.randomize.title')"
           @click="randomize()"
-        >
-          Randomizer
-        </v-btn>
+        />
+
         <!-- <v-row
           > <v-col cols="12"
             >
@@ -216,9 +217,21 @@ function stopExplosions() {
           :disabled="true"
           @click="isExploding ? stopExplosions() : startExplosions()"
         >
-          {{ isExploding ? 'Stop Show' : 'Start Show' }} </v-btn
-        ><v-btn variant="text" text="Réinitialiser" @click="reset" />
-        <v-btn color="error" text="Close" @click="closeModal" />
+          {{
+            isExploding
+              ? t('SettingsModal.pixi.stop.title')
+              : t('SettingsModal.pixi.start.title')
+          }} </v-btn
+        ><v-btn
+          variant="text"
+          :text="t('SettingsModal.pixi.reset.title')"
+          @click="reset"
+        />
+        <v-btn
+          color="error"
+          :text="t('SettingsModal.pixi.close.title')"
+          @click="closeModal"
+        />
       </v-card-actions>
     </v-card>
   </ResponsiveModal>

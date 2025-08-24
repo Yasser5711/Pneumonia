@@ -19,14 +19,12 @@
 </template>
 <script setup>
 import { Icon } from '@iconify/vue'
-import { useI18n } from 'vue-i18n'
-const { t } = useI18n()
 definePage({
   name: 'NotFound',
   meta: {
-    title: t('404.title'),
+    title: 'Not Found',
     icon: '/icons/404.png',
-    description: t('404.description'),
+    description: 'The page you were looking for does not exist',
     layout: 'default',
   },
 })

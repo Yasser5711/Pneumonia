@@ -5,8 +5,9 @@ export type StorageKeys =
   | 'apiKey'
   | 'pixiBgCfg'
   | 'pixiBgPresets'
+  | 'lang'
 export type ClockState = {
-  local: string
+  local: LangState['locale']
   showSeconds: boolean
   showDate: boolean
   options: Intl.DateTimeFormatOptions
@@ -26,13 +27,16 @@ export interface PixiBgCfg {
 export type ThemeState = {
   mode: 'light' | 'dark' | 'auto'
 }
-
+export type LangState = {
+  locale: 'en' | 'fr'
+}
 export type StorageMap = {
   theme: ThemeState
   clock: ClockState
   apiKey: string
   pixiBgCfg: PixiBgCfg
   pixiBgPresets: Record<string, PixiBgCfg>
+  lang: LangState
 }
 export type StorageValue<K extends keyof StorageMap> = RemovableRef<
   StorageMap[K]

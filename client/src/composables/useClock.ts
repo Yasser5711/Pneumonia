@@ -1,14 +1,11 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 
-import { useI18n } from 'vue-i18n'
-
 import { useStorageStore } from '@/stores/storageStore'
 export const useClock = () => {
   const storageStore = useStorageStore()
-  const { locale } = useI18n()
 
   const time = storageStore.getKeyFromLocalStorage('clock', {
-    local: locale.value,
+    local: storageStore.getKeyFromLocalStorage('lang').value.locale,
     showSeconds: false,
     showDate: false,
     options: {

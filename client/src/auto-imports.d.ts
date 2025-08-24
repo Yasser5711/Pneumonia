@@ -80,6 +80,7 @@ declare global {
   const useId: typeof import('vue')['useId']
   const useImagePredictor: typeof import('./composables/useImagePredictor')['useImagePredictor']
   const useLink: (typeof import('vue-router'))['useLink']
+  const useLocale: typeof import('./composables/useLocale')['useLocale']
   const useModel: typeof import('vue')['useModel']
   const useOximeterStore: typeof import('./stores/oximeterStore')['useOximeterStore']
   const usePixiBackground: typeof import('./composables/usePixiBackground')['usePixiBackground']

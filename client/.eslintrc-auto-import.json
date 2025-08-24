@@ -90,6 +90,7 @@
     "useHeadSafe": true,
     "useId": true,
     "useImagePredictor": true,
+    "useLocale": true,
     "useModel": true,
     "useOximeterStore": true,
     "usePixiBackground": true,

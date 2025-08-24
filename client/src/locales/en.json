@@ -127,6 +127,9 @@
     }
   },
   "SettingsModal": {
+    "locale": {
+      "label": "Language"
+    },
     "pixi": {
       "close": {
         "title": "Close"

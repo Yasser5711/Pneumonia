@@ -3,11 +3,13 @@ import { useI18n } from 'vue-i18n'
 import { VForm } from 'vuetify/components'
 
 import { useSettingsModal } from '@/components/useSettingsModal'
+import { useLocale } from '@/composables/useLocale'
 import { usePixiBgConfig } from '@/composables/usePixiBgConfig'
 import { useTheme } from '@/composables/useTheme'
-
 const { isSettingsOpen, closeModal } = useSettingsModal()
 const { themeMode } = useTheme()
+const { locales, resolvedLocale, setLocale } = useLocale()
+
 const { cfg, reset, randomize } = usePixiBgConfig()
 const { t } = useI18n()
 const form = ref<VForm | null>(null)
@@ -27,6 +29,13 @@ function stopExplosions() {
     intervalId.value = null
   }
 }
+const toIso = (loc: string) => (loc === 'en' ? 'gb' : loc)
+const localesList = computed(() => {
+  return locales.value.map((loc) => ({
+    title: loc === 'fr' ? 'Français' : 'English',
+    value: loc,
+  }))
+})
 </script>
 
 <template>
@@ -70,6 +79,39 @@ function stopExplosions() {
               density="comfortable"
               hide-details
             />
+          </v-col>
+        </v-row>
+        <v-row dense>
+          <v-col cols="12">
+            <v-select
+              :model-value="resolvedLocale"
+              item-title="title"
+              item-value="value"
+              :items="localesList"
+              :label="t('SettingsModal.locale.label')"
+              density="comfortable"
+              hide-details
+              @update:model-value="setLocale"
+              ><!-- Selected chip -->
+              <template #selection="{ item }">
+                <span
+                  class="fi"
+                  :class="`fi-${toIso(item.value)}`"
+                  style="margin-right: 8px"
+                />
+                {{ item.title }}
+              </template>
+
+              <!-- Dropdown items -->
+              <template #item="{ item, props }">
+                <v-list-item v-bind="props">
+                  <template #prepend>
+                    <span class="fi" :class="`fi-${toIso(item.value)}`" />
+                  </template>
+                  <v-list-item-title>{{ item.title }}</v-list-item-title>
+                </v-list-item>
+              </template></v-select
+            >
           </v-col>
         </v-row>
         <!-- ---- Pixi Config ---- -->
@@ -178,7 +220,7 @@ function stopExplosions() {
         <v-btn
           color="secondary"
           prepend-icon="mdi-shuffle-variant"
-          :title="t('SettingsModal.pixi.randomize.title')"
+          :text="t('SettingsModal.pixi.randomize.title')"
           @click="randomize()"
         />
 

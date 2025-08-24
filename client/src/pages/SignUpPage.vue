@@ -8,9 +8,9 @@ definePage({
   name: 'SignUp',
   meta: {
     guestOnly: true,
-    title: t('signup.title'),
+    title: 'Sign Up',
     icon: '/icons/account.png',
-    description: t('signup.description'),
+    description: 'Create a new account',
     layout: 'default',
     transitions: {
       enter: 'slide-up',

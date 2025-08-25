@@ -26,16 +26,21 @@ export function getTRPCClient(): TRPCClient<AppRouter> {
 export function createTRPCPlugin({ url }: { url: string }) {
   return {
     install(app: App) {
-      const store = useStorageStore()
+      const storage = useStorageStore()
+      const theme = useThemeStore()
+      const apiKeyRef = storage.getKeyFromLocalStorage('apiKey')
+
+      const langHeaders = theme.languageHeaders
+      const makeHeaders = () => ({
+        ...(apiKeyRef.value ? { 'x-api-key': apiKeyRef.value } : {}),
+        ...langHeaders,
+      })
       const http = httpBatchLink({
         transformer: SuperJSON,
         url,
         fetch: (input, init) =>
           fetch(input, { ...init, credentials: 'include' } as RequestInit),
-        headers: () => {
-          const key = store.getKeyFromLocalStorage('apiKey').value
-          return key ? { 'x-api-key': key } : {}
-        },
+        headers: makeHeaders,
       })
       const links = [
         splitLink({

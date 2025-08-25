@@ -8,7 +8,6 @@
 // Styles
 
 import '@mdi/font/css/materialdesignicons.css'
-import { watch } from 'vue'
 
 import { useI18n } from 'vue-i18n'
 import { createVuetify } from 'vuetify'
@@ -60,12 +59,8 @@ export default {
 
     const themeStore = useThemeStore()
 
-    watch(
-      () => themeStore.resolvedTheme,
-      (val) => {
-        vuetify.theme.change(val)
-      },
-      { immediate: true },
-    )
+    watchEffect(() => {
+      vuetify.theme.global.name.value = themeStore.resolvedTheme
+    })
   },
 }

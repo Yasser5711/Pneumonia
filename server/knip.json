@@ -40,6 +40,7 @@
     "drizzle-seed",
     "superjson",
     "better-auth-harmony",
-    "better-auth"
+    "better-auth",
+    "better-auth-localization"
   ]
 }

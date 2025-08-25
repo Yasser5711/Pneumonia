@@ -7,7 +7,7 @@ export type StorageKeys =
   | 'pixiBgPresets'
   | 'lang'
 export type ClockState = {
-  local: LangState['locale']
+  local: string
   showSeconds: boolean
   showDate: boolean
   options: Intl.DateTimeFormatOptions

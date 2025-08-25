@@ -99,3 +99,54 @@ describe('useThemeStore', () => {
     expect(newStore.themeMode.mode).toBe('dark')
   })
 })
+
+describe('localeStore', () => {
+  beforeEach(() => {
+    mockSystemDark(false)
+    setActivePinia(createPinia())
+    localStorage.clear()
+
+    document.documentElement.removeAttribute('lang')
+  })
+
+  it('should expose default locale and supported locales', async () => {
+    const store = useThemeStore()
+    await nextTick()
+    expect(typeof store.resolvedLocale).toBe('string')
+    expect(store.locales).toContain(store.resolvedLocale)
+
+    expect(store.languageHeaders).toEqual({
+      'Accept-Language': store.resolvedLocale,
+    })
+  })
+
+  it('should change locale via setLocale and reflect on document.lang and i18n', async () => {
+    const store = useThemeStore()
+    await nextTick()
+    expect(document.documentElement.getAttribute('lang')).toBe(
+      store.resolvedLocale,
+    )
+
+    store.setLocale('fr')
+    await nextTick()
+    expect(localStorage.getItem('lang')).toBe('{"locale":"fr"}')
+    expect(store.resolvedLocale).toBe('fr')
+    expect(document.documentElement.getAttribute('lang')).toBe('fr')
+  })
+
+  it('should persist locale in localStorage and restore on new store instance', async () => {
+    const store = useThemeStore()
+
+    store.setLocale('fr')
+    await nextTick()
+    const saved = localStorage.getItem('lang')
+    expect(saved).toBe('{"locale":"fr"}')
+
+    document.documentElement.removeAttribute('lang')
+
+    setActivePinia(createPinia())
+    const newStore = useThemeStore()
+    expect(newStore.resolvedLocale).toBe('fr')
+    expect(document.documentElement.getAttribute('lang')).toBe('fr')
+  })
+})

@@ -34,6 +34,7 @@ const localesList = computed(() => {
   return locales.value.map((loc) => ({
     title: loc === 'fr' ? 'Français' : 'English',
     value: loc,
+    'prepend-icon': `fi-${toIso(loc)}`,
   }))
 })
 </script>
@@ -85,33 +86,14 @@ const localesList = computed(() => {
           <v-col cols="12">
             <v-select
               :model-value="resolvedLocale"
-              item-title="title"
-              item-value="value"
               :items="localesList"
+              :item-props="true"
               :label="t('SettingsModal.locale.label')"
               density="comfortable"
               hide-details
               @update:model-value="setLocale"
-              ><!-- Selected chip -->
-              <template #selection="{ item }">
-                <span
-                  class="fi"
-                  :class="`fi-${toIso(item.value)}`"
-                  style="margin-right: 8px"
-                />
-                {{ item.title }}
-              </template>
-
-              <!-- Dropdown items -->
-              <template #item="{ item, props }">
-                <v-list-item v-bind="props">
-                  <template #prepend>
-                    <span class="fi" :class="`fi-${toIso(item.value)}`" />
-                  </template>
-                  <v-list-item-title>{{ item.title }}</v-list-item-title>
-                </v-list-item>
-              </template></v-select
             >
+            </v-select>
           </v-col>
         </v-row>
         <!-- ---- Pixi Config ---- -->

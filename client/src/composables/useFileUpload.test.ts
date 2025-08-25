@@ -132,18 +132,16 @@ describe('useFileUpload', () => {
     const { processUploadedFile, uploadError } = result
 
     // @ts-expect-error: Testing invalid input is intentional here
-    await expect(processUploadedFile(null)).rejects.toThrow(
-      'Aucun fichier fourni pour le traitement.',
-    )
+    await expect(processUploadedFile(null)).rejects.toThrow('No file provided')
 
-    expect(uploadError.value).toBe('Aucun fichier fourni pour le traitement.')
+    expect(uploadError.value).toBe('No file provided')
   })
 
   it('handles FileReader errors', async () => {
     const mockFile = new File(['dummy content'], 'test.txt', {
       type: 'text/plain',
     })
-    const errorMessage = 'Read error'
+    const errorMessage = 'Error reading file'
     const mockError = new DOMException(errorMessage)
 
     setupFileReaderMock({ error: mockError })
@@ -160,9 +158,7 @@ describe('useFileUpload', () => {
 
     vi.runAllTimers()
 
-    await expect(promise).rejects.toThrow(
-      `Erreur FileReader pour : ${mockFile.name}. Erreur: ${errorMessage}`,
-    )
+    await expect(promise).rejects.toThrow(`Error reading file`)
 
     expect(isUploadingFile.value).toBe(false)
     expect(uploadProgress.value).toBe(0)

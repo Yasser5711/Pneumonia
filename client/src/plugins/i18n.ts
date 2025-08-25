@@ -14,3 +14,16 @@ export const i18n = createI18n({
   missingWarn: import.meta.env.MODE !== 'production',
   fallbackWarn: import.meta.env.MODE !== 'production',
 })
+export function createI18nPlugin() {
+  return createI18n({
+    legacy: false,
+    locale: 'en',
+    fallbackLocale: 'en',
+    messages: {
+      en: { $vuetify: vuetifyEn, ...enL },
+      fr: { $vuetify: vuetifyFr, ...frL },
+    },
+    missingWarn: import.meta.env.MODE !== 'production',
+    fallbackWarn: import.meta.env.MODE !== 'production',
+  })
+}

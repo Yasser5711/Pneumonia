@@ -3,7 +3,7 @@ import { computed, ref, watch } from 'vue'
 import { usePreferredDark } from '@vueuse/core'
 import { defineStore } from 'pinia'
 
-import { i18n } from '@/plugins/i18n' // <- adapte le chemin si besoin
+import { i18n } from '@/plugins/i18n'
 import type { LangState } from '@/types/app'
 
 import { useStorageStore } from './storageStore'
@@ -74,7 +74,6 @@ export const useThemeStore = defineStore('theme', () => {
     }
   }
 
-  // Applique immédiatement la locale stockée (ou défaut)
   watch(
     resolvedLocale,
     (val) => {
@@ -83,16 +82,11 @@ export const useThemeStore = defineStore('theme', () => {
     { immediate: true },
   )
 
-  // Setter explicite (utile pour UI / préférences)
   const setLocale = (locale: LangState['locale']) => {
     lang.value.locale = locale
-    // applyLocale est appelé par le watch ci-dessus
   }
 
-  // Optionnel : header prêt à l’emploi pour tes appels HTTP
-  // (propre et centralisé ; tu peux l’utiliser dans un fetch wrapper / axios)
   const languageHeaders = computed(() => {
-    // On respecte le standard HTTP
     return { 'Accept-Language': `${resolvedLocale.value}` }
   })
 

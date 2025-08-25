@@ -5206,6 +5206,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"better-auth-localization@npm:^2.1.4":
+  version: 2.1.4
+  resolution: "better-auth-localization@npm:2.1.4"
+  peerDependencies:
+    better-auth: ^1.3.4
+  checksum: 10c0/7764d44310dfe1681c2d3d38a45891a135290ea18d97e2ed008b93758d8195084c982b46bb5317e23f4c6161b8820e698dde6be54154afe149c89363c15fc846
+  languageName: node
+  linkType: hard
+
 "better-auth@npm:^1.3.4":
   version: 1.3.6
   resolution: "better-auth@npm:1.3.6"
@@ -12648,6 +12657,7 @@ __metadata:
     bcrypt: "npm:^6.0.0"
     better-auth: "npm:^1.3.4"
     better-auth-harmony: "npm:^1.2.5"
+    better-auth-localization: "npm:^2.1.4"
     depcheck: "npm:^1.4.7"
     dotenv: "npm:^16.5.0"
     drizzle-kit: "npm:^0.31.4"

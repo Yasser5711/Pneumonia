@@ -5,7 +5,7 @@ export const useClock = () => {
   const storageStore = useStorageStore()
 
   const time = storageStore.getKeyFromLocalStorage('clock', {
-    local: storageStore.getKeyFromLocalStorage('lang').value.locale,
+    local: typeof navigator !== 'undefined' ? navigator.language : 'en-US',
     showSeconds: false,
     showDate: false,
     options: {

@@ -14,7 +14,7 @@ const config: KnipConfig = {
     'knip',
     'depcheck',
     'ts-prune',
-    'wireit',
+    'vue-i18n-extract',
   ],
 }
 

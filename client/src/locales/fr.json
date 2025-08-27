@@ -1,8 +1,4 @@
 {
-  "404": {
-    "description": "La page que vous recherchez n’existe pas",
-    "title": "404 - Page non trouvée"
-  },
   "ApiKeyContent": {
     "button": {
       "generate": "🔄 Générer une nouvelle clé",
@@ -127,6 +123,9 @@
     }
   },
   "SettingsModal": {
+    "locale": {
+      "label": ""
+    },
     "pixi": {
       "close": {
         "title": "Fermer"
@@ -183,27 +182,21 @@
     },
     "title": "Paramètres"
   },
-  "app": {
-    "title": "Mon application"
-  },
+
   "fileUpload": {
     "noFileProvided": "Aucun fichier fourni",
     "readError": "Erreur de lecture du fichier"
   },
   "signin": {
-    "description": "Page de connexion",
     "logIntoYourAccount": "Connectez-vous à votre compte",
     "noAccount": "Vous n’avez pas de compte ?",
     "signUp": "Inscrivez-vous",
-    "title": "Connexion",
     "welcomeBack": "Bon retour !"
   },
   "signup": {
     "alreadyHaveAccount": "Vous avez déjà un compte ?",
     "createAccount": "Créez votre compte",
-    "description": "Page d’inscription",
     "signIn": "Connectez-vous",
-    "signUpToGetStarted": "Inscrivez-vous pour commencer",
-    "title": "Inscription"
+    "signUpToGetStarted": "Inscrivez-vous pour commencer"
   }
 }

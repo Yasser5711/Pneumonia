@@ -2,14 +2,14 @@
 import { computed } from 'vue'
 
 import { useDateFormat } from '@vueuse/core'
+import { useI18n } from 'vue-i18n'
 
 import { useSession } from '@/composables/useSession'
 
 import { useProfileModal } from './useProfileModal'
-
 const { isProfileOpen, closeModal } = useProfileModal()
 const { user } = useSession()
-
+const { t, locale } = useI18n()
 const avatarUrl = computed(() => user.value?.image)
 
 const quotaPct = computed(() => {
@@ -19,18 +19,22 @@ const quotaPct = computed(() => {
 
 const createdAt = computed(() =>
   user.value?.createdAt
-    ? useDateFormat(user.value.createdAt, 'YYYY-MM-DD HH:mm').value
+    ? useDateFormat(user.value.createdAt, 'YYYY-MM-DD HH:mm', {
+        locales: locale.value,
+      }).value
     : '—',
 )
 const lastLogin = computed(() =>
   user.value?.lastLoginAt
-    ? useDateFormat(user.value?.lastLoginAt, 'YYYY-MM-DD HH:mm').value
+    ? useDateFormat(user.value?.lastLoginAt, 'YYYY-MM-DD HH:mm', {
+        locales: locale.value,
+      }).value
     : '—',
 )
 const lastUsedIp = computed(() => user.value?.lastLoginIp || '—')
 
 useHead({
-  title: () => (isProfileOpen.value ? 'Mon Profil' : undefined),
+  title: () => (isProfileOpen.value ? t('ProfileModal.title') : undefined),
 })
 </script>
 
@@ -118,7 +122,9 @@ useHead({
       </v-card-text>
 
       <v-card-actions class="justify-end">
-        <v-btn variant="flat" color="primary" @click="closeModal">Close</v-btn>
+        <v-btn variant="flat" color="primary" @click="closeModal">{{
+          t('ProfileModal.close')
+        }}</v-btn>
       </v-card-actions>
     </v-card>
     <v-card v-else elevation="2" class="rounded-lg" title="Loading profile">

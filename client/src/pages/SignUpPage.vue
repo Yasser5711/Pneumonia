@@ -1,5 +1,8 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
 const router = useRouter()
+
+const { t } = useI18n()
 definePage({
   path: '/signup',
   name: 'SignUp',
@@ -7,7 +10,7 @@ definePage({
     guestOnly: true,
     title: 'Sign Up',
     icon: '/icons/account.png',
-    description: 'Sign Up page',
+    description: 'Create a new account',
     layout: 'default',
     transitions: {
       enter: 'slide-up',
@@ -31,10 +34,10 @@ function toggleMode() {
           <Logo class="mx-auto mb-4" style="width: 70%" />
 
           <h1 class="text-h4 font-weight-bold mb-2 text-center">
-            Create your account
+            {{ t('signup.createAccount') }}
           </h1>
           <p class="text-h6 font-weight-regular mb-8 text-center">
-            Sign up to get started
+            {{ t('signup.signUpToGetStarted') }}
           </p>
 
           <AuthForm
@@ -43,14 +46,14 @@ function toggleMode() {
             @toggle-mode="toggleMode"
           >
             <div class="text-center">
-              <span>Already have an account?</span>
+              <span>{{ t('signup.alreadyHaveAccount') }}</span>
               <v-btn
                 variant="text"
                 class="text-primary text-none"
                 slim
                 @click="toggleMode"
               >
-                Sign in
+                {{ t('signup.signIn') }}
               </v-btn>
             </div>
           </AuthForm>

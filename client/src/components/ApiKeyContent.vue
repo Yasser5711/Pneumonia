@@ -1,5 +1,6 @@
 <script setup>
 import { useClipboard, useTimeoutFn } from '@vueuse/core'
+import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
 
 import { useGenerateKeyHandler } from '@/composables/useAuthHandler'
@@ -8,6 +9,7 @@ import { useSession } from '@/composables/useSession'
 import { useApiKeyModal } from './useApiKeyModal'
 import { useProfileModal } from './useProfileModal'
 const copied = ref(false)
+const { t } = useI18n()
 const { closeModal, isOpen } = useApiKeyModal()
 const store = useStorageStore()
 const { isLoggedIn, refreshMe, user } = useSession()
@@ -54,15 +56,26 @@ watch(isOpen, (open) => {
 })
 </script>
 <template>
-  <v-card :title="isLoggedIn ? 'Your API Key' : 'Enter your API Key'">
+  <v-card
+    :title="
+      isLoggedIn
+        ? t('ApiKeyContent.card.yourApiKey')
+        : t('ApiKeyContent.card.enterApiKey')
+    "
+  >
     <template v-if="isLoggedIn">
       <v-card-text>
         <v-text-field
           v-model="apiKey"
-          label="API Key"
+          :label="t('ApiKeyContent.field.apiKey.label')"
           variant="underlined"
           readonly
-          :hint="`Quota: ${user?.quota?.used} / ${user?.quota?.total}`"
+          :hint="
+            t('ApiKeyContent.field.quota', {
+              used: user?.quota?.used,
+              total: user?.quota?.total,
+            })
+          "
           persistent-hint
           :append-inner-icon="copied ? 'mdi-check' : 'mdi-content-copy'"
           @click:append-inner="handleCopy"
@@ -77,13 +90,13 @@ watch(isOpen, (open) => {
           variant="plain"
           :loading="isGenerating"
           @click="generateAPIKey"
-          >🔄 Generate new key</v-btn
+          >{{ t('ApiKeyContent.button.generate') }}</v-btn
         >
         <v-spacer />
         <LogoutButton />
 
         <v-btn
-          text="Profile"
+          :text="t('ApiKeyContent.button.profile')"
           prepend-icon="mdi-account-circle"
           @click="openProfile"
         >

@@ -1,4 +1,5 @@
 import eslint from '@eslint/js'
+import vueI18n from '@intlify/eslint-plugin-vue-i18n'
 import pluginQuery from '@tanstack/eslint-plugin-query'
 import eslintPluginTs from '@typescript-eslint/eslint-plugin'
 import tsParser from '@typescript-eslint/parser'
@@ -127,6 +128,30 @@ export default typescriptEslint.config(
     },
     rules: {
       ...pluginQuery.configs.recommended.rules,
+    },
+  },
+  ...vueI18n.configs.recommended,
+  {
+    rules: {
+      '@intlify/vue-i18n/no-dynamic-keys': 'error',
+      '@intlify/vue-i18n/no-unused-keys': [
+        'error',
+        {
+          extensions: ['.ts', '.vue'],
+        },
+      ],
+      '@intlify/vue-i18n/no-duplicate-keys-in-locale': 'error',
+      '@intlify/vue-i18n/no-missing-keys-in-other-locales': 'error',
+      '@intlify/vue-i18n/no-html-messages': 'error',
+      '@intlify/vue-i18n/no-missing-keys': 'error',
+      '@intlify/vue-i18n/no-raw-text': 'off',
+      '@intlify/vue-i18n/valid-message-syntax': 'error',
+    },
+    settings: {
+      'vue-i18n': {
+        localeDir: './src/locales/*.json',
+        messageSyntaxVersion: '^11.0.0',
+      },
     },
   },
 )

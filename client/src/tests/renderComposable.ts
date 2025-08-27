@@ -7,6 +7,7 @@ import {
 } from '@tanstack/vue-query'
 import { createPinia } from 'pinia'
 
+import { createI18nPlugin } from '@/plugins/i18n'
 import { createAppRouter } from '@/router'
 
 import vuetify from '../plugins/vuetify'
@@ -42,7 +43,7 @@ export function renderComposable<T>(
     route: options.route,
   }
   const router = createAppRouter('/')
-
+  const i18n = createI18nPlugin()
   const app = createApp({
     setup() {
       result = composable()
@@ -59,6 +60,7 @@ export function renderComposable<T>(
 
   app.use(createPinia())
   app.use(router)
+  app.use(i18n)
   if (options.useVuetify) {
     app.use(vuetify)
   }

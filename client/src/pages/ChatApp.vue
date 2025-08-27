@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import ChatWindow from '../components/ChatWindow.vue'
-
 definePage({
   path: '/chat',
   name: 'ChatPage',

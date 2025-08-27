@@ -7,10 +7,12 @@ import Components from 'unplugin-vue-components/vite'
 import VueRouter from 'unplugin-vue-router/vite'
 import Layouts from 'vite-plugin-vue-layouts'
 import { transformAssetUrls, default as Vuetify } from 'vite-plugin-vuetify'
+import VueI18nPlugin from '@intlify/unplugin-vue-i18n/vite'
 // Utilities
 import { unheadVueComposablesImports } from '@unhead/vue'
 import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -40,6 +42,9 @@ export default defineConfig({
     }),
     Vue({
       template: { transformAssetUrls },
+    }),
+    VueI18nPlugin({
+      include: [fileURLToPath(new URL('./src/locales/**', import.meta.url))],
     }),
     // https://github.com/vuetifyjs/vuetify-loader/tree/master/packages/vite-plugin#readme
     Vuetify({

@@ -96,7 +96,7 @@
               class="text-body-2"
               style="opacity: 0.9"
             >
-              Initialisation… connexion au serveur en cours.
+              {{ t('ServerWakeModal.message') }}
             </div>
 
             <div
@@ -110,20 +110,19 @@
                 width="2"
               />
               <div class="text-body-2" style="opacity: 0.9">
-                Checking /api/check-pulse…
+                {{ t('ServerWakeModal.checking') }}
               </div>
             </div>
 
             <div v-else-if="status === 'down'" class="text-body-2">
-              API injoignable. Tu peux retenter, ou continuer (les appels
-              peuvent échouer).
+              {{ t('ServerWakeModal.down') }}
               <div v-if="errorMsg" class="mt-2" style="opacity: 0.6">
                 <code>{{ errorMsg }}</code>
               </div>
             </div>
 
             <div v-else class="text-body-2" style="opacity: 0.9">
-              All good. Tu peux continuer. 🚀
+              {{ t('ServerWakeModal.success') }}
             </div>
           </div>
         </div>
@@ -132,23 +131,33 @@
       <v-divider />
 
       <v-card-actions class="justify-end px-4 py-3">
-        <v-btn v-if="status === 'checking'" disabled>Checking…</v-btn>
+        <v-btn v-if="status === 'checking'" disabled>{{
+          t('ServerWakeModal.btn.checking')
+        }}</v-btn>
         <template v-else-if="status === 'down'">
-          <v-btn variant="outlined" @click="retry">Retry</v-btn>
-          <v-btn color="primary" @click="close">Continue</v-btn>
+          <v-btn variant="outlined" @click="retry">{{
+            t('ServerWakeModal.btn.retry')
+          }}</v-btn>
+          <v-btn color="primary" @click="close">{{
+            t('ServerWakeModal.btn.continue')
+          }}</v-btn>
         </template>
-        <v-btn v-else color="primary" @click="close">Close</v-btn>
+        <v-btn v-else color="primary" @click="close">{{
+          t('ServerWakeModal.btn.close')
+        }}</v-btn>
       </v-card-actions>
     </v-card>
   </ResponsiveModal>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
 import { useServerPulse } from '@/composables/useServerPulse'
 import { useTheme } from '@/composables/useTheme'
 
 import ResponsiveModal from './ResponsiveModal.vue'
-
+const { t } = useI18n()
 const { isDark } = useTheme()
 
 const { open, status, lastError, retry, close, isLive, lastBeatAt, bpm, spo2 } =
@@ -161,8 +170,8 @@ const openVModel = computed({
 
 const liveText = computed(() =>
   lastBeatAt.value
-    ? `LIVE • ${Math.max(0, Math.round((Date.now() - lastBeatAt.value.getTime()) / 1000))}s`
-    : 'LIVE',
+    ? `${t('ServerWakeModal.live')} • ${Math.max(0, Math.round((Date.now() - lastBeatAt.value.getTime()) / 1000))}s`
+    : t('ServerWakeModal.live'),
 )
 const errorMsg = computed(() => lastError.value?.message ?? '')
 
@@ -184,10 +193,10 @@ const STATUS_COLORS = {
 } as const
 
 const TITLE_TEXT = {
-  idle: 'Server monitor',
-  checking: 'Warming the server…',
-  up: 'Server ready',
-  down: 'Server unreachable',
+  idle: t('ServerWakeModal.titleText.idle'),
+  checking: t('ServerWakeModal.titleText.checking'),
+  up: t('ServerWakeModal.titleText.up'),
+  down: t('ServerWakeModal.titleText.down'),
 } as const
 
 const hrColor = computed(() => STATUS_COLORS[status.value].hr)

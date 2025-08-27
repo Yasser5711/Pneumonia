@@ -1,6 +1,7 @@
 import type { App } from 'vue'
 
 import { httpBatchLink, httpSubscriptionLink } from '@trpc/client'
+import { createPinia, setActivePinia } from 'pinia'
 import { describe, expect, it, vi, type Mock } from 'vitest'
 
 import { createTRPCPlugin, getTRPCClient } from './trpc'
@@ -28,8 +29,14 @@ vi.mock('@/stores/storageStore', () => {
     })),
   }
 })
+vi.mock('@/stores/themeStore', () => ({
+  useThemeStore: vi.fn(() => ({
+    languageHeaders: { 'Accept-Language': 'fr-FR' },
+  })),
+}))
 describe('createTRPCPlugin', () => {
   it('injects a tRPC client with correct config into Vue app', () => {
+    setActivePinia(createPinia())
     const app = { config: { globalProperties: {} } }
     const plugin = createTRPCPlugin({
       url: 'https://api.example.com/trpc',
@@ -48,9 +55,13 @@ describe('createTRPCPlugin', () => {
 
     const config = (httpBatchLink as Mock).mock.calls[0][0]
     const headers = config.headers()
-    expect(headers).toEqual({ 'x-api-key': 'test-api-key' })
+    expect(headers).toEqual({
+      'Accept-Language': 'fr-FR',
+      'x-api-key': 'test-api-key',
+    })
   })
   it('wires SSE: uses httpSubscriptionLink for subscription ops', () => {
+    setActivePinia(createPinia())
     const app = { config: { globalProperties: {} } }
     const plugin = createTRPCPlugin({ url: 'https://api.example.com/trpc' })
     plugin.install(app as unknown as App)

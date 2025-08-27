@@ -2,7 +2,6 @@
   "entry": ["src/index.ts"],
   "project": ["tsconfig.json"],
   "ignoreBinaries": [
-    "nodemon",
     "tsx",
     "tsc",
     "prettier",
@@ -27,7 +26,6 @@
     "depcheck",
     "ts-prune",
     "tsx",
-    "nodemon",
     "@electric-sql/pglite",
     "@types/bcrypt",
     "drizzle-orm",
@@ -42,6 +40,7 @@
     "drizzle-seed",
     "superjson",
     "better-auth-harmony",
-    "better-auth"
+    "better-auth",
+    "better-auth-localization"
   ]
 }

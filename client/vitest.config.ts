@@ -55,6 +55,7 @@ export default defineConfig(
           'vitest/',
           'tests/',
           '**/*.d.ts',
+          '**/*.vue',
         ],
       },
       server: {

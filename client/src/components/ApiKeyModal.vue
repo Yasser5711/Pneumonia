@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { useApiKeyModal } from './useApiKeyModal'
+import { useI18n } from 'vue-i18n'
 
+import { useApiKeyModal } from './useApiKeyModal'
+const { t } = useI18n()
 const { isOpen } = useApiKeyModal()
 useHead({
-  title: () => (isOpen.value ? 'Mon API Key' : undefined),
+  title: () => (isOpen.value ? t('ApiKeyModal.title') : undefined),
 })
 </script>
 

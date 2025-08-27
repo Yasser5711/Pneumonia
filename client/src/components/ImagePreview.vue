@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, ref } from 'vue'
-
+import { useI18n } from 'vue-i18n'
 const props = defineProps<{
   file: File
   progress?: number
   onRemove: () => void
 }>()
-
+const { t } = useI18n()
 const imageUrl = ref<string>('')
 const isLoading = ref(true)
 const hasLoadError = ref(false)
@@ -82,7 +81,7 @@ const isUploading = computed(
         class="mb-1"
       />
       <span class="text-caption font-weight-medium text-on-error-container">
-        Preview N/A
+        {{ t('ImagePreview.error') }}
       </span>
     </div>
 
@@ -129,8 +128,8 @@ const isUploading = computed(
       <v-btn
         icon
         size="x-small"
-        title="Remove image"
-        aria-label="Remove image"
+        :title="t('ImagePreview.remove')"
+        :aria-label="t('ImagePreview.remove')"
         class="remove-button"
         @click="props.onRemove"
       >

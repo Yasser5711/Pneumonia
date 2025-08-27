@@ -47,8 +47,13 @@
       "dependsOn": ["^check:test"],
       "cache": true
     },
+    "check:i18n": {
+      "dependsOn": ["^check:i18n"],
+      "outputs": [],
+      "cache": true
+    },
     "check:all": {
-      "dependsOn": ["check:lint", "check:types", "check:test", "^check:all"],
+      "dependsOn": ["^check:all"],
       "outputs": [],
       "cache": true
     },

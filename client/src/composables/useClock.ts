@@ -1,12 +1,11 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 
 import { useStorageStore } from '@/stores/storageStore'
-
 export const useClock = () => {
   const storageStore = useStorageStore()
 
   const time = storageStore.getKeyFromLocalStorage('clock', {
-    local: navigator.language,
+    local: typeof navigator !== 'undefined' ? navigator.language : 'en-US',
     showSeconds: false,
     showDate: false,
     options: {

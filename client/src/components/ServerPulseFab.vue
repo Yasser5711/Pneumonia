@@ -9,20 +9,23 @@
           size="large"
           elevation="12"
           rounded="pill"
-          aria-label="Open server monitor"
+          :aria-label="t('ServerPulseFab.tooltip')"
           @click="openMonitor"
         >
           <v-icon size="28">{{ btnIcon }}</v-icon>
         </v-btn>
       </template>
-      <span>Open server monitor</span>
+      <span>{{ t('ServerPulseFab.tooltip') }}</span>
     </v-tooltip>
   </div>
 </template>
 
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
 import { useServerPulse } from '@/composables/useServerPulse'
 
+const { t } = useI18n()
 const { status, open } = useServerPulse()
 
 const btnIcon = computed(() => {

@@ -1,6 +1,10 @@
+import { useI18n } from 'vue-i18n'
+import { toast } from 'vuetify-sonner'
+
 import { authClient } from '@/lib/auth'
 
 export function useAuthForm() {
+  const { t } = useI18n()
   const email = ref('')
   const password = ref('')
   const firstName = ref('')
@@ -14,15 +18,18 @@ export function useAuthForm() {
     isLoading.value = true
     errorMsg.value = ''
     try {
-      await authClient.signIn.email({
+      const { data, error } = await authClient.signIn.email({
         email: email.value,
         password: password.value,
         callbackURL: `${FRONTEND_URL}/chat`,
         rememberMe: rememberMe.value,
       })
+      if (error) throw error
+      if (data) return true
     } catch (e) {
-      errorMsg.value = (e as Error).message ?? 'Unknown error'
-      throw e
+      errorMsg.value = (e as Error).message ?? t('useAuthForm.signIn.error')
+      toast.error(errorMsg.value)
+      return false
     } finally {
       isLoading.value = false
     }
@@ -32,7 +39,7 @@ export function useAuthForm() {
     isLoading.value = true
     errorMsg.value = ''
     try {
-      await authClient.signUp.email({
+      const { data, error } = await authClient.signUp.email({
         email: email.value,
         password: password.value,
         firstName: firstName.value,
@@ -40,9 +47,12 @@ export function useAuthForm() {
         name: `${firstName.value} ${lastName.value}`,
         callbackURL: `${FRONTEND_URL}/chat`,
       })
+      if (error) throw error
+      if (data) return true
     } catch (e) {
-      errorMsg.value = (e as Error).message ?? 'Unknown error'
-      throw e
+      errorMsg.value = (e as Error).message ?? t('useAuthForm.signUp.error')
+      toast.error(errorMsg.value)
+      return false
     } finally {
       isLoading.value = false
     }
@@ -52,11 +62,14 @@ export function useAuthForm() {
     isLoading.value = true
     errorMsg.value = ''
     try {
-      await authClient.signOut()
+      const { error } = await authClient.signOut()
+      if (error) throw error
       callback?.()
+      return true
     } catch (e) {
-      errorMsg.value = (e as Error).message ?? 'Unknown error'
-      throw e
+      errorMsg.value = (e as Error).message ?? t('useAuthForm.logout.error')
+      toast.error(errorMsg.value)
+      return false
     } finally {
       isLoading.value = false
     }
@@ -65,13 +78,17 @@ export function useAuthForm() {
     isLoading.value = true
     errorMsg.value = ''
     try {
-      await authClient.signIn.social({
+      const { data, error } = await authClient.signIn.social({
         provider,
         callbackURL: `${FRONTEND_URL}/chat`,
       })
+      if (error) throw error
+      if (data) return true
     } catch (e) {
-      errorMsg.value = (e as Error).message ?? 'Unknown error'
-      throw e
+      errorMsg.value =
+        (e as Error).message ?? t('useAuthForm.socialSignIn.error')
+      toast.error(errorMsg.value)
+      return false
     } finally {
       isLoading.value = false
     }

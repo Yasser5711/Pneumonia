@@ -191,5 +191,19 @@
     "createAccount": "Create your account",
     "signIn": "Sign in",
     "signUpToGetStarted": "Sign up to get started"
+  },
+  "useAuthForm": {
+    "logout": {
+      "error": "Unknown error"
+    },
+    "signIn": {
+      "error": "Unknown error"
+    },
+    "signUp": {
+      "error": "Unknown error"
+    },
+    "socialSignIn": {
+      "error": "Unknown error"
+    }
   }
 }

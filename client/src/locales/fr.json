@@ -191,5 +191,19 @@
     "createAccount": "Créez votre compte",
     "signIn": "Connectez-vous",
     "signUpToGetStarted": "Inscrivez-vous pour commencer"
+  },
+  "useAuthForm": {
+    "logout": {
+      "error": "Erreur inconnue"
+    },
+    "signIn": {
+      "error": "Erreur inconnue"
+    },
+    "signUp": {
+      "error": "Erreur inconnue"
+    },
+    "socialSignIn": {
+      "error": "Erreur inconnue"
+    }
   }
 }

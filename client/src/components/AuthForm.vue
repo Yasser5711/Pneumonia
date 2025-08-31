@@ -45,12 +45,9 @@ const handle = async () => {
   const { valid } = await formRef.value!.validate()
   if (!valid) return
 
-  try {
-    props.mode === 'signup' ? await signUp() : await signIn()
-    emit('submitted')
-  } catch {
-    throw new Error('Authentication failed')
-  }
+  const ok = props.mode === 'signup' ? await signUp() : await signIn()
+
+  if (ok) emit('submitted')
 }
 
 watch(

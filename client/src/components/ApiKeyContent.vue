@@ -2,6 +2,7 @@
 import { useClipboard, useTimeoutFn } from '@vueuse/core'
 import { useI18n } from 'vue-i18n'
 import { useDisplay } from 'vuetify'
+import { toast } from 'vuetify-sonner'
 
 import { useGenerateKeyHandler } from '@/composables/useAuthHandler'
 import { useSession } from '@/composables/useSession'
@@ -48,6 +49,7 @@ function generateAPIKey() {
     },
     onError: (error) => {
       console.error('Error generating key:', error)
+      toast.error(error.message)
     },
   })
 }

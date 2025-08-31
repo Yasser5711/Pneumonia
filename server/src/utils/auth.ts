@@ -186,9 +186,8 @@ export const auth = betterAuth({
       defaultLocale: 'fr-FR',
       fallbackLocale: 'default',
       getLocale: (request) => {
-        const [primary] = parseAcceptLanguage(request);
-        const base = primary?.split('-')[0];
-
+        const primary = parseAcceptLanguage(request);
+        const base = primary;
         switch (base) {
           case 'fr':
             return 'fr-FR';
@@ -199,18 +198,9 @@ export const auth = betterAuth({
     }),
   ],
 });
-function parseAcceptLanguage(req: Request): string[] {
-  const header = req.headers.get('accept-language') ?? '';
-  return header
-    .split(',')
-    .map((entry) => {
-      const [tag, qpart] = entry.trim().split(';');
-      const q = qpart?.startsWith('q=') ? Number(qpart.slice(2)) : 1;
-      return { tag, q };
-    })
-    .filter((x) => !!x.tag)
-    .sort((a, b) => b.q - a.q)
-    .map((x) => x.tag.toLowerCase());
+function parseAcceptLanguage(req: Request): string {
+  const header = req.headers.get('X-Language') ?? '';
+  return JSON.parse(header).locale;
 }
 
 export type Auth = typeof auth;

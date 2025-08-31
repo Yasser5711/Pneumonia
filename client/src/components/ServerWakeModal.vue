@@ -250,7 +250,6 @@ function drawWave() {
   const w = canvas.clientWidth * dpr
   const h = canvas.clientHeight * dpr
   if (w === 0 || h === 0) {
-    // dialog not sized yet; try again next frame
     raf = requestAnimationFrame(drawWave)
     return
   }

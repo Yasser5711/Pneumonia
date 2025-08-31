@@ -53,7 +53,17 @@
       "cache": true
     },
     "check:all": {
-      "dependsOn": ["^check:all"],
+      "dependsOn": [
+        "check:build",
+        "check:pwa",
+        "check:types",
+        "check:lint",
+        "check:knip",
+        "check:prune",
+        "check:dep",
+        "check:test",
+        "check:i18n"
+      ],
       "outputs": [],
       "cache": true
     },

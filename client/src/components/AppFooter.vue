@@ -3,7 +3,6 @@ const currentDate = new Date()
 
 const socialLinks = [
   { icon: 'mdi-github', link: 'https://github.com/Yasser5711' },
-  // { icon: 'mdi-web', link: 'https://yassermekhfi.tech/' },
   { icon: 'mdi-linkedin', link: 'https://www.linkedin.com/in/yasser-mekhfi/' },
 ]
 </script>

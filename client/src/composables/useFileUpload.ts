@@ -49,7 +49,10 @@ export function useFileUpload() {
       reader.onerror = () => {
         isReading.value = false
         progress.value = 0
-        const errorMessage = `${t('fileUpload.readError', { fileName: fileToProcess.name, error: reader.error?.message })}`
+        const errorMessage = t('fileUpload.readError', {
+          fileName: fileToProcess.name,
+          error: reader.error?.message,
+        })
         console.error(errorMessage, reader.error)
         error.value = errorMessage
         reject(new Error(errorMessage))

@@ -164,12 +164,6 @@
       "spacing": {
         "label": "Spacing"
       },
-      "start": {
-        "title": "Start Show"
-      },
-      "stop": {
-        "title": "Stop Show"
-      },
       "transition": {
         "label": "Transition"
       }
@@ -182,10 +176,9 @@
     },
     "title": "Settings"
   },
-
   "fileUpload": {
     "noFileProvided": "No file provided",
-    "readError": "Error reading file"
+    "readError": "Error reading file {fileName}: {error}"
   },
   "signin": {
     "logIntoYourAccount": "Log into your account",

@@ -2,12 +2,13 @@
 import { ref, watch } from 'vue'
 
 import { useIntersectionObserver } from '@vueuse/core'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
   src: string
   alt?: string
 }>()
-
+const { t } = useI18n()
 const imageContainerRef = ref<HTMLDivElement | null>(null)
 const isVisible = ref(false)
 const isLoading = ref(true)
@@ -88,13 +89,13 @@ watch(
       class="absolute inset-0 flex flex-col items-center justify-center p-2 text-center text-slate-500 dark:text-slate-400"
     >
       <v-icon icon="mdi-image-off-outline" class="mb-1 h-10 w-10 opacity-60" />
-      <span class="text-xs">Image unavailable</span>
+      <span class="text-xs">{{ t('HoverImage.unavailable') }}</span>
     </div>
 
     <img
       v-if="isVisible && !hasError"
       :src="props.src"
-      :alt="props.alt || 'Chat image content'"
+      :alt="props.alt || t('HoverImage.alt')"
       class="h-full w-full object-cover transition-all duration-300 ease-in-out"
       :class="{
         'scale-95 opacity-0': isLoading,

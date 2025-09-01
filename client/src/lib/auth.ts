@@ -7,4 +7,9 @@ import type { Auth } from '@server/utils/auth'
 export const authClient = createAuthClient({
   plugins: [inferAdditionalFields<Auth>(), customSessionClient<Auth>()],
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
+  fetchOptions: {
+    headers: {
+      'X-Language': localStorage.getItem('lang') || 'en-US',
+    },
+  },
 })

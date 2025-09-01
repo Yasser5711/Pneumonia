@@ -22,9 +22,9 @@ import { Icon } from '@iconify/vue'
 definePage({
   name: 'NotFound',
   meta: {
-    title: '404 - Page Not Found',
+    title: 'Not Found',
     icon: '/icons/404.png',
-    description: 'The page you are looking for does not exist',
+    description: 'The page you were looking for does not exist',
     layout: 'default',
   },
 })

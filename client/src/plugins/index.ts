@@ -13,6 +13,7 @@ import { createAppRouter } from '../router'
 import pinia from '../stores'
 
 // import { authClient } from './auth'
+import { i18n } from './i18n'
 import motion from './motion'
 import { installTanstack } from './tanstack'
 import { createTRPCPlugin } from './trpc'
@@ -28,6 +29,7 @@ export function registerPlugins(app: App) {
 
   app
     .use(pinia)
+    .use(i18n)
     .use(vuetify)
     .use(motion)
     .use(createTRPCPlugin({ url: `${import.meta.env.VITE_API_URL}/trpc` }))

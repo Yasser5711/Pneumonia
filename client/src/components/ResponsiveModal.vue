@@ -25,7 +25,7 @@ const emit = defineEmits<{
 }>()
 
 /* ---------- breakpoint ------------------------------------------------- */
-const { smAndDown, xs } = useDisplay() // comes from Vuetify
+const { smAndDown, xs } = useDisplay()
 const isMobile = computed(() =>
   props.switchAt === 'xs' ? xs.value : smAndDown.value,
 )

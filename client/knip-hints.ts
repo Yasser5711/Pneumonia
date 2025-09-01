@@ -31,3 +31,6 @@ import 'pixi.js'
 import 'simplex-noise'
 import 'tweakpane'
 import '@tweakpane/core'
+
+import 'vue-i18n-extract'
+import 'eslint-plugin-vue-i18n'

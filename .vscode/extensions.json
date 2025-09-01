@@ -4,6 +4,7 @@
     "charliermarsh.ruff",
     "ms-python.vscode-pylance",
     "ms-azuretools.vscode-docker",
-    "Cameron.vscode-pytest"
+    "Cameron.vscode-pytest",
+    "lokalise.i18n-ally"
   ]
 }

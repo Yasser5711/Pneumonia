@@ -2,6 +2,7 @@ import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
 import { apiKey, customSession, haveIBeenPwned } from 'better-auth/plugins';
 import { emailHarmony } from 'better-auth-harmony';
+import { localization } from 'better-auth-localization';
 import { eq } from 'drizzle-orm';
 
 import { db, schemas } from '../db';
@@ -181,6 +182,25 @@ export const auth = betterAuth({
       customPasswordCompromisedMessage: 'Please choose a more secure password.',
     }),
     emailHarmony(),
+    localization({
+      defaultLocale: 'fr-FR',
+      fallbackLocale: 'default',
+      getLocale: (request) => {
+        const primary = parseAcceptLanguage(request);
+        const base = primary;
+        switch (base) {
+          case 'fr':
+            return 'fr-FR';
+          default:
+            return 'default';
+        }
+      },
+    }),
   ],
 });
+function parseAcceptLanguage(req: Request): string {
+  const header = req.headers.get('X-Language') ?? '';
+  return JSON.parse(header).locale;
+}
+
 export type Auth = typeof auth;

@@ -1,0 +1,209 @@
+{
+  "ApiKeyContent": {
+    "button": {
+      "generate": "🔄 Générer une nouvelle clé",
+      "profile": "Profil"
+    },
+    "card": {
+      "enterApiKey": "Entrez votre clé API",
+      "yourApiKey": "Votre clé API"
+    },
+    "field": {
+      "apiKey": {
+        "label": "Clé API"
+      },
+      "quota": "Quota : {used} / {total}"
+    }
+  },
+  "ApiKeyModal": {
+    "title": "Ma clé API"
+  },
+  "AuthForm": {
+    "confirmPassword": "Confirmez le mot de passe",
+    "continue": "Continuer",
+    "createAccount": "Créer un compte",
+    "email": "E-mail",
+    "firstName": "Prénom",
+    "forgotPassword": "Mot de passe oublié ?",
+    "invalidEmail": "Adresse e-mail invalide",
+    "lastName": "Nom",
+    "orContinueWith": "Ou continuer avec",
+    "password": "Mot de passe",
+    "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+    "rememberMe": "Se souvenir de moi",
+    "weakPassword": "Au moins 8 caractères"
+  },
+  "ChatMessage": {
+    "heatmapAlt": "Visualisation de la carte thermique",
+    "result": "🩺 J’ai analysé l’image \"{originalImageName}\". Le résultat indique **{class}** avec une probabilité de **{probability}%**."
+  },
+  "ChatWindow": {
+    "messageCount": "Chat - {count} messages",
+    "noMessages": "En attente de démarrer une conversation",
+    "typing": "L’assistant est en train d’écrire..."
+  },
+  "ClockDisplay": {
+    "title": "Horloge",
+    "toggleFormat": "Changer le format de l’heure"
+  },
+  "FileInput": {
+    "label": "Importer un fichier"
+  },
+  "HoverImage": {
+    "alt": "Contenu de l’image du chat",
+    "unavailable": "Image non disponible"
+  },
+  "ImagePreview": {
+    "error": "Aperçu N/D",
+    "remove": "Supprimer l’image"
+  },
+  "LoginButton": {
+    "email": "E-mail",
+    "emailRequired": "L’e-mail est requis",
+    "error": "Une erreur inconnue est survenue.",
+    "firstName": "Prénom",
+    "firstNameRequired": "Le prénom est requis",
+    "github": "Continuer avec GitHub",
+    "google": "Continuer avec Google",
+    "lastName": "Nom",
+    "lastNameRequired": "Le nom est requis",
+    "password": "Mot de passe",
+    "passwordRequired": "Le mot de passe est requis",
+    "title": "Inscription ou Connexion"
+  },
+  "LogoutButton": {
+    "text": "Déconnexion",
+    "title": "Déconnexion"
+  },
+  "MessageInput": {
+    "PredictionErr": "Échec de la prédiction",
+    "assistantTyping": "L’assistant est en train d’écrire...",
+    "btn": {
+      "sendMessage": "Envoyer le message",
+      "uploadImage": "Téléverser une image"
+    },
+    "dropImageHere": "Déposez une image ici",
+    "errorProcessingFile": "Erreur lors du traitement du fichier",
+    "fileTooLarge": "Fichier trop volumineux",
+    "heatmapAlt": "Visualisation de la carte thermique",
+    "imageReady": "Image prête",
+    "invalidFileType": "Type de fichier invalide",
+    "noPrediction": "Aucune prédiction disponible",
+    "result": "Résultat",
+    "uploadingImage": "Téléversement de l’image...",
+    "writeMessage": "Écrivez un message..."
+  },
+  "ProfileModal": {
+    "close": "Fermer",
+    "title": "Profil"
+  },
+  "ScrollToBottomButton": {
+    "title": "Aller en bas"
+  },
+  "ServerPulseFab": {
+    "tooltip": "Ouvrir le moniteur du serveur"
+  },
+  "ServerWakeModal": {
+    "btn": {
+      "checking": "Vérification…",
+      "close": "Fermer",
+      "continue": "Continuer",
+      "retry": "Réessayer"
+    },
+    "checking": "Vérification de /api/check-pulse…",
+    "down": "Le serveur semble hors ligne.",
+    "live": "EN DIRECT",
+    "message": "En attente de la réponse du serveur",
+    "success": "Le serveur est en ligne",
+    "titleText": {
+      "checking": "Mise en route du serveur…",
+      "down": "Serveur injoignable",
+      "idle": "Inactif",
+      "up": "Serveur prêt"
+    }
+  },
+  "SettingsModal": {
+    "locale": {
+      "label": ""
+    },
+    "pixi": {
+      "close": {
+        "title": "Fermer"
+      },
+      "gravityForce": {
+        "label": "Force de gravité"
+      },
+      "length": {
+        "label": "Longueur"
+      },
+      "mode": {
+        "gravity": "Gravité",
+        "idle": "Inactif",
+        "label": "Mode",
+        "orbit": "Orbite",
+        "repel": "Répulsion"
+      },
+      "mouseRadius": {
+        "label": "Rayon de la souris"
+      },
+      "orbitRadius": {
+        "label": "Rayon de l’orbite"
+      },
+      "randomize": {
+        "title": "Randomiser"
+      },
+      "repelForce": {
+        "label": "Force de répulsion"
+      },
+      "reset": {
+        "title": "Réinitialiser"
+      },
+      "scale": {
+        "label": "Échelle"
+      },
+      "spacing": {
+        "label": "Espacement"
+      },
+      "transition": {
+        "label": "Transition"
+      }
+    },
+    "theme": {
+      "auto": "Automatique",
+      "dark": "Sombre",
+      "label": "Thème",
+      "light": "Clair"
+    },
+    "title": "Paramètres"
+  },
+  "fileUpload": {
+    "noFileProvided": "Aucun fichier fourni",
+    "readError": "Erreur de lecture du fichier {fileName}: {error}"
+  },
+  "signin": {
+    "logIntoYourAccount": "Connectez-vous à votre compte",
+    "noAccount": "Vous n’avez pas de compte ?",
+    "signUp": "Inscrivez-vous",
+    "welcomeBack": "Bon retour !"
+  },
+  "signup": {
+    "alreadyHaveAccount": "Vous avez déjà un compte ?",
+    "createAccount": "Créez votre compte",
+    "signIn": "Connectez-vous",
+    "signUpToGetStarted": "Inscrivez-vous pour commencer"
+  },
+  "useAuthForm": {
+    "logout": {
+      "error": "Erreur inconnue"
+    },
+    "signIn": {
+      "error": "Erreur inconnue"
+    },
+    "signUp": {
+      "error": "Erreur inconnue"
+    },
+    "socialSignIn": {
+      "error": "Erreur inconnue"
+    }
+  }
+}

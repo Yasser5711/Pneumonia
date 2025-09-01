@@ -29,7 +29,6 @@ const fastify = Fastify({
           target: 'pino-pretty',
           options: {
             translateTime: 'HH:MM:ss Z',
-            ignore: 'pid,hostname',
             colorize: true,
           },
         },
@@ -57,7 +56,13 @@ async function main() {
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'x-api-key'],
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'X-Requested-With',
+      'x-api-key',
+      'x-language',
+    ],
 
     maxAge: 86400,
     exposedHeaders: ['Set-Cookie'],

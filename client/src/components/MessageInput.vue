@@ -2,6 +2,7 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 
 import { storeToRefs } from 'pinia'
+import { useI18n } from 'vue-i18n'
 
 import {
   useFileUpload,
@@ -13,8 +14,8 @@ import { useChatStore } from '../stores/chatStore'
 
 import ImagePreview from './ImagePreview.vue'
 
-const { predictFromFile, error: predictionError } = useImagePredictor()
-
+const { predictFromFile } = useImagePredictor()
+const { t } = useI18n()
 const chatStore = useChatStore()
 const { isTyping: assistantIsProcessing } = storeToRefs(chatStore)
 
@@ -38,7 +39,7 @@ const processNewFile = async (file: File) => {
   if (!isValidImage(file)) {
     if (fileInput.value) fileInput.value.value = ''
     pendingImageFile.value = null
-    console.warn("Tentative de traitement d'un fichier invalide:", file.type)
+    console.warn(t('MessageInput.invalidFileType', { type: file.type }))
     return
   }
 
@@ -50,7 +51,7 @@ const processNewFile = async (file: File) => {
     const result = await processUploadedFile(file)
     processedImageData.value = result
   } catch (err) {
-    console.error('Erreur lors du traitement initial du fichier:', err)
+    console.error(t('MessageInput.errorProcessingFile', { error: err }))
   }
 }
 
@@ -93,7 +94,7 @@ const isValidImage = (file: File): boolean => {
   if (!validTypes.includes(file.type)) {
     chatStore.addMessage({
       type: 'text',
-      content: `Type de fichier invalide : ${file.type}. Types valides : ${validTypes.join(', ')}`,
+      content: t('MessageInput.invalidFileType', { type: file.type }),
       sender: 'assistant',
     })
     return false
@@ -101,7 +102,9 @@ const isValidImage = (file: File): boolean => {
   if (file.size > maxSize) {
     chatStore.addMessage({
       type: 'text',
-      content: `La taille du fichier dépasse la limite de ${maxSize / (1024 * 1024)}MB.`,
+      content: t('MessageInput.fileTooLarge', {
+        size: maxSize / (1024 * 1024),
+      }),
       sender: 'assistant',
     })
     return false
@@ -137,7 +140,7 @@ const sendMessage = async () => {
     chatStore.setTyping(true)
     try {
       const prediction = await predictFromFile(imageFileForPrediction)
-      if (!prediction) throw new Error('Aucune prédiction reçue.')
+      if (!prediction) throw new Error(t('MessageInput.noPrediction'))
       // chatStore.addMessage({
       //   type: 'prediction',
       //   sender: 'assistant',
@@ -147,20 +150,26 @@ const sendMessage = async () => {
       // })
       chatStore.addMessage({
         type: 'text',
-        content: `🩺 J'ai analysé l'image "${imageFileForPrediction.name}", et elle semble montrer **${prediction.prediction.class}**, avec une confiance de **${(prediction.prediction.probability * 100).toFixed(2)}%**.`,
+        content: t('MessageInput.result', {
+          originalImageName: imageFileForPrediction.name,
+          class: prediction.prediction.class,
+          probability: (prediction.prediction.probability * 100).toFixed(2),
+        }),
         sender: 'assistant',
       })
       if (prediction.heatmap_base64)
         chatStore.addMessage({
           type: 'image',
           url: prediction.heatmap_base64 || '',
-          alt: `Heatmap de la prédiction pour ${imageFileForPrediction.name}`,
+          alt: t('MessageInput.heatmapAlt', {
+            originalImageName: imageFileForPrediction.name,
+          }),
           sender: 'assistant',
         })
     } catch (predictionErr) {
       chatStore.addMessage({
         type: 'text',
-        content: `❌ Échec de l'analyse de l'image : ${predictionErr instanceof Error ? predictionErr.message : 'Erreur inconnue'}`,
+        content: t('MessageInput.PredictionErr', { error: predictionErr }),
         sender: 'assistant',
       })
     } finally {
@@ -226,15 +235,14 @@ const uploadButtonIcon = computed(() => {
 
 const textFieldPlaceholder = computed(() => {
   if (pendingImageFile.value && isUploadingFile.value) {
-    return "Lecture de l'image en cours..."
+    return t('MessageInput.uploadingImage')
   }
   if (pendingImageFile.value && processedImageData.value)
-    return `Image "${pendingImageFile.value.name}" prête. Ajoutez un message ou envoyez.`
+    return `${t('MessageInput.imageReady', { name: pendingImageFile.value.name })}`
   if (isDraggingFileOverWindow.value && !isActionDisabledForNewFile.value)
-    return "Déposez l'image ici !"
-  if (assistantIsProcessing.value)
-    return "L'assistant est en train de répondre..."
-  return 'Écrivez un message ou déposez une image...'
+    return t('MessageInput.dropImageHere')
+  if (assistantIsProcessing.value) return t('MessageInput.assistantTyping')
+  return t('MessageInput.writeMessage')
 })
 
 const isTextFieldDisabled = computed(() => {
@@ -300,7 +308,7 @@ const isTextFieldDisabled = computed(() => {
         <v-btn
           icon
           variant="text"
-          title="Téléverser une image"
+          :title="t('MessageInput.btn.uploadImage')"
           :disabled="isActionDisabledForNewFile"
           @click="triggerFileInput"
         >
@@ -326,7 +334,7 @@ const isTextFieldDisabled = computed(() => {
         <v-btn
           icon="mdi-send"
           variant="text"
-          title="Envoyer le message"
+          :title="t('MessageInput.btn.sendMessage')"
           :loading="showSendButtonLoader"
           :disabled="isSendDisabled"
           rounded="lg"

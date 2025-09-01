@@ -24,12 +24,11 @@ describe('Vuetify plugin', () => {
     expect(app.use).toHaveBeenCalled()
 
     const vuetifyInstance = (app.use as Mock).mock.calls[0][0]
-    const themeRef = vuetifyInstance.theme.global.name
-
-    expect(themeRef.value.value).toBe('light')
+    const themeRef = vuetifyInstance.theme.global.name.value
+    expect(themeRef.value).toBe('light')
 
     resolvedTheme.value = 'dark'
-    await Promise.resolve()
-    expect(themeRef.value.value).toBe('dark')
+    await nextTick()
+    expect(themeRef.value).toBe('dark')
   })
 })

@@ -1,6 +1,9 @@
 <script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+
 import { authClient } from '../lib/auth'
 
+const { t } = useI18n()
 const { signIn, signUp } = authClient
 const email = ref('')
 const password = ref('')
@@ -29,7 +32,7 @@ const handleSignIn = async (provider: 'google' | 'github' | 'email') => {
     }
   } catch (err) {
     if (err instanceof Error) {
-      errorMessage.value = err.message || 'An unknown error occurred.'
+      errorMessage.value = err.message || t('LoginButton.error')
     }
   } finally {
     isLoading.value = false
@@ -45,7 +48,9 @@ const handleSignIn = async (provider: 'google' | 'github' | 'email') => {
       elevation="10"
       rounded="lg"
     >
-      <v-card-title class="text-h5 pb-4">Sign Up or Sign In</v-card-title>
+      <v-card-title class="text-h5 pb-4">{{
+        t('LoginButton.title')
+      }}</v-card-title>
 
       <v-alert
         v-if="errorMessage"
@@ -58,36 +63,36 @@ const handleSignIn = async (provider: 'google' | 'github' | 'email') => {
 
       <v-text-field
         v-model="email"
-        label="Email"
+        :label="t('LoginButton.email')"
         type="email"
         variant="outlined"
         class="mb-3"
-        :rules="[(v) => !!v || 'Email is required']"
+        :rules="[(v) => !!v || t('LoginButton.emailRequired')]"
         :disabled="isLoading"
       />
       <v-text-field
         v-model="password"
-        label="Password"
+        :label="t('LoginButton.password')"
         type="password"
         variant="outlined"
         class="mb-3"
-        :rules="[(v) => !!v || 'Password is required']"
+        :rules="[(v) => !!v || t('LoginButton.passwordRequired')]"
         :disabled="isLoading"
       />
       <v-text-field
         v-model="firstName"
-        label="First Name"
+        :label="t('LoginButton.firstName')"
         variant="outlined"
         class="mb-3"
-        :rules="[(v) => !!v || 'First Name is required']"
+        :rules="[(v) => !!v || t('LoginButton.firstNameRequired')]"
         :disabled="isLoading"
       />
       <v-text-field
         v-model="lastName"
-        label="Last Name"
+        :label="t('LoginButton.lastName')"
         variant="outlined"
         class="mb-3"
-        :rules="[(v) => !!v || 'Last Name is required']"
+        :rules="[(v) => !!v || t('LoginButton.lastNameRequired')]"
         :disabled="isLoading"
       />
 
@@ -113,7 +118,7 @@ const handleSignIn = async (provider: 'google' | 'github' | 'email') => {
         @click="handleSignIn('google')"
       >
         <template #prepend><v-icon size="22">mdi-google</v-icon></template>
-        Continue with Google
+        {{ t('LoginButton.google') }}
       </v-btn>
 
       <v-btn
@@ -126,7 +131,7 @@ const handleSignIn = async (provider: 'google' | 'github' | 'email') => {
         @click="handleSignIn('github')"
       >
         <template #prepend><v-icon size="22">mdi-github</v-icon></template>
-        Continue with GitHub
+        {{ t('LoginButton.github') }}
       </v-btn>
     </v-card>
   </div>

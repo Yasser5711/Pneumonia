@@ -6,6 +6,7 @@ import {
 } from '@testing-library/vue'
 import { createPinia, setActivePinia } from 'pinia'
 
+import { createI18nPlugin } from '@/plugins/i18n'
 import motion from '@/plugins/motion'
 import vuetify from '@/plugins/vuetify'
 
@@ -43,6 +44,7 @@ export function render<Component>(
   const trpcPlugin = createTRPCPlugin({
     url: renderOptions.trpcUrl || defaultOptions.trpcUrl,
   })
+  const i18n = createI18nPlugin()
   return {
     ...renderVue(component, {
       ...renderOptions,
@@ -59,6 +61,7 @@ export function render<Component>(
           setActivePinia(createPinia()),
           router,
           ...(renderOptions.global?.plugins ?? []),
+          i18n,
         ],
       },
     }),

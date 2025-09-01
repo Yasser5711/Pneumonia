@@ -43,7 +43,7 @@ jobs:
       - name: 🧹 Run All Checks
         run: yarn check:all
 
-      - name: 🧪 Run All Tests
+      - name: 🧪 Re-Run All Tests
         run: yarn check:test
   # db-migrate-detect:
   #   name: 🗄️ Detect DB Migrations

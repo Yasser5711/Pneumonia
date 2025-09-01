@@ -1,4 +1,5 @@
 import { useQueryClient } from '@tanstack/vue-query'
+import { toast } from 'vuetify-sonner'
 
 import { useMeQuery } from '@/queries/useAuth'
 import { useAuthStore } from '@/stores/auth'
@@ -7,7 +8,6 @@ import type { User } from '@/types/app'
 import { useApiKeyModal } from '../components/useApiKeyModal'
 
 import { useAuthForm } from './useAuthForm'
-
 const user = ref<User>(undefined)
 
 export function useSession() {
@@ -29,6 +29,7 @@ export function useSession() {
     if (error) {
       console.warn('ME query error → logout soft', error)
       user.value = undefined
+      toast.error(error.message)
     } else if (me) {
       user.value = me.user
       if (user.value) {

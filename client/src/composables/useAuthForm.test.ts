@@ -21,6 +21,19 @@ vi.mock('@/lib/auth', () => ({
 describe('useAuthForm', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.mocked(authClient.signIn.email).mockResolvedValue({
+      data: {},
+      error: null,
+    })
+    vi.mocked(authClient.signIn.social).mockResolvedValue({
+      data: {},
+      error: null,
+    })
+    vi.mocked(authClient.signUp.email).mockResolvedValue({
+      data: {},
+      error: null,
+    })
+    vi.mocked(authClient.signOut).mockResolvedValue({ error: null })
   })
 
   describe('signIn', () => {
@@ -29,8 +42,8 @@ describe('useAuthForm', () => {
       form.email.value = 'test@example.com'
       form.password.value = 'password123'
 
-      await form.signIn()
-
+      const ok = await form.signIn()
+      expect(ok).toBe(true)
       expect(authClient.signIn.email).toHaveBeenCalledWith({
         email: 'test@example.com',
         password: 'password123',
@@ -42,16 +55,17 @@ describe('useAuthForm', () => {
     })
 
     it('sets errorMsg on signIn failure', async () => {
-      vi.mocked(authClient.signIn.email).mockRejectedValueOnce(
-        new Error('fail'),
-      )
+      vi.mocked(authClient.signIn.email).mockResolvedValueOnce({
+        data: null,
+        error: new Error('oops'),
+      })
 
       const [form] = renderComposable(() => useAuthForm())
       form.email.value = 'test@example.com'
       form.password.value = 'wrong'
-
-      await expect(form.signIn()).rejects.toThrow('fail')
-      expect(form.errorMsg.value).toBe('fail')
+      const ok = await form.signIn()
+      expect(ok).toBe(false)
+      expect(form.errorMsg.value).toBe('oops')
       expect(form.isLoading.value).toBe(false)
     })
   })
@@ -64,8 +78,8 @@ describe('useAuthForm', () => {
       form.firstName.value = 'John'
       form.lastName.value = 'Doe'
 
-      await form.signUp()
-
+      const ok = await form.signUp()
+      expect(ok).toBe(true)
       expect(authClient.signUp.email).toHaveBeenCalledWith({
         email: 'new@example.com',
         password: 'secure',
@@ -79,9 +93,10 @@ describe('useAuthForm', () => {
     })
 
     it('sets errorMsg on signUp failure', async () => {
-      vi.mocked(authClient.signUp.email).mockRejectedValueOnce(
-        new Error('signup failed'),
-      )
+      vi.mocked(authClient.signUp.email).mockResolvedValueOnce({
+        data: null,
+        error: new Error('signup failed'),
+      })
 
       const [form] = renderComposable(() => useAuthForm())
       form.email.value = 'a@b.com'
@@ -89,7 +104,8 @@ describe('useAuthForm', () => {
       form.firstName.value = 'A'
       form.lastName.value = 'B'
 
-      await expect(form.signUp()).rejects.toThrow('signup failed')
+      const ok = await form.signUp()
+      expect(ok).toBe(false)
       expect(form.errorMsg.value).toBe('signup failed')
       expect(form.isLoading.value).toBe(false)
     })
@@ -100,8 +116,8 @@ describe('useAuthForm', () => {
       const callback = vi.fn()
       const [form] = renderComposable(() => useAuthForm())
 
-      await form.logout(callback)
-
+      const ok = await form.logout(callback)
+      expect(ok).toBe(true)
       expect(authClient.signOut).toHaveBeenCalled()
       expect(callback).toHaveBeenCalled()
       expect(form.isLoading.value).toBe(false)
@@ -109,13 +125,14 @@ describe('useAuthForm', () => {
     })
 
     it('sets errorMsg on logout failure', async () => {
-      vi.mocked(authClient.signOut).mockRejectedValueOnce(
-        new Error('logout failed'),
-      )
+      vi.mocked(authClient.signOut).mockResolvedValueOnce({
+        error: new Error('logout failed'),
+      })
 
       const [form] = renderComposable(() => useAuthForm())
 
-      await expect(form.logout(() => {})).rejects.toThrow('logout failed')
+      const ok = await form.logout(() => {})
+      expect(ok).toBe(false)
       expect(form.errorMsg.value).toBe('logout failed')
       expect(form.isLoading.value).toBe(false)
     })
@@ -125,14 +142,27 @@ describe('useAuthForm', () => {
     it('calls authClient.signIn.social with correct provider', async () => {
       const [form] = renderComposable(() => useAuthForm())
 
-      await form.socialSignIn('github')
-
+      const ok = await form.socialSignIn('github')
+      expect(ok).toBe(true)
       expect(authClient.signIn.social).toHaveBeenCalledWith({
         provider: 'github',
         callbackURL: expect.stringMatching(/\/chat$/),
       })
       expect(form.isLoading.value).toBe(false)
       expect(form.errorMsg.value).toBe('')
+    })
+    it('sets errorMsg on socialSignIn failure', async () => {
+      vi.mocked(authClient.signIn.social).mockResolvedValueOnce({
+        data: null,
+        error: new Error('social login failed'),
+      })
+
+      const [form] = renderComposable(() => useAuthForm())
+
+      const ok = await form.socialSignIn('github')
+      expect(ok).toBe(false)
+      expect(form.errorMsg.value).toBe('social login failed')
+      expect(form.isLoading.value).toBe(false)
     })
   })
 })

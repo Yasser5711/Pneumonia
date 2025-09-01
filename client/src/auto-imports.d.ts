@@ -80,6 +80,7 @@ declare global {
   const useId: typeof import('vue')['useId']
   const useImagePredictor: typeof import('./composables/useImagePredictor')['useImagePredictor']
   const useLink: (typeof import('vue-router'))['useLink']
+  const useLocale: typeof import('./composables/useLocale')['useLocale']
   const useModel: typeof import('vue')['useModel']
   const useOximeterStore: typeof import('./stores/oximeterStore')['useOximeterStore']
   const usePixiBackground: typeof import('./composables/usePixiBackground')['usePixiBackground']
@@ -103,6 +104,7 @@ declare global {
   const useTemplateRef: typeof import('vue')['useTemplateRef']
   const useTheme: typeof import('./composables/useTheme')['useTheme']
   const useThemeStore: typeof import('./stores/themeStore')['useThemeStore']
+  const useToaster: typeof import('./composables/useToaster')['useToaster']
   const watch: typeof import('vue')['watch']
   const watchEffect: typeof import('vue')['watchEffect']
   const watchPostEffect: typeof import('vue')['watchPostEffect']
@@ -201,6 +203,7 @@ declare module 'vue' {
     readonly useHeadSafe: UnwrapRef<typeof import('@unhead/vue')['useHeadSafe']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
     readonly useImagePredictor: UnwrapRef<typeof import('./composables/useImagePredictor')['useImagePredictor']>
+    readonly useLocale: UnwrapRef<typeof import('./composables/useLocale')['useLocale']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly useOximeterStore: UnwrapRef<typeof import('./stores/oximeterStore')['useOximeterStore']>
     readonly usePixiBackground: UnwrapRef<typeof import('./composables/usePixiBackground')['usePixiBackground']>

@@ -1,0 +1,151 @@
+[git]
+conventional_commits = true
+filter_unconventional = true
+tag_pattern = "v[0-9].*"
+commit_parsers = [
+  { message = "^feat",     group = "✨ Features" },
+  { message = "^fix",      group = "🐛 Bug Fixes" },
+  { message = "^perf",     group = "🚀 Performance" },
+  { message = "^refactor", group = "♻️ Refactoring" },
+  { message = "^docs",     group = "📝 Documentation" },
+  { message = "^test",     group = "✅ Tests" },
+  { message = "^build",    group = "🏗️ Build" },
+  { message = "^ci",       group = "🤖 CI" },
+  { message = "^chore",    group = "🧹 Chore", skip = true },
+]
+
+trim = true
+[git.remotes."origin"]
+#
+
+[changelog]
+header = """
+# Changelog
+"""
+
+body = """
+{# ----------------------------- MACROS -------------------------------- #}
+
+{# Remote URL for commits #}
+{% macro remote_url(owner, repo) -%}https://github.com/{{ owner }}/{{ repo }}{%- endmacro %}
+
+{# Single commit line #}
+{% macro commit_line(c, owner, repo) -%}
+  {# Clean subject: remove trailing " (#123)" #}
+  {% set raw   = c.message | split(pat="\n") | first %}
+  {% set clean = raw | split(pat=" (#") | first | trim %}
+
+  {# Prefer GitHub metadata; fall back to remote #}
+  {% if c.github and c.github.pr_number %}{% set prn = c.github.pr_number %}
+  {% elif c.remote and c.remote.pr_number %}{% set prn = c.remote.pr_number %}
+  {% endif %}
+
+  {% if c.github and c.github.username %}{% set user = c.github.username %}
+  {% elif c.remote and c.remote.username %}{% set user = c.remote.username %}
+  {% endif %}
+ 
+  - {{ clean }}{% if c.scope %} **({{ c.scope }})** {% endif %}{% if owner and repo and prn %} [#{{ prn }}]({{ self::remote_url(owner=owner,repo=repo) }}/pull/{{ prn }}){% endif %} ([{{ c.id | truncate(length=7, end="") }}]({{ self::remote_url(owner=owner,repo=repo) }}/commit/{{ c.id }})){% if c.remote and c.remote.username %} by [@{{ c.remote.username }}](https://github.com/{{ c.remote.username }}){% endif %}
+{%- endmacro %}
+
+
+{% macro gh_avatar_img(user, size=20) -%}
+<img src="https://github.com/{{ user }}.png?size={{ size }}" alt="@{{ user }}"
+     width="{{ size }}" height="{{ size }}"
+     style="border-radius:50%;vertical-align:middle;">{%- endmacro %}
+
+{# single-line linked profile (avatar + handle) #}
+{% macro gh_profile_html(user, size=20) -%}
+<a href="https://github.com/{{ user }}">{{
+  self::gh_avatar_img(user=user, size=size)
+}}&nbsp;@{{ user }}</a>{%- endmacro %}
+
+{# single-line contributor entry (no extra newlines) #}
+{% macro contributor_line_html(user, count, size=20) -%}
+- {{ self::gh_profile_html(user=user, size=size) }} ({{ count }} contribution{% if count != 1 %}s{% endif %})
+{%- endmacro %}
+
+{# --------------------------- RENDERING ------------------------------ #}
+
+{% if version -%}
+## {{ version }} - {{ timestamp | date(format="%Y-%m-%d") }}
+{%- else -%}
+## Unreleased
+{%- endif %}
+
+{# --- Split breaking/non-breaking --- #}
+{% set breaking = commits | filter(attribute="breaking", value=true) %}
+{% set non_breaking = commits | filter(attribute="breaking", value=false) %}
+
+{%- if breaking | length > 0 %}
+### 💥 Breaking Changes
+{%- for c in breaking %}
+{{ self::commit_line(c=c, owner=remote.github.owner, repo=remote.github.repo) }}
+{%- endfor %}
+
+{%- endif %}
+
+{# --- Non-breaking grouped by type --- #}
+{%- for group, items in non_breaking | group_by(attribute="group") %}
+{%- if items | length > 0 %}
+### {{ group }}
+{%- for c in items %}
+{{ self::commit_line(c=c, owner=remote.github.owner, repo=remote.github.repo) }}
+{%- endfor %}
+
+{%- endif %}
+{%- endfor %}
+
+### 📊 Commit Statistics
+- {{ statistics.commit_count }} commit(s) contributed to the release.
+- {{ statistics.commits_timespan | default(value=0) }} day(s) passed between the first and last commit.
+- {{ statistics.conventional_commit_count }} commit(s) parsed as conventional.
+- {{ statistics.links | length }} linked issue(s) detected in commits.
+{%- if statistics.links | length > 0 %}
+	{%- for link in statistics.links %}
+        {{ "  " }}- [{{ link.text }}]({{ link.href }}) (referenced {{ link.count }} time(s))
+	{%- endfor %}
+{%- endif %}
+{%- if statistics.days_passed_since_last_release %}
+	- {{ statistics.days_passed_since_last_release }} day(s) passed between releases.
+{%- endif %}
+
+
+#### By type
+{%- if breaking | length > 0 %}
+- 💥 Breaking Changes: **{{ breaking | length }}**
+{%- endif %}
+{%- for group, items in non_breaking | group_by(attribute="group") %}
+- {{ group }}: **{{ items | length }}**
+{%- endfor %}
+
+#### Contributors
+
+
+{% for user, items in commits | group_by(attribute="github.username") %}
+{% if user %}
+{{ self::contributor_line_html(user=user, count=(items | length), size=20) }}
+{% endif %}
+{% endfor %}
+
+
+{% if version %}
+    {% if previous.version %}
+      **🔗 Full Changelog**: {{ self::remote_url(owner=remote.github.owner, repo=remote.github.repo) }}/compare/{{ previous.version }}...{{ version }}
+    {% endif %}
+{% else -%}
+  {% raw %}\n{% endraw %}
+{% endif %}
+
+
+
+"""
+
+footer = """
+{% if version %}
+    {% if previous.version %}
+      **🔗 Full Changelog**: {{ self::remote_url(owner=remote.github.owner, repo=remote.github.repo) }}/compare/{{ previous.version }}...{{ version }}
+    {% endif %}
+{% else -%}
+  {% raw %}\n{% endraw %}
+{% endif %}
+"""

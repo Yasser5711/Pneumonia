@@ -18,7 +18,7 @@
 
 
 
-## Unreleased
+## v5.0.0 - 2025-09-15
 
 
 
@@ -51,16 +51,28 @@
 
 - add turbo [#57](https://github.com/Yasser5711/Pneumonia/pull/57) ([adc420a](https://github.com/Yasser5711/Pneumonia/commit/adc420a7ef8a0696880491fb574a1186e0615234)) by [@Yasser5711](https://github.com/Yasser5711)
 
+
+
+
+
+
+
+
+
+
+
+- add git-cliff [#60](https://github.com/Yasser5711/Pneumonia/pull/60) ([a7200d7](https://github.com/Yasser5711/Pneumonia/commit/a7200d79067c964221346cdc3bd89f260d454ce4)) by [@Yasser5711](https://github.com/Yasser5711)
+
 ### 📊 Commit Statistics
-- 2 commit(s) contributed to the release.
-- 3 day(s) passed between the first and last commit.
-- 2 commit(s) parsed as conventional.
+- 3 commit(s) contributed to the release.
+- 32 day(s) passed between the first and last commit.
+- 3 commit(s) parsed as conventional.
 - 0 linked issue(s) detected in commits.
 - 65 day(s) passed between releases.
 
 
 #### By type
-- ✨ Features: **2**
+- ✨ Features: **3**
 
 #### Contributors
 
@@ -69,12 +81,14 @@
 
 - <a href="https://github.com/Yasser5711"><img src="https://github.com/Yasser5711.png?size=20" alt="@Yasser5711"
 width="20" height="20"
-style="border-radius:50%;vertical-align:middle;">&nbsp;@Yasser5711</a> (2 contributions)
+style="border-radius:50%;vertical-align:middle;">&nbsp;@Yasser5711</a> (3 contributions)
 
 
 
 
 
+
+**🔗 Full Changelog**: https://github.com/Yasser5711/Pneumonia/compare/v4.0.0...v5.0.0
 
 
 
@@ -450,6 +464,7 @@ style="border-radius:50%;vertical-align:middle;">&nbsp;@Yasser5711</a> (8 contri
 - 34 day(s) passed between the first and last commit.
 - 8 commit(s) parsed as conventional.
 - 0 linked issue(s) detected in commits.
+- 13 day(s) passed between releases.
 
 
 #### By type
@@ -468,6 +483,8 @@ style="border-radius:50%;vertical-align:middle;">&nbsp;@Yasser5711</a> (8 contri
 
 
 
+
+**🔗 Full Changelog**: https://github.com/Yasser5711/Pneumonia/compare/v1.0.0...v2.0.0
 
 
 

@@ -3,6 +3,7 @@
   "private": true,
   "packageManager": "yarn@4.9.2",
   "type": "module",
+  "version": "5.0.0",
   "workspaces": [
     "client",
     "server"

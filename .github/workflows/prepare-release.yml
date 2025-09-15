@@ -1,0 +1,136 @@
+name: 🧰 Prepare Release (PR)
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "New version (without 'v'), e.g. 1.4.0"
+        required: true
+        type: string
+      branch_name:
+        description: "Release branch name (optional)"
+        required: false
+        default: ""
+        type: string
+      generate_notes:
+        description: "Generate CHANGELOG.md with git-cliff"
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🔧 Setup Node (for bump script)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 📝 Write bump script
+        run: |
+          cat > bump-all-package-json.mjs <<'EOF'
+          import fs from 'fs';
+          import path from 'path';
+
+          const NEW_VERSION = process.env.NEW_VERSION;
+          if (!NEW_VERSION) {
+            console.error('NEW_VERSION env not set');
+            process.exit(1);
+          }
+
+          // Recursively find package.json excluding node_modules/.git
+          const root = process.cwd();
+          const targets = [];
+          function walk(dir) {
+            const entries = fs.readdirSync(dir, { withFileTypes: true });
+            for (const e of entries) {
+              if (e.name === 'node_modules' || e.name === '.git' || e.name === 'dist' || e.name === 'build') continue;
+              const p = path.join(dir, e.name);
+              if (e.isDirectory()) walk(p);
+              else if (e.isFile() && e.name === 'package.json') targets.push(p);
+            }
+          }
+          walk(root);
+
+          let changed = 0;
+          for (const file of targets) {
+            const raw = fs.readFileSync(file, 'utf8');
+            try {
+              const json = JSON.parse(raw);
+              if (typeof json.version === 'string') {
+                json.version = NEW_VERSION;
+                fs.writeFileSync(file, JSON.stringify(json, null, 2) + '\n');
+                console.log(`Updated ${file}`);
+                changed++;
+              } else {
+                console.log(`Skip (no version): ${file}`);
+              }
+            } catch (e) {
+              console.warn(`Skip (invalid JSON): ${file}`);
+            }
+          }
+          console.log(`Total package.json updated: ${changed}`);
+          EOF
+
+      - name: 🚀 Bump versions in all package.json
+        env:
+          NEW_VERSION: ${{ inputs.version }}
+        run: node bump-all-package-json.mjs
+
+      - name: (optional) 🧩 Generate release notes (git-cliff)
+        if: ${{ inputs.generate_notes == true }}
+        uses: orhun/git-cliff-action@v4
+        with:
+          config: cliff.toml
+          args: >-
+            --tag v${{ inputs.version }}
+            --verbose
+        env:
+          OUTPUT: CHANGELOG.md
+          GITHUB_REPO: ${{ github.repository }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: 🔎 Show notes (first 100 lines)
+        if: ${{ inputs.generate_notes == true }}
+        run: sed -n '1,100p' CHANGELOG.md || true
+      - name: 🧮 Compute branch name (fallback to run id)
+        id: branch
+        run: |
+          if [ -n "${{ inputs.branch_name }}" ]; then
+            echo "value=${{ inputs.branch_name }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=chore/release-${GITHUB_RUN_ID}" >> "$GITHUB_OUTPUT"
+          fi
+          echo "Release branch: ${{ steps.branch.outputs.value }}"
+      - name: 🧪 Ensure there are changes to commit
+        run: |
+          if git diff --quiet --exit-code && git diff --quiet --cached --exit-code; then
+            echo "No changes detected. Did any package.json have a version field?"
+            exit 1
+          fi
+      - name: 📨 Create PR
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GH_PAT }}
+          title: "chore(release): bump version to v${{ inputs.version }}"
+          body: |
+            This PR bumps all package.json versions to **v${{ inputs.version }}**.
+            Merge to trigger the Publish Release workflow.
+          base: master
+          branch: ${{ steps.branch.outputs.value }}
+          commit-message: "chore(release): bump version to v${{ inputs.version }}"
+          add-paths: |
+            package.json
+            CHANGELOG.md
+          labels: release
+          draft: false

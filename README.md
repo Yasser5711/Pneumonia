@@ -39,11 +39,6 @@ SESSION_SECRET=
 - 🌓 Light/Dark theme toggle
 - 📊 Code quality checks & CI
 
-## 📦 Release Process
-
-- The release process is managed using [Changesets](./RELEASE.md).
-- Follow the steps described in [RELEASE.md](./RELEASE.md) to generate and publish new releases.
-
 ## 🔐 Secrets and Actions
 
 - Please refer to [`workflows/SECRETS.md`](./.github/workflows/SECRETS.md) for GitHub Action secrets documentation.

@@ -16,6 +16,9 @@ const envSchema = z.object({
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
   SESSION_SECRET: z.string(),
+  // Controls OAuth authentication routes (GitHub, Google) and user logout
+  // Despite the name, this does NOT control "local" authentication
+  // Default: false (authentication disabled)
   ENABLE_LOCAL_AUTH: z.boolean().default(false),
 });
 

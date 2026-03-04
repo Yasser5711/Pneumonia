@@ -6,7 +6,8 @@
   "version": "5.0.0",
   "workspaces": [
     "client",
-    "server"
+    "server",
+    "IA"
   ],
   "scripts": {
     "build": "turbo run build",

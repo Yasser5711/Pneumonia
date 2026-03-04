@@ -4725,6 +4725,12 @@ __metadata:
   languageName: node
   linkType: hard
 
+"IA@workspace:IA":
+  version: 0.0.0-use.local
+  resolution: "IA@workspace:IA"
+  languageName: unknown
+  linkType: soft
+
 "abbrev@npm:^2.0.0":
   version: 2.0.0
   resolution: "abbrev@npm:2.0.0"

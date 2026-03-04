@@ -1,7 +1,10 @@
 ruff
 pillow
-modelbit
 tensorflow
 opencv-python-headless
 numpy
 tf_keras_vis
+fastapi
+uvicorn[standard]
+pydantic
+python-dotenv

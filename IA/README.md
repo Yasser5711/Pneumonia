@@ -1,3 +1,12 @@
+---
+title: Pneumonia CNN API
+emoji: 🫁
+colorFrom: blue
+colorTo: green
+sdk: docker
+app_port: 7860
+---
+
 # Pneumonia Detection with CNN
 
 This project trains a lightweight Convolutional Neural Network (CNN) to detect pneumonia from chest X-ray images.

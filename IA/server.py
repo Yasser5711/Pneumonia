@@ -79,6 +79,11 @@ def startup():
 score_function = lambda output: output[0]
 
 
+@app.get("/")
+def health():
+    return {"status": "ok", "model_loaded": model is not None}
+
+
 @app.post("/predict", dependencies=[Depends(verify_api_key)])
 def predict(req: PredictRequest):
     if model is None:
@@ -142,4 +147,4 @@ def predict(req: PredictRequest):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("server:app", host="0.0.0.0", port=8080, reload=True)
+    uvicorn.run("server:app", host="0.0.0.0", port=7860, reload=True)

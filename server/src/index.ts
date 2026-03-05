@@ -34,7 +34,7 @@ const fastify = Fastify({
         },
       }
     : true,
-  bodyLimit: 3 * 1024 * 1024, // 3 MB
+  bodyLimit: 10 * 1024 * 1024, // 10 MB
 });
 setLogger(fastify.log);
 async function main() {
